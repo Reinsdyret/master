@@ -81,10 +81,12 @@ impl KosajaruSCC {
             transpose.insert(node, Vec::new());
         }
         
-        // Reverse all edges
+        // Reverse all edges, but only add to nodes that exist in original graph
         for (&from, neighbors) in graph {
             for &to in neighbors {
-                transpose.entry(to).or_insert_with(Vec::new).push(from);
+                if graph.contains_key(&to) {
+                    transpose.get_mut(&to).unwrap().push(from);
+                }
             }
         }
         

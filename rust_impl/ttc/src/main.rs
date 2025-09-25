@@ -1,7 +1,7 @@
-use ttc::{parse_data_file, TTCState, ttc_algorithm_with_pruning, TTCResult, TTCResultWithStats, TTCSCCSolver};
+use ttc::{parse_data_file, ttc_algorithm_with_pruning, ttc_scc::TTCSCCSolverV2, TTCResult, TTCResultWithStats, TTCSCCSolver, TTCState};
 
 fn main() {
-    match parse_data_file("data/test_1000000_patient_1000000_doctors.txt") {
+    match parse_data_file("data/test_100000_patient_4000_doctors_10_districts.txt") {
         Ok((patients, doctors)) => {
             println!("Parsed {} patients and {} doctors", patients.len(), doctors.len());
             
@@ -48,7 +48,7 @@ fn run_scc_experiment(patients: Vec<ttc::Patient>, doctors: Vec<ttc::Doctor>) ->
     print_statistics(&state);
     
     let start_time = std::time::Instant::now();
-    let mut scc_solver = TTCSCCSolver::new();
+    let mut scc_solver = TTCSCCSolverV2::new();
     let result = scc_solver.solve(&mut state);
     let execution_time = start_time.elapsed();
     
