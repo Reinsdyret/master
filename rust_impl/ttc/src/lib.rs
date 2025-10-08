@@ -1,5 +1,5 @@
-pub mod scc;
 pub mod graph;
+pub mod scc;
 pub mod ttc_scc;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -49,7 +49,8 @@ impl Doctor {
     }
 
     pub fn add_switching_patient(&mut self, patient: Patient) {
-        let insert_pos = self.switching_patients
+        let insert_pos = self
+            .switching_patients
             .binary_search_by(|p| p.priority.cmp(&patient.priority))
             .unwrap_or_else(|pos| pos);
         self.switching_patients.insert(insert_pos, patient);
@@ -68,53 +69,57 @@ impl Doctor {
     }
 }
 
-use std::fs;
 use std::collections::HashMap;
+use std::fs;
+use std::io::Write;
 
 pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), String> {
-    let contents = fs::read_to_string(file_path)
-        .map_err(|e| format!("Error reading file: {}", e))?;
-    
+    let contents =
+        fs::read_to_string(file_path).map_err(|e| format!("Error reading file: {}", e))?;
+
     let lines: Vec<&str> = contents.lines().collect();
-    
+
     if lines.len() < 4 {
         return Err("File must have at least 4 lines".to_string());
     }
-    
+
     let first_line: Vec<&str> = lines[0].split(',').collect();
     if first_line.len() != 2 {
         return Err("First line must be in format: num_patient,num_doctor".to_string());
     }
-    
-    let num_patients: usize = first_line[0].parse()
+
+    let num_patients: usize = first_line[0]
+        .parse()
         .map_err(|_| "Invalid number of patients")?;
-    let num_doctors: usize = first_line[1].parse()
+    let num_doctors: usize = first_line[1]
+        .parse()
         .map_err(|_| "Invalid number of doctors")?;
-    
+
     let preferred_doctors: Vec<usize> = lines[1]
         .split(',')
         .map(|s| s.parse::<usize>())
         .collect::<Result<Vec<_>, _>>()
         .map_err(|_| "Invalid preferred doctor values")?;
-    
+
     let current_doctors: Vec<usize> = lines[2]
         .split(',')
         .map(|s| s.parse::<usize>())
         .collect::<Result<Vec<_>, _>>()
         .map_err(|_| "Invalid current doctor values")?;
-    
+
     let priorities: Vec<usize> = lines[3]
         .split(',')
         .map(|s| s.parse::<usize>())
         .collect::<Result<Vec<_>, _>>()
         .map_err(|_| "Invalid priority values")?;
-    
-    if preferred_doctors.len() != num_patients || 
-       current_doctors.len() != num_patients || 
-       priorities.len() != num_patients {
+
+    if preferred_doctors.len() != num_patients
+        || current_doctors.len() != num_patients
+        || priorities.len() != num_patients
+    {
         return Err("Mismatch in patient data lengths".to_string());
     }
-    
+
     let mut patients = Vec::new();
     for i in 0..num_patients {
         let patient = Patient::new(
@@ -125,17 +130,17 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
         );
         patients.push(patient);
     }
-    
+
     let mut doctors = Vec::new();
     for i in 1..=num_doctors {
         doctors.push(Doctor::new(i));
     }
-    
+
     let mut doctor_map: HashMap<usize, &mut Doctor> = HashMap::new();
     for doctor in &mut doctors {
         doctor_map.insert(doctor.id, doctor);
     }
-    
+
     for patient in &patients {
         if patient.prefers_switch() {
             if let Some(doctor) = doctor_map.get_mut(&patient.current_doctor) {
@@ -143,7 +148,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
             }
         }
     }
-    
+
     Ok((patients, doctors))
 }
 
@@ -155,12 +160,12 @@ pub struct TTCState {
 
 impl TTCState {
     pub fn new(patients: Vec<Patient>, doctors: Vec<Doctor>) -> Self {
-        let mut patient_priority_pairs: Vec<(usize, usize)> = patients.iter()
-            .map(|p| (p.id, p.priority))
-            .collect();
-        
+        let mut patient_priority_pairs: Vec<(usize, usize)> =
+            patients.iter().map(|p| (p.id, p.priority)).collect();
+
         patient_priority_pairs.sort_by(|a, b| a.1.cmp(&b.1)); // Sort by priority
-        let patients_by_priority: Vec<usize> = patient_priority_pairs.into_iter()
+        let patients_by_priority: Vec<usize> = patient_priority_pairs
+            .into_iter()
             .map(|(id, _)| id)
             .collect();
 
@@ -190,15 +195,17 @@ impl TTCState {
 
 pub fn ttc_algorithm(state: &mut TTCState) -> TTCResult {
     use indicatif::{ProgressBar, ProgressStyle};
-    
+
     let mut cycles_found = 0;
     let mut total_patients_reassigned = 0;
-    
-    let switching_patients: Vec<usize> = state.patients_by_priority.iter()
+
+    let switching_patients: Vec<usize> = state
+        .patients_by_priority
+        .iter()
         .filter(|&&id| state.get_patient(id).map_or(false, |p| p.wants_to_switch))
         .copied()
         .collect();
-    
+
     let pb = ProgressBar::new(switching_patients.len() as u64);
     pb.set_style(
         ProgressStyle::default_bar()
@@ -207,7 +214,7 @@ pub fn ttc_algorithm(state: &mut TTCState) -> TTCResult {
             .progress_chars("##-"),
     );
     pb.set_message("Searching for cycles...");
-    
+
     for (_i, &patient_id) in switching_patients.iter().enumerate() {
         let _patient = match state.get_patient(patient_id) {
             Some(p) if p.wants_to_switch => p,
@@ -217,20 +224,26 @@ pub fn ttc_algorithm(state: &mut TTCState) -> TTCResult {
             }
         };
 
-        pb.set_message(format!("Processing Patient {} (prio {})", 
-            patient_id, 
-            state.get_patient(patient_id).map_or(0, |p| p.priority)));
+        pb.set_message(format!(
+            "Processing Patient {} (prio {})",
+            patient_id,
+            state.get_patient(patient_id).map_or(0, |p| p.priority)
+        ));
 
         // Run DFS to find cycle starting from this patient
         if let Some(cycle) = find_cycle_from_patient(patient_id, state) {
             cycles_found += 1;
             total_patients_reassigned += cycle.len();
-            
-            pb.set_message(format!("Found cycle #{} with {} patients!", cycles_found, cycle.len()));
-            
+
+            pb.set_message(format!(
+                "Found cycle #{} with {} patients!",
+                cycles_found,
+                cycle.len()
+            ));
+
             // Execute the cycle - reassign patients
             execute_cycle(&cycle, state);
-            
+
             // Mark all patients in cycle as happy
             for &cycle_patient_id in &cycle {
                 if let Some(p) = state.get_patient_mut(cycle_patient_id) {
@@ -238,13 +251,15 @@ pub fn ttc_algorithm(state: &mut TTCState) -> TTCResult {
                 }
             }
         }
-        
+
         pb.inc(1);
     }
-    
-    pb.finish_with_message(format!("✅ Completed! Found {} cycles, {} patients reassigned", 
-        cycles_found, total_patients_reassigned));
-    
+
+    pb.finish_with_message(format!(
+        "✅ Completed! Found {} cycles, {} patients reassigned",
+        cycles_found, total_patients_reassigned
+    ));
+
     TTCResult {
         cycles_found,
         patients_reassigned: total_patients_reassigned,
@@ -254,16 +269,24 @@ pub fn ttc_algorithm(state: &mut TTCState) -> TTCResult {
 // Optimized version with pruning
 pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
     use indicatif::{ProgressBar, ProgressStyle};
-    
+
     let mut cycles_found = 0;
     let mut total_patients_reassigned = 0;
-    
+
+    println!("🔍 [DFS] Starting DFS algorithm...");
+
+    // Create output file for DFS cycles
+    let mut dfs_cycles_file =
+        std::fs::File::create("dfs_cycles.txt").expect("Could not create dfs_cycles.txt");
+
     // Create progress bar
-    let switching_patients: Vec<usize> = state.patients_by_priority.iter()
+    let switching_patients: Vec<usize> = state
+        .patients_by_priority
+        .iter()
         .filter(|&&id| state.get_patient(id).map_or(false, |p| p.wants_to_switch))
         .copied()
         .collect();
-    
+
     let pb = ProgressBar::new(switching_patients.len() as u64);
     pb.set_style(
         ProgressStyle::default_bar()
@@ -272,9 +295,8 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
             .progress_chars("##-"),
     );
     pb.set_message("Searching for cycles (with pruning)...");
-    
+
     for (_i, &patient_id) in switching_patients.iter().enumerate() {
-        
         let _patient = match state.get_patient(patient_id) {
             Some(p) if p.wants_to_switch => p,
             _ => {
@@ -283,33 +305,42 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
             }
         };
 
-        pb.set_message(format!("Processing Patient {} (prio {})", 
-            patient_id, 
-            state.get_patient(patient_id).map_or(0, |p| p.priority)));
+        pb.set_message(format!(
+            "Processing Patient {} (prio {})",
+            patient_id,
+            state.get_patient(patient_id).map_or(0, |p| p.priority)
+        ));
 
-        // Run DFS with pruning optimization
         if let Some(cycle) = find_cycle_from_patient_with_direct_pruning(patient_id, state) {
             cycles_found += 1;
             total_patients_reassigned += cycle.len();
-            
-            pb.set_message(format!("Found cycle #{} with {} patients!", cycles_found, cycle.len()));
-            
-            // Execute the cycle - reassign patients
+
+            // Write cycle to file
+            writeln!(dfs_cycles_file, "{:?}", cycle)
+                .expect("Failed to write cycle to dfs_cycles.txt");
+
+            // println!("🔍 [DFS] Cycle #{}: {} patients: {:?}", cycles_found, cycle.len(), cycle);
+
+            pb.set_message(format!(
+                "Found cycle #{} with {} patients!",
+                cycles_found,
+                cycle.len()
+            ));
+
             execute_cycle(&cycle, state);
-            
-            // Mark all patients in cycle as happy
+
             for &cycle_patient_id in &cycle {
                 if let Some(p) = state.get_patient_mut(cycle_patient_id) {
                     p.wants_to_switch = false;
                 }
             }
         }
-        
+
         pb.inc(1);
     }
-    
+
     let patients_pruned = state.patients.iter().filter(|p| p.is_stuck).count();
-    
+
     TTCResultWithStats {
         cycles_found,
         patients_reassigned: total_patients_reassigned,
@@ -329,14 +360,21 @@ pub struct TTCResult {
 }
 
 // Re-export the SCC-based TTC solver for easy access
-pub use ttc_scc::{TTCSCCSolver, SCCStats};
+pub use ttc_scc::{SCCStats, TTCSCCSolver};
 
 fn find_cycle_from_patient(start_patient_id: usize, state: &TTCState) -> Option<Vec<usize>> {
     let mut path = Vec::new();
     let mut path_set = std::collections::HashSet::new(); // O(1) cycle detection
     let mut visited = std::collections::HashSet::new();
-    
-    if dfs_for_cycle(start_patient_id, start_patient_id, &mut path, &mut path_set, &mut visited, state) {
+
+    if dfs_for_cycle(
+        start_patient_id,
+        start_patient_id,
+        &mut path,
+        &mut path_set,
+        &mut visited,
+        state,
+    ) {
         Some(path)
     } else {
         None
@@ -345,24 +383,24 @@ fn find_cycle_from_patient(start_patient_id: usize, state: &TTCState) -> Option<
 
 // Optimized version with direct marking (no HashSet needed)
 fn find_cycle_from_patient_with_direct_pruning(
-    start_patient_id: usize, 
+    start_patient_id: usize,
     state: &mut TTCState,
 ) -> Option<Vec<usize>> {
     let mut path = Vec::new();
     let mut path_set = std::collections::HashSet::new(); // O(1) cycle detection
     let mut visited = std::collections::HashSet::new();
     let mut found_any_cycle = false;
-    
+
     let found_target_cycle = dfs_for_cycle_with_tracking(
-        start_patient_id, 
-        start_patient_id, 
-        &mut path, 
+        start_patient_id,
+        start_patient_id,
+        &mut path,
         &mut path_set,
-        &mut visited, 
+        &mut visited,
         &mut found_any_cycle,
-        state
+        state,
     );
-    
+
     if found_target_cycle {
         Some(path)
     } else {
@@ -382,20 +420,20 @@ fn dfs_for_cycle(
     if path.len() > 1 && current_patient_id == target_patient_id {
         return true; // Found cycle back to start
     }
-    
+
     // O(1) cycle detection within current path
     if path_set.contains(&current_patient_id) {
         return false; // Cycle detected but not target
     }
-    
+
     if visited.contains(&current_patient_id) {
         return false; // Visited but not target - no cycle
     }
-    
+
     visited.insert(current_patient_id);
     path.push(current_patient_id);
     path_set.insert(current_patient_id);
-    
+
     // Find current patient
     let current_patient = match state.get_patient(current_patient_id) {
         Some(p) => p,
@@ -404,7 +442,7 @@ fn dfs_for_cycle(
             return false;
         }
     };
-    
+
     // Go to preferred doctor
     let preferred_doctor = match state.get_doctor(current_patient.preferred_doctor) {
         Some(d) => d,
@@ -413,14 +451,21 @@ fn dfs_for_cycle(
             return false;
         }
     };
-    
+
     // Visit switching patients of this doctor in priority order (already sorted)
     for next_patient in &preferred_doctor.switching_patients {
-        if dfs_for_cycle(next_patient.id, target_patient_id, path, path_set, visited, state) {
+        if dfs_for_cycle(
+            next_patient.id,
+            target_patient_id,
+            path,
+            path_set,
+            visited,
+            state,
+        ) {
             return true;
         }
     }
-    
+
     path.pop();
     path_set.remove(&current_patient_id);
     false
@@ -440,13 +485,13 @@ fn dfs_for_cycle_with_tracking(
         *found_any_cycle = true;
         return true; // Found cycle back to start
     }
-    
+
     // O(1) cycle detection instead of O(n) path.contains()
     if path_set.contains(&current_patient_id) {
         *found_any_cycle = true;
         return false;
     }
-    
+
     if visited.contains(&current_patient_id) {
         return false;
     }
@@ -462,11 +507,11 @@ fn dfs_for_cycle_with_tracking(
     if current_patient.is_stuck || !current_patient.wants_to_switch {
         return false;
     }
-    
+
     visited.insert(current_patient_id);
     path.push(current_patient_id);
     path_set.insert(current_patient_id);
-    
+
     // Get preferred doctor ID and collect switching patient IDs to avoid borrowing conflicts
     let preferred_doctor_id = current_patient.preferred_doctor;
     let switching_patient_ids: Vec<usize> = match state.get_doctor(preferred_doctor_id) {
@@ -476,17 +521,17 @@ fn dfs_for_cycle_with_tracking(
             return false;
         }
     };
-    
+
     // Visit switching patients of this doctor in priority order (already sorted)
     for next_patient_id in switching_patient_ids {
         if dfs_for_cycle_with_tracking(
-            next_patient_id, 
-            target_patient_id, 
-            path, 
+            next_patient_id,
+            target_patient_id,
+            path,
             path_set,
-            visited, 
-            found_any_cycle, 
-            state
+            visited,
+            found_any_cycle,
+            state,
         ) {
             return true;
         }
@@ -497,7 +542,7 @@ fn dfs_for_cycle_with_tracking(
             patient.is_stuck = true;
         }
     }
-    
+
     path.pop();
     path_set.remove(&current_patient_id);
     false
@@ -507,20 +552,20 @@ fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
     if cycle.len() < 2 {
         return;
     }
-    
+
     // Create a mapping of old assignments
     let mut patient_to_new_doctor = std::collections::HashMap::new();
-    
+
     // In a cycle, each patient gets the current doctor of the next patient in cycle
     for i in 0..cycle.len() {
         let current_patient_id = cycle[i];
         let next_patient_id = cycle[(i + 1) % cycle.len()];
-        
+
         if let Some(next_patient) = state.get_patient(next_patient_id) {
             patient_to_new_doctor.insert(current_patient_id, next_patient.current_doctor);
         }
     }
-    
+
     // Remove patients from old doctors' switching lists
     for &patient_id in cycle {
         if let Some(patient) = state.get_patient(patient_id) {
@@ -529,12 +574,12 @@ fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
             }
         }
     }
-    
+
     // Update patient assignments
     for &patient_id in cycle {
         if let (Some(patient), Some(&new_doctor_id)) = (
             state.get_patient_mut(patient_id),
-            patient_to_new_doctor.get(&patient_id)
+            patient_to_new_doctor.get(&patient_id),
         ) {
             patient.current_doctor = new_doctor_id;
         }

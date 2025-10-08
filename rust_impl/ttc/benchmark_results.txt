@@ -1,0 +1,6 @@
+# Benchmark Results (1 iterations)
+# Times in milliseconds
+
+dfs_pruning = [960.911526]
+scc_v1 = [1542.2142270000002]
+scc_v2_optimized = [1376.3465919999999]
