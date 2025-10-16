@@ -1,3 +1,4 @@
+pub mod benchmarking;
 pub mod graph;
 pub mod scc;
 pub mod ttc_scc;

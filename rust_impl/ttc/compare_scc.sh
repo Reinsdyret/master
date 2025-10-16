@@ -9,6 +9,9 @@ fi
 
 DATA_FILE=$1
 
+cargo build --release --bin scc_benchmark
+echo "Rust release build built"
+
 echo "=========================================="
 echo "SCC Algorithm Comparison"
 echo "=========================================="

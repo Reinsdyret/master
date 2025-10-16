@@ -112,7 +112,7 @@ impl TTCSCCSolver {
     }
 
     /// Build petgraph DiGraph with both Patient and Doctor nodes from a set of patients
-    fn build_graph_with_doctors_from_patients(
+    pub fn build_graph_with_doctors_from_patients(
         &self,
         patients: &HashSet<usize>,
         state: &TTCState,

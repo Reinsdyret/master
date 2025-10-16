@@ -47,6 +47,11 @@ fn main() {
             println!("SCCs with size > 1: {}", large_sccs);
             println!("Largest SCC size: {}", largest_scc);
             println!("Time: {} ms", duration.as_millis());
+
+            // println!("SCCS: ");
+            // for scc in sccs {
+            //     println!("{:?}", scc);
+            // }
         }
         Err(e) => {
             eprintln!("Error: {}", e);
