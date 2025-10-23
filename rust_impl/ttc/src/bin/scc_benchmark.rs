@@ -70,7 +70,9 @@ fn build_patient_graph(state: &TTCState) -> (Vec<Vec<usize>>, usize, usize) {
     for patient in &state.patients {
         if patient.wants_to_switch && !patient.is_stuck {
             active_patients += 1;
-            doctor_to_patients[patient.current_doctor].push(patient.id);
+            if let Some(current_doctor_id) = patient.current_doctor {
+                doctor_to_patients[current_doctor_id].push(patient.id);
+            }
             if patient.id > max_patient_id {
                 max_patient_id = patient.id;
             }

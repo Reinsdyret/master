@@ -33,7 +33,88 @@ def generate_ttc_test_data(num_patients, num_doctors, filename):
         f.write(";".join(priorities) + "\n")
 
 
-def generate_district_based_test_data(num_patients, num_doctors, num_districts, filename):
+def generate_chain_district_test_data(num_patients, num_doctors, num_districts, filename):
+    """
+    Generate test data where districts form a directed chain: 1→2→3→...
+    Patients in district i only want doctors in district i+1 (or same district).
+    This creates a pathological case for DFS with no cycles between districts.
+    """
+    # Equal-sized districts
+    district_sizes = [1.0 / num_districts] * num_districts
+
+    # Assign patients and doctors evenly to districts
+    patient_districts = []
+    doctor_districts = []
+
+    patients_per_district = num_patients // num_districts
+    doctors_per_district = num_doctors // num_districts
+
+    for district in range(num_districts):
+        for _ in range(patients_per_district):
+            patient_districts.append(district)
+        for _ in range(doctors_per_district):
+            doctor_districts.append(district)
+
+    # Handle remainder
+    for _ in range(num_patients - len(patient_districts)):
+        patient_districts.append(num_districts - 1)
+    for _ in range(num_doctors - len(doctor_districts)):
+        doctor_districts.append(num_districts - 1)
+
+    # Shuffle to mix up assignment
+    random.shuffle(patient_districts)
+    random.shuffle(doctor_districts)
+
+    with open(filename, 'w') as f:
+        f.write(f"{num_patients},{num_doctors}\n")
+
+        preferred = []
+        current = []
+
+        # Generate preferences with chain structure
+        for patient in tqdm(range(num_patients), desc="Generating chain-structured patients"):
+            patient_district = patient_districts[patient]
+
+            # 70% chance: prefer doctor in NEXT district (creating the chain)
+            # 30% chance: prefer doctor in SAME district (local cycles possible)
+            if patient_district < num_districts - 1 and random.random() < 0.7:
+                target_district = patient_district + 1
+            else:
+                target_district = patient_district
+
+            # Find doctors in target district
+            target_doctors = [
+                doc for doc in range(num_doctors)
+                if doctor_districts[doc] == target_district
+            ]
+
+            if target_doctors:
+                preferred_doctor_idx = random.choice(target_doctors)
+                preferred.append(str(preferred_doctor_idx + 1))
+            else:
+                preferred.append(str(random.randint(1, num_doctors)))
+
+            # Current doctor is always in same district
+            same_district_doctors = [
+                doc for doc in range(num_doctors)
+                if doctor_districts[doc] == patient_district
+            ]
+            if same_district_doctors:
+                current_doctor_idx = random.choice(same_district_doctors)
+                current.append(str(current_doctor_idx + 1))
+            else:
+                current.append(str(random.randint(1, num_doctors)))
+
+        # Randomize priorities
+        patient_priorities = list(range(1, num_patients + 1))
+        random.shuffle(patient_priorities)
+
+        f.write(",".join(preferred) + "\n")
+        f.write(",".join(current) + "\n")
+        f.write(",".join(map(str, patient_priorities)) + "\n")
+
+
+def generate_district_based_test_data(num_patients, num_doctors, num_districts, cross_district_prob, filename):
     # Create districts with varying sizes
     district_sizes = []
     remaining_capacity = 1.0
@@ -42,23 +123,22 @@ def generate_district_based_test_data(num_patients, num_doctors, num_districts, 
         district_sizes.append(size)
         remaining_capacity -= size
     district_sizes.append(remaining_capacity)
-    
+
     # Assign patients and doctors to districts
     patient_districts = []
     doctor_districts = []
-    
+
     # Assign patients to districts
     for patient in tqdm(range(num_patients), desc="Assigning patients to districts"):
         district = random.choices(range(num_districts), weights=district_sizes)[0]
         patient_districts.append(district)
-    
+
     # Assign doctors to districts
     for doctor in tqdm(range(num_doctors), desc="Assigning doctors to districts"):
         district = random.choices(range(num_districts), weights=district_sizes)[0]
         doctor_districts.append(district)
     
     doctor_preferability = [1 / num_doctors] * num_doctors
-    cross_district_prob = float(input("Cross district prob in %: "))
     
     with open(filename, 'w') as f:
         f.write(f"{num_patients},{num_doctors}\n")
@@ -111,15 +191,22 @@ if __name__ == "__main__":
     print("Choose generator type:")
     print("1. Original generator")
     print("2. District-based generator")
-    choice = input("Enter choice (1 or 2): ").strip()
-    
+    print("3. Chain district generator (1→2→3, pathological for DFS)")
+    choice = input("Enter choice (1, 2, or 3): ").strip()
+
     patients = int(input("How many Patients?: "))
     doctors = int(input("How many Doctors?: "))
-    
-    if choice == "2":
+
+    if choice == "3":
         districts = int(input("How many Districts?: "))
-        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts.txt"
-        generate_district_based_test_data(patients, doctors, districts, filename)
+        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_chain.txt"
+        generate_chain_district_test_data(patients, doctors, districts, filename)
+        print(f"Generated chain district test file: {filename}")
+    elif choice == "2":
+        districts = int(input("How many Districts?: "))
+        cross_district_prob = float(input("Cross district probability (0.0-1.0): "))
+        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_{cross_district_prob}_prob.txt"
+        generate_district_based_test_data(patients, doctors, districts, cross_district_prob, filename)
         print(f"Generated district-based test file: {filename}")
     else:
         filename = f"data/test_{patients}_patient_{doctors}_doctors.txt"

@@ -7,6 +7,7 @@ fn main() {
 
     let data_files = vec![
         // === Scaling Analysis: Variable sizes ===
+        /*
         "data/test_100_patient_10_doctors.txt".to_string(),
         "data/test_1000_patient_100_doctors_3_districts.txt".to_string(),
         "data/test_10000_patient_1000_doctors_5_districts.txt".to_string(),
@@ -24,6 +25,11 @@ fn main() {
         "data/test_133000_patient_4000_doctors_25_districts.txt".to_string(),
         "data/test_133000_patient_4000_doctors_28_districts.txt".to_string(),
         "data/test_133000_patient_4000_doctors_30_districts.txt".to_string(),
+         */
+        // "data/test_300000_patient_5000_doctors_1000_districts_0.0_prob.txt".to_string(),    
+        // "data/test_100000_patient_2000_doctors_10_districts_chain.txt".to_string()
+        "data/test_1000_patient_100_doctors_10_districts_chain.txt".to_string(),
+        "data/test_1000_patient_100_doctors_10_districts_0.1_prob.txt".to_string()
     ];
 
     const NUM_RUNS: usize = 10;

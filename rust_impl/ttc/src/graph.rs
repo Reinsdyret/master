@@ -160,9 +160,9 @@ mod tests {
 
     fn create_test_state() -> TTCState {
         let patients = vec![
-            Patient::new(1, 1, 2, 1), // Patient 1: wants doctor 2, has doctor 1
-            Patient::new(2, 2, 3, 2), // Patient 2: wants doctor 3, has doctor 2
-            Patient::new(3, 3, 1, 3), // Patient 3: wants doctor 1, has doctor 3
+            Patient::new(1, 1, 2, Some(1)), // Patient 1: wants doctor 2, has doctor 1
+            Patient::new(2, 2, 3, Some(2)), // Patient 2: wants doctor 3, has doctor 2
+            Patient::new(3, 3, 1, Some(3)), // Patient 3: wants doctor 1, has doctor 3
         ];
 
         let mut doctors = vec![Doctor::new(1), Doctor::new(2), Doctor::new(3)];

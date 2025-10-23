@@ -13,16 +13,20 @@ pub struct TTCSCCSolverV2 {
     stats: SCCStats,
     tarjan: TarjanSCC,
     graph: Vec<Vec<usize>>,
-    index_to_patient: Vec<Option<usize>>,
+    index_to_node: Vec<Option<GraphNode>>,
     patient_index: FxHashMap<usize, usize>,
     doctor_index: FxHashMap<usize, usize>,
+    capacity_slot_index: FxHashMap<(usize, usize), usize>,
+    dummy_doctor_index: Option<usize>,
     used_indices: Vec<usize>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum GraphNode {
+pub enum GraphNode {
     Patient(usize),
     Doctor(usize),
+    DummyDoctor,
+    CapacitySlot { doctor_id: usize, slot_id: usize },
 }
 
 #[derive(Debug)]
@@ -103,7 +107,6 @@ impl TTCSCCSolver {
                     self.stats.largest_scc_size = scc.len();
                 }
             }
-            // println!("Number of large sccs (With Doctors): {}", _larger_than_one_scc);
 
             self.solve_once(state, &mut stats, sccs);
         }
@@ -127,12 +130,21 @@ impl TTCSCCSolver {
             let patient = state.get_patient(*patient_id).unwrap();
             if patient.wants_to_switch && !patient.is_stuck {
                 active_patients_in_set_count += 1;
-                doctors_involved.insert(patient.current_doctor);
-                doctors_involved.insert(patient.preferred_doctor);
-
-                if max_doctor_id < patient.current_doctor.max(patient.preferred_doctor) {
-                    max_doctor_id = patient.current_doctor.max(patient.preferred_doctor);
+                
+                // Handle unassigned patients (current_doctor = None)
+                if let Some(current_doctor_id) = patient.current_doctor {
+                    doctors_involved.insert(current_doctor_id);
+                    let max_id = current_doctor_id.max(patient.preferred_doctor);
+                    if max_doctor_id < max_id {
+                        max_doctor_id = max_id;
+                    }
+                } else {
+                    // Unassigned patient - only track preferred doctor
+                    if max_doctor_id < patient.preferred_doctor {
+                        max_doctor_id = patient.preferred_doctor;
+                    }
                 }
+                doctors_involved.insert(patient.preferred_doctor);
 
                 if max_patient_id < patient.id {
                     max_patient_id = patient.id;
@@ -172,9 +184,11 @@ impl TTCSCCSolver {
             let preferred_doctor_node = doctor_to_node[patient.preferred_doctor].unwrap();
             graph.add_edge(patient_node, preferred_doctor_node, ());
 
-            // Add edge: Doctor -> Patient (doctor has patient)
-            let current_doctor_node = doctor_to_node[patient.current_doctor].unwrap();
-            graph.add_edge(current_doctor_node, patient_node, ());
+            // Add edge: Doctor -> Patient (doctor has patient) - only if patient is assigned
+            if let Some(current_doctor_id) = patient.current_doctor {
+                let current_doctor_node = doctor_to_node[current_doctor_id].unwrap();
+                graph.add_edge(current_doctor_node, patient_node, ());
+            }
         }
 
         (graph, node_to_id)
@@ -193,7 +207,11 @@ impl TTCSCCSolver {
             if patient.wants_to_switch && !patient.is_stuck {
                 active_patients_count += 1;
                 doctors_involved.insert(patient.preferred_doctor);
-                doctors_involved.insert(patient.current_doctor);
+                
+                // Only add current doctor if patient is assigned
+                if let Some(current_doctor_id) = patient.current_doctor {
+                    doctors_involved.insert(current_doctor_id);
+                }
             }
         }
 
@@ -236,9 +254,11 @@ impl TTCSCCSolver {
             let preferred_doctor_node = doctor_to_node[patient.preferred_doctor].unwrap();
             graph.add_edge(patient_node, preferred_doctor_node, ());
 
-            // Add edge: Doctor -> Patient (doctor has patient)
-            let current_doctor_node = doctor_to_node[patient.current_doctor].unwrap();
-            graph.add_edge(current_doctor_node, patient_node, ());
+            // Add edge: Doctor -> Patient (doctor has patient) - only if patient is assigned
+            if let Some(current_doctor_id) = patient.current_doctor {
+                let current_doctor_node = doctor_to_node[current_doctor_id].unwrap();
+                graph.add_edge(current_doctor_node, patient_node, ());
+            }
         }
 
         (graph, node_to_id)
@@ -285,7 +305,7 @@ impl TTCSCCSolver {
                     continue;
                 }
 
-                if patient.current_doctor == patient.preferred_doctor {
+                if patient.current_doctor == Some(patient.preferred_doctor) {
                     let pat = state.get_patient_mut(patient_id).unwrap();
                     pat.wants_to_switch = false;
                 } else {
@@ -322,9 +342,6 @@ impl TTCSCCSolver {
 
             stats.cycles_found += 1;
             stats.patients_reassigned += cycle.len();
-
-            // println!("🔍 [With Doctors] Cycle #{}: {} patients: {:?} (from SCC size {})",
-            //     stats.cycles_found, cycle.len(), cycle, scc.len());
 
             // Time: Cycle execution
             let start = std::time::Instant::now();
@@ -403,9 +420,11 @@ impl TTCSCCSolverV2 {
             },
             tarjan: TarjanSCC::new(),
             graph: Vec::new(),
-            index_to_patient: Vec::new(),
+            index_to_node: Vec::new(),
             patient_index: FxHashMap::default(),
             doctor_index: FxHashMap::default(),
+            capacity_slot_index: FxHashMap::default(),
+            dummy_doctor_index: None,
             used_indices: Vec::new(),
         }
     }
@@ -468,12 +487,21 @@ impl TTCSCCSolverV2 {
             let patient = state.get_patient(*patient_id).unwrap();
             if patient.wants_to_switch && !patient.is_stuck {
                 active_patients_in_set_count += 1;
-                doctors_involved.insert(patient.current_doctor);
-                doctors_involved.insert(patient.preferred_doctor);
-
-                if max_doctor_id < patient.current_doctor.max(patient.preferred_doctor) {
-                    max_doctor_id = patient.current_doctor.max(patient.preferred_doctor);
+                
+                // Handle unassigned patients (current_doctor = None)
+                if let Some(current_doctor_id) = patient.current_doctor {
+                    doctors_involved.insert(current_doctor_id);
+                    let max_id = current_doctor_id.max(patient.preferred_doctor);
+                    if max_doctor_id < max_id {
+                        max_doctor_id = max_id;
+                    }
+                } else {
+                    // Unassigned patient - only track preferred doctor
+                    if max_doctor_id < patient.preferred_doctor {
+                        max_doctor_id = patient.preferred_doctor;
+                    }
                 }
+                doctors_involved.insert(patient.preferred_doctor);
 
                 if max_patient_id < patient.id {
                     max_patient_id = patient.id;
@@ -513,9 +541,11 @@ impl TTCSCCSolverV2 {
             let preferred_doctor_node = doctor_to_node[patient.preferred_doctor].unwrap();
             graph.add_edge(patient_node, preferred_doctor_node, ());
 
-            // Add edge: Doctor -> Patient (doctor has patient)
-            let current_doctor_node = doctor_to_node[patient.current_doctor].unwrap();
-            graph.add_edge(current_doctor_node, patient_node, ());
+            // Add edge: Doctor -> Patient (doctor has patient) - only if patient is assigned
+            if let Some(current_doctor_id) = patient.current_doctor {
+                let current_doctor_node = doctor_to_node[current_doctor_id].unwrap();
+                graph.add_edge(current_doctor_node, patient_node, ());
+            }
         }
 
         (graph, node_to_id)
@@ -534,7 +564,11 @@ impl TTCSCCSolverV2 {
             if patient.wants_to_switch && !patient.is_stuck {
                 active_patients_count += 1;
                 doctors_involved.insert(patient.preferred_doctor);
-                doctors_involved.insert(patient.current_doctor);
+                
+                // Only add current doctor if patient is assigned
+                if let Some(current_doctor_id) = patient.current_doctor {
+                    doctors_involved.insert(current_doctor_id);
+                }
             }
         }
 
@@ -577,9 +611,11 @@ impl TTCSCCSolverV2 {
             let preferred_doctor_node = doctor_to_node[patient.preferred_doctor].unwrap();
             graph.add_edge(patient_node, preferred_doctor_node, ());
 
-            // Add edge: Doctor -> Patient (doctor has patient)
-            let current_doctor_node = doctor_to_node[patient.current_doctor].unwrap();
-            graph.add_edge(current_doctor_node, patient_node, ());
+            // Add edge: Doctor -> Patient (doctor has patient) - only if patient is assigned
+            if let Some(current_doctor_id) = patient.current_doctor {
+                let current_doctor_node = doctor_to_node[current_doctor_id].unwrap();
+                graph.add_edge(current_doctor_node, patient_node, ());
+            }
         }
 
         (graph, node_to_id)
@@ -602,7 +638,7 @@ impl TTCSCCSolverV2 {
                     continue;
                 }
 
-                if patient.current_doctor == patient.preferred_doctor {
+                if patient.current_doctor == Some(patient.preferred_doctor) {
                     let pat = state.get_patient_mut(patient_id).unwrap();
                     pat.wants_to_switch = false;
                 } else {
@@ -701,17 +737,12 @@ impl TTCSCCSolverV2 {
 
     // Build adjacency list directly (patients and active doctors only)
     fn build_adjacency_list(&mut self, state: &TTCState) -> usize {
-        for &idx in &self.used_indices {
-            if idx < self.graph.len() {
-                self.graph[idx].clear();
-            }
-            if idx < self.index_to_patient.len() {
-                self.index_to_patient[idx] = None;
-            }
-        }
+
         self.used_indices.clear();
         self.patient_index.clear();
         self.doctor_index.clear();
+        self.capacity_slot_index.clear();
+        self.dummy_doctor_index = None;
 
         let mut next_index = 0;
 
@@ -722,10 +753,14 @@ impl TTCSCCSolverV2 {
 
             let patient_idx = self.assign_patient_node(patient.id, &mut next_index);
             let preferred_idx = self.assign_doctor_node(patient.preferred_doctor, &mut next_index);
-            let current_idx = self.assign_doctor_node(patient.current_doctor, &mut next_index);
+            
+            // Only create edge from current doctor if patient is assigned
+            if let Some(current_doctor_id) = patient.current_doctor {
+                let current_idx = self.assign_doctor_node(current_doctor_id, &mut next_index);
+                self.graph[current_idx].push(patient_idx);
+            }
 
             self.graph[patient_idx].push(preferred_idx);
-            self.graph[current_idx].push(patient_idx);
         }
 
         next_index
@@ -734,7 +769,7 @@ impl TTCSCCSolverV2 {
     fn ensure_node_slot(&mut self, idx: usize) {
         if self.graph.len() <= idx {
             self.graph.resize_with(idx + 1, Vec::new);
-            self.index_to_patient.resize(idx + 1, None);
+            self.index_to_node.resize(idx + 1, None);
         }
     }
 
@@ -747,7 +782,7 @@ impl TTCSCCSolverV2 {
         *next_index += 1;
         self.ensure_node_slot(idx);
         self.graph[idx].clear();
-        self.index_to_patient[idx] = Some(patient_id);
+        self.index_to_node[idx] = Some(GraphNode::Patient(patient_id));
         self.patient_index.insert(patient_id, idx);
         self.used_indices.push(idx);
         idx
@@ -762,7 +797,7 @@ impl TTCSCCSolverV2 {
         *next_index += 1;
         self.ensure_node_slot(idx);
         self.graph[idx].clear();
-        self.index_to_patient[idx] = None;
+        self.index_to_node[idx] = Some(GraphNode::Doctor(doctor_id));
         self.doctor_index.insert(doctor_id, idx);
         self.used_indices.push(idx);
         idx
@@ -778,7 +813,15 @@ impl TTCSCCSolverV2 {
             .filter_map(|scc| {
                 let valid_ids: Vec<usize> = scc
                     .into_iter()
-                    .filter_map(|idx| self.index_to_patient.get(idx).and_then(|entry| *entry))
+                    .filter_map(|idx| {
+                        self.index_to_node.get(idx).and_then(|node_opt| {
+                            if let Some(GraphNode::Patient(patient_id)) = node_opt {
+                                Some(*patient_id)
+                            } else {
+                                None
+                            }
+                        })
+                    })
                     .collect();
 
                 if valid_ids.is_empty() {
