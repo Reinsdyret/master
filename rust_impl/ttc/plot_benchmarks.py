@@ -39,19 +39,17 @@ def plot_total_time_comparison(df, output_dir='plots'):
     # Group by file and compute means
     summary = df.groupby(['file_name', 'num_patients']).agg({
         'dfs_total_ms': 'mean',
-        'scc_v1_total_ms': 'mean',
-        'scc_v2_total_ms': 'mean'
+        'scc_v1_total_ms': 'mean'
     }).reset_index()
 
     summary = summary.sort_values('num_patients')
 
     plt.figure(figsize=(12, 6))
     x = np.arange(len(summary))
-    width = 0.25
+    width = 0.35
 
-    plt.bar(x - width, summary['dfs_total_ms'], width, label='DFS', alpha=0.8)
-    plt.bar(x, summary['scc_v1_total_ms'], width, label='SCC V1', alpha=0.8)
-    plt.bar(x + width, summary['scc_v2_total_ms'], width, label='SCC V2', alpha=0.8)
+    plt.bar(x - width/2, summary['dfs_total_ms'], width, label='DFS', alpha=0.8)
+    plt.bar(x + width/2, summary['scc_v1_total_ms'], width, label='SCC', alpha=0.8)
 
     plt.xlabel('Dataset (by number of patients)', fontsize=12)
     plt.ylabel('Execution Time (ms)', fontsize=12)
@@ -70,8 +68,7 @@ def plot_scaling_analysis(df, output_dir='plots'):
 
     summary = df.groupby(['file_name', 'num_patients']).agg({
         'dfs_total_ms': 'mean',
-        'scc_v1_total_ms': 'mean',
-        'scc_v2_total_ms': 'mean'
+        'scc_v1_total_ms': 'mean'
     }).reset_index()
 
     summary = summary.sort_values('num_patients')
@@ -80,9 +77,7 @@ def plot_scaling_analysis(df, output_dir='plots'):
     plt.plot(summary['num_patients'], summary['dfs_total_ms'],
              marker='o', linewidth=2, markersize=8, label='DFS')
     plt.plot(summary['num_patients'], summary['scc_v1_total_ms'],
-             marker='s', linewidth=2, markersize=8, label='SCC V1')
-    plt.plot(summary['num_patients'], summary['scc_v2_total_ms'],
-             marker='^', linewidth=2, markersize=8, label='SCC V2')
+             marker='s', linewidth=2, markersize=8, label='SCC')
 
     plt.xlabel('Number of Patients', fontsize=12)
     plt.ylabel('Execution Time (ms)', fontsize=12)
@@ -95,104 +90,66 @@ def plot_scaling_analysis(df, output_dir='plots'):
     plt.close()
 
 def plot_scc_timing_breakdown(df, output_dir='plots'):
-    """Plot timing breakdown for SCC algorithms."""
+    """Plot timing breakdown for SCC algorithm."""
     Path(output_dir).mkdir(exist_ok=True)
 
     summary = df.groupby(['file_name', 'num_patients']).agg({
-        'scc_v2_graph_ms': 'mean',
-        'scc_v2_scc_ms': 'mean',
-        'scc_v2_cycle_ms': 'mean',
-        'scc_v2_exec_ms': 'mean'
-    }).reset_index()
-
-    summary = summary.sort_values('num_patients')
-
-    plt.figure(figsize=(12, 6))
-    x = np.arange(len(summary))
-
-    plt.bar(x, summary['scc_v2_graph_ms'], label='Graph Building', alpha=0.8)
-    plt.bar(x, summary['scc_v2_scc_ms'], bottom=summary['scc_v2_graph_ms'],
-            label='SCC Finding', alpha=0.8)
-    plt.bar(x, summary['scc_v2_cycle_ms'],
-            bottom=summary['scc_v2_graph_ms'] + summary['scc_v2_scc_ms'],
-            label='Cycle Finding', alpha=0.8)
-    plt.bar(x, summary['scc_v2_exec_ms'],
-            bottom=summary['scc_v2_graph_ms'] + summary['scc_v2_scc_ms'] + summary['scc_v2_cycle_ms'],
-            label='Cycle Execution', alpha=0.8)
-
-    plt.xlabel('Dataset (by number of patients)', fontsize=12)
-    plt.ylabel('Time (ms)', fontsize=12)
-    plt.title('SCC V2 Algorithm: Timing Breakdown', fontsize=14, fontweight='bold')
-    plt.xticks(x, summary['num_patients'], rotation=45)
-    plt.legend()
-    plt.grid(axis='y', alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(f'{output_dir}/scc_v2_breakdown.png', dpi=300)
-    print(f"Saved: {output_dir}/scc_v2_breakdown.png")
-    plt.close()
-
-    # Same for SCC V1
-    summary_v1 = df.groupby(['file_name', 'num_patients']).agg({
         'scc_v1_graph_ms': 'mean',
         'scc_v1_scc_ms': 'mean',
         'scc_v1_cycle_ms': 'mean',
         'scc_v1_exec_ms': 'mean'
     }).reset_index()
 
-    summary_v1 = summary_v1.sort_values('num_patients')
+    summary = summary.sort_values('num_patients')
 
     plt.figure(figsize=(12, 6))
-    x = np.arange(len(summary_v1))
+    x = np.arange(len(summary))
 
-    plt.bar(x, summary_v1['scc_v1_graph_ms'], label='Graph Building', alpha=0.8)
-    plt.bar(x, summary_v1['scc_v1_scc_ms'], bottom=summary_v1['scc_v1_graph_ms'],
+    plt.bar(x, summary['scc_v1_graph_ms'], label='Graph Building', alpha=0.8)
+    plt.bar(x, summary['scc_v1_scc_ms'], bottom=summary['scc_v1_graph_ms'],
             label='SCC Finding', alpha=0.8)
-    plt.bar(x, summary_v1['scc_v1_cycle_ms'],
-            bottom=summary_v1['scc_v1_graph_ms'] + summary_v1['scc_v1_scc_ms'],
+    plt.bar(x, summary['scc_v1_cycle_ms'],
+            bottom=summary['scc_v1_graph_ms'] + summary['scc_v1_scc_ms'],
             label='Cycle Finding', alpha=0.8)
-    plt.bar(x, summary_v1['scc_v1_exec_ms'],
-            bottom=summary_v1['scc_v1_graph_ms'] + summary_v1['scc_v1_scc_ms'] + summary_v1['scc_v1_cycle_ms'],
+    plt.bar(x, summary['scc_v1_exec_ms'],
+            bottom=summary['scc_v1_graph_ms'] + summary['scc_v1_scc_ms'] + summary['scc_v1_cycle_ms'],
             label='Cycle Execution', alpha=0.8)
 
     plt.xlabel('Dataset (by number of patients)', fontsize=12)
     plt.ylabel('Time (ms)', fontsize=12)
-    plt.title('SCC V1 Algorithm: Timing Breakdown', fontsize=14, fontweight='bold')
-    plt.xticks(x, summary_v1['num_patients'], rotation=45)
+    plt.title('SCC Algorithm: Timing Breakdown', fontsize=14, fontweight='bold')
+    plt.xticks(x, summary['num_patients'], rotation=45)
     plt.legend()
     plt.grid(axis='y', alpha=0.3)
     plt.tight_layout()
-    plt.savefig(f'{output_dir}/scc_v1_breakdown.png', dpi=300)
-    print(f"Saved: {output_dir}/scc_v1_breakdown.png")
+    plt.savefig(f'{output_dir}/scc_breakdown.png', dpi=300)
+    print(f"Saved: {output_dir}/scc_breakdown.png")
     plt.close()
 
 def plot_speedup_comparison(df, output_dir='plots'):
-    """Plot speedup of SCC algorithms compared to DFS."""
+    """Plot speedup of SCC algorithm compared to DFS."""
     Path(output_dir).mkdir(exist_ok=True)
 
     summary = df.groupby(['file_name', 'num_patients']).agg({
         'dfs_total_ms': 'mean',
-        'scc_v1_total_ms': 'mean',
-        'scc_v2_total_ms': 'mean'
+        'scc_v1_total_ms': 'mean'
     }).reset_index()
 
     summary = summary.sort_values('num_patients')
 
     # Calculate speedup
-    summary['scc_v1_speedup'] = summary['dfs_total_ms'] / summary['scc_v1_total_ms']
-    summary['scc_v2_speedup'] = summary['dfs_total_ms'] / summary['scc_v2_total_ms']
+    summary['scc_speedup'] = summary['dfs_total_ms'] / summary['scc_v1_total_ms']
 
     plt.figure(figsize=(12, 6))
     x = np.arange(len(summary))
-    width = 0.35
 
-    plt.bar(x - width/2, summary['scc_v1_speedup'], width, label='SCC V1 vs DFS', alpha=0.8)
-    plt.bar(x + width/2, summary['scc_v2_speedup'], width, label='SCC V2 vs DFS', alpha=0.8)
+    plt.bar(x, summary['scc_speedup'], label='SCC vs DFS', alpha=0.8, color='steelblue')
 
     plt.axhline(y=1.0, color='r', linestyle='--', alpha=0.5, label='Break-even (1x)')
 
     plt.xlabel('Dataset (by number of patients)', fontsize=12)
     plt.ylabel('Speedup Factor', fontsize=12)
-    plt.title('Speedup of SCC Algorithms vs DFS', fontsize=14, fontweight='bold')
+    plt.title('Speedup of SCC Algorithm vs DFS', fontsize=14, fontweight='bold')
     plt.xticks(x, summary['num_patients'], rotation=45)
     plt.legend()
     plt.grid(axis='y', alpha=0.3)
@@ -209,11 +166,11 @@ def plot_variability(df, output_dir='plots'):
     datasets = df.groupby('num_patients')['file_name'].first().reset_index()
     selected = datasets.sort_values('num_patients').iloc[::2]  # Every other dataset
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     for idx, (ax, algo, col) in enumerate(zip(axes,
-                                                ['DFS', 'SCC V1', 'SCC V2'],
-                                                ['dfs_total_ms', 'scc_v1_total_ms', 'scc_v2_total_ms'])):
+                                                ['DFS', 'SCC'],
+                                                ['dfs_total_ms', 'scc_v1_total_ms'])):
         data_to_plot = []
         labels = []
 
@@ -264,8 +221,7 @@ def plot_district_impact(df, output_dir='plots'):
 
         summary = group.groupby('districts').agg({
             'dfs_total_ms': 'mean',
-            'scc_v1_total_ms': 'mean',
-            'scc_v2_total_ms': 'mean'
+            'scc_v1_total_ms': 'mean'
         }).reset_index()
 
         summary = summary.sort_values('districts')
@@ -278,9 +234,7 @@ def plot_district_impact(df, output_dir='plots'):
         plt.plot(summary['districts'], summary['dfs_total_ms'],
                 marker='o', linewidth=2, markersize=10, label='DFS')
         plt.plot(summary['districts'], summary['scc_v1_total_ms'],
-                marker='s', linewidth=2, markersize=10, label='SCC V1')
-        plt.plot(summary['districts'], summary['scc_v2_total_ms'],
-                marker='^', linewidth=2, markersize=10, label='SCC V2')
+                marker='s', linewidth=2, markersize=10, label='SCC')
 
         plt.xlabel('Number of Districts', fontsize=12)
         plt.ylabel('Execution Time (ms)', fontsize=12)
@@ -311,8 +265,7 @@ def plot_district_speedup(df, output_dir='plots'):
 
         summary = group.groupby('districts').agg({
             'dfs_total_ms': 'mean',
-            'scc_v1_total_ms': 'mean',
-            'scc_v2_total_ms': 'mean'
+            'scc_v1_total_ms': 'mean'
         }).reset_index()
 
         summary = summary.sort_values('districts')
@@ -320,15 +273,12 @@ def plot_district_speedup(df, output_dir='plots'):
         if len(summary) < 2:
             continue
 
-        summary['scc_v1_speedup'] = summary['dfs_total_ms'] / summary['scc_v1_total_ms']
-        summary['scc_v2_speedup'] = summary['dfs_total_ms'] / summary['scc_v2_total_ms']
+        summary['scc_speedup'] = summary['dfs_total_ms'] / summary['scc_v1_total_ms']
 
         plt.figure(figsize=(12, 6))
 
-        plt.plot(summary['districts'], summary['scc_v1_speedup'],
-                marker='s', linewidth=2, markersize=10, label='SCC V1 vs DFS')
-        plt.plot(summary['districts'], summary['scc_v2_speedup'],
-                marker='^', linewidth=2, markersize=10, label='SCC V2 vs DFS')
+        plt.plot(summary['districts'], summary['scc_speedup'],
+                marker='s', linewidth=2, markersize=10, label='SCC vs DFS', color='steelblue')
 
         plt.axhline(y=1.0, color='r', linestyle='--', alpha=0.5, label='Break-even (1x)')
 
@@ -350,7 +300,6 @@ def generate_summary_table(df, output_dir='plots'):
     summary = df.groupby(['file_name', 'num_patients', 'num_doctors']).agg({
         'dfs_total_ms': ['mean', 'std'],
         'scc_v1_total_ms': ['mean', 'std'],
-        'scc_v2_total_ms': ['mean', 'std'],
         'cycles_found': 'mean',
         'patients_reassigned': 'mean'
     }).reset_index()
@@ -394,10 +343,9 @@ def main():
 
     print("\n✅ All plots generated successfully!")
     print(f"\nYou can find all plots in the '{output_dir}/' directory:")
-    print("  - total_time_comparison.png: Bar chart comparing all algorithms")
+    print("  - total_time_comparison.png: Bar chart comparing DFS and SCC algorithms")
     print("  - scaling_analysis.png: Line plot showing how algorithms scale")
-    print("  - scc_v1_breakdown.png: Stacked bar chart of SCC V1 timing phases")
-    print("  - scc_v2_breakdown.png: Stacked bar chart of SCC V2 timing phases")
+    print("  - scc_breakdown.png: Stacked bar chart of SCC timing phases")
     print("  - speedup_comparison.png: Speedup factors vs DFS")
     print("  - variability_analysis.png: Box plots showing run-to-run variability")
     print("  - district_impact_*.png: How district count affects performance")

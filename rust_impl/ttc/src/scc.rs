@@ -21,7 +21,7 @@ impl TarjanSCC {
     pub fn find_sccs(&mut self, graph: &[Vec<usize>]) -> Vec<Vec<usize>> {
         let n = graph.len();
         self.ensure_capacity(n);
-        self.reset_state(n);
+        self.reset_state();
 
         let mut next_index = 1;
         for v in 0..n {
@@ -41,12 +41,11 @@ impl TarjanSCC {
         }
     }
 
-    fn reset_state(&mut self, n: usize) {
-        for i in 0..n {
-            self.disc[i] = -1;
-            self.low[i] = 0;
-            self.on_stack[i] = false;
-        }
+    fn reset_state(&mut self) {
+        self.disc.fill(-1);
+        self.low.fill(0);
+        self.on_stack.fill(false);
+
         self.stack.clear();
         self.components.clear();
     }

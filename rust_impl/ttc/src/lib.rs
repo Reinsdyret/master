@@ -1,7 +1,8 @@
 pub mod benchmarking;
-pub mod graph;
 pub mod scc;
 pub mod ttc_scc;
+use std::{collections::HashMap};
+use std::fs;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Patient {
@@ -124,10 +125,6 @@ impl Doctor {
         self.capacity = capacity;
     }
 }
-
-use std::collections::HashMap;
-use std::fs;
-use std::io::Write;
 
 pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), String> {
     let contents =
@@ -310,93 +307,38 @@ impl TTCState {
     pub fn get_doctor_mut(&mut self, id: usize) -> Option<&mut Doctor> {
         self.doctors.get_mut(id - 1)
     }
-}
 
-pub fn ttc_algorithm(state: &mut TTCState) -> TTCResult {
-    use indicatif::{ProgressBar, ProgressStyle};
+    pub fn resolve_patient(&mut self, id: usize) {
+        let current_doctor_id = self.get_patient(id).and_then(|p| p.current_doctor);
 
-    let mut cycles_found = 0;
-    let mut total_patients_reassigned = 0;
+        // Remove patient from current doctor
+        if let Some(current_doctor_id) = current_doctor_id {
+            let current_doctor = self.doctors.get_mut(current_doctor_id - 1).unwrap();
+            current_doctor.switching_patients.retain(|p| p.id != id);
+        }
 
-    let switching_patients: Vec<usize> = state
-        .patients_by_priority
-        .iter()
-        .filter(|&&id| state.get_patient(id).map_or(false, |p| p.wants_to_switch))
-        .copied()
-        .collect();
+        // Add patient to preferred doctor
+        let preferred_doctor_id = self.get_patient(id).and_then(|p| Some(p.preferred_doctor));
 
-    let pb = ProgressBar::new(switching_patients.len() as u64);
-    pb.set_style(
-        ProgressStyle::default_bar()
-            .template("{bar:40.cyan/blue} {pos:>7}/{len:7} [{elapsed_precise}] {msg}")
-            .unwrap()
-            .progress_chars("##-"),
-    );
-    pb.set_message("Searching for cycles...");
-
-    for (_i, &patient_id) in switching_patients.iter().enumerate() {
-        let _patient = match state.get_patient(patient_id) {
-            Some(p) if p.wants_to_switch => p,
-            _ => {
-                pb.inc(1);
-                continue; // Skip happy patients
-            }
-        };
-
-        pb.set_message(format!(
-            "Processing Patient {} (prio {})",
-            patient_id,
-            state.get_patient(patient_id).map_or(0, |p| p.priority)
-        ));
-
-        // Run DFS to find cycle starting from this patient
-        if let Some(cycle) = find_cycle_from_patient(patient_id, state) {
-            cycles_found += 1;
-            total_patients_reassigned += cycle.len();
-
-            pb.set_message(format!(
-                "Found cycle #{} with {} patients!",
-                cycles_found,
-                cycle.len()
-            ));
-
-            // Execute the cycle - reassign patients
-            execute_cycle(&cycle, state);
-
-            // Mark all patients in cycle as happy
-            for &cycle_patient_id in &cycle {
-                if let Some(p) = state.get_patient_mut(cycle_patient_id) {
-                    p.wants_to_switch = false;
-                }
+        if let Some(preferred_doctor_id) = preferred_doctor_id {
+            if let Some(preferred_doctor) = self.get_doctor_mut(preferred_doctor_id) {
+                preferred_doctor.assign_patient(id);
             }
         }
 
-        pb.inc(1);
-    }
-
-    pb.finish_with_message(format!(
-        "✅ Completed! Found {} cycles, {} patients reassigned",
-        cycles_found, total_patients_reassigned
-    ));
-
-    TTCResult {
-        cycles_found,
-        patients_reassigned: total_patients_reassigned,
+        // Mark as do not want to switch
+        self.get_patient_mut(id).unwrap().wants_to_switch = false;
+        
     }
 }
 
+
 // Optimized version with pruning
 pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
-    use indicatif::{ProgressBar, ProgressStyle};
-
     let mut cycles_found = 0;
     let mut total_patients_reassigned = 0;
 
-    println!("🔍 [DFS] Starting DFS algorithm...");
-
-    // Create output file for DFS cycles
-    let mut dfs_cycles_file =
-        std::fs::File::create("dfs_cycles.txt").expect("Could not create dfs_cycles.txt");
+    println!("[DFS] Starting DFS algorithm...");
 
     // Create progress bar
     let switching_patients: Vec<usize> = state
@@ -406,56 +348,22 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
         .copied()
         .collect();
 
-    let pb = ProgressBar::new(switching_patients.len() as u64);
-    pb.set_style(
-        ProgressStyle::default_bar()
-            .template("{bar:40.cyan/blue} {pos:>7}/{len:7} [{elapsed_precise}] {msg}")
-            .unwrap()
-            .progress_chars("##-"),
-    );
-    pb.set_message("Searching for cycles (with pruning)...");
-
     for (_i, &patient_id) in switching_patients.iter().enumerate() {
         let _patient = match state.get_patient(patient_id) {
             Some(p) if p.wants_to_switch => p,
             _ => {
-                pb.inc(1);
                 continue; // Skip happy patients
             }
         };
-
-        pb.set_message(format!(
-            "Processing Patient {} (prio {})",
-            patient_id,
-            state.get_patient(patient_id).map_or(0, |p| p.priority)
-        ));
-
         if let Some(cycle) = find_cycle_from_patient_with_direct_pruning(patient_id, state) {
             cycles_found += 1;
             total_patients_reassigned += cycle.len();
 
-            // Write cycle to file
-            writeln!(dfs_cycles_file, "{:?}", cycle)
-                .expect("Failed to write cycle to dfs_cycles.txt");
-
             // println!("🔍 [DFS] Cycle #{}: {} patients: {:?}", cycles_found, cycle.len(), cycle);
 
-            pb.set_message(format!(
-                "Found cycle #{} with {} patients!",
-                cycles_found,
-                cycle.len()
-            ));
 
             execute_cycle(&cycle, state);
-
-            for &cycle_patient_id in &cycle {
-                if let Some(p) = state.get_patient_mut(cycle_patient_id) {
-                    p.wants_to_switch = false;
-                }
-            }
         }
-
-        pb.inc(1);
     }
 
     let patients_pruned = state.patients.iter().filter(|p| p.is_stuck).count();
@@ -481,24 +389,6 @@ pub struct TTCResult {
 // Re-export the SCC-based TTC solver for easy access
 pub use ttc_scc::{SCCStats, TTCSCCSolver};
 
-fn find_cycle_from_patient(start_patient_id: usize, state: &TTCState) -> Option<Vec<usize>> {
-    let mut path = Vec::new();
-    let mut path_set = std::collections::HashSet::new(); // O(1) cycle detection
-    let mut visited = std::collections::HashSet::new();
-
-    if dfs_for_cycle(
-        start_patient_id,
-        start_patient_id,
-        &mut path,
-        &mut path_set,
-        &mut visited,
-        state,
-    ) {
-        Some(path)
-    } else {
-        None
-    }
-}
 
 // Optimized version with direct marking (no HashSet needed)
 fn find_cycle_from_patient_with_direct_pruning(
@@ -506,17 +396,16 @@ fn find_cycle_from_patient_with_direct_pruning(
     state: &mut TTCState,
 ) -> Option<Vec<usize>> {
     let mut path = Vec::new();
-    let mut path_set = std::collections::HashSet::new(); // O(1) cycle detection
+    let mut path_set = std::collections::HashSet::new();
     let mut visited = std::collections::HashSet::new();
     let mut found_any_cycle = false;
 
-    let found_target_cycle = dfs_for_cycle_with_tracking(
+    let (found_target_cycle, _) = dfs_for_cycle_with_tracking(
         start_patient_id,
         start_patient_id,
         &mut path,
         &mut path_set,
         &mut visited,
-        &mut found_any_cycle,
         state,
     );
 
@@ -528,143 +417,93 @@ fn find_cycle_from_patient_with_direct_pruning(
     }
 }
 
-fn dfs_for_cycle(
-    current_patient_id: usize,
-    target_patient_id: usize,
-    path: &mut Vec<usize>,
-    path_set: &mut std::collections::HashSet<usize>, // O(1) cycle detection
-    visited: &mut std::collections::HashSet<usize>,
-    state: &TTCState,
-) -> bool {
-    if path.len() > 1 && current_patient_id == target_patient_id {
-        return true; // Found cycle back to start
-    }
 
-    // O(1) cycle detection within current path
-    if path_set.contains(&current_patient_id) {
-        return false; // Cycle detected but not target
-    }
-
-    if visited.contains(&current_patient_id) {
-        return false; // Visited but not target - no cycle
-    }
-
-    visited.insert(current_patient_id);
-    path.push(current_patient_id);
-    path_set.insert(current_patient_id);
-
-    // Find current patient
-    let current_patient = match state.get_patient(current_patient_id) {
-        Some(p) => p,
-        None => {
-            path.pop();
-            return false;
-        }
-    };
-
-    // Go to preferred doctor
-    let preferred_doctor = match state.get_doctor(current_patient.preferred_doctor) {
-        Some(d) => d,
-        None => {
-            path.pop();
-            return false;
-        }
-    };
-
-    // Visit switching patients of this doctor in priority order (already sorted)
-    for next_patient in &preferred_doctor.switching_patients {
-        if dfs_for_cycle(
-            next_patient.id,
-            target_patient_id,
-            path,
-            path_set,
-            visited,
-            state,
-        ) {
-            return true;
-        }
-    }
-
-    path.pop();
-    path_set.remove(&current_patient_id);
-    false
-}
-
-// DFS that detects ANY cycles (not just ones containing target) for pruning optimization
 fn dfs_for_cycle_with_tracking(
     current_patient_id: usize,
     target_patient_id: usize,
     path: &mut Vec<usize>,
-    path_set: &mut std::collections::HashSet<usize>, // O(1) cycle detection
+    path_set: &mut std::collections::HashSet<usize>,
     visited: &mut std::collections::HashSet<usize>,
-    found_any_cycle: &mut bool,
     state: &mut TTCState,
-) -> bool {
+) -> (bool, bool) {
     if path.len() > 1 && current_patient_id == target_patient_id {
-        *found_any_cycle = true;
-        return true; // Found cycle back to start
+        return (true, true); // Found cycle back to start
     }
 
-    // O(1) cycle detection instead of O(n) path.contains()
     if path_set.contains(&current_patient_id) {
-        *found_any_cycle = true;
-        return false;
+        return (false, true);
     }
 
     if visited.contains(&current_patient_id) {
-        return false;
+        // We've explored this node before in a previous branch
+        // Check if it was marked as stuck - if so, it leads nowhere
+        if let Some(patient) = state.get_patient(current_patient_id) {
+            return (false, !patient.is_stuck);
+        }
+        return (false, false);
     }
 
     let current_patient = match state.get_patient(current_patient_id) {
         Some(p) => p,
         None => {
-            path.pop();
-            return false;
+            return (false, false);
         }
     };
 
     if current_patient.is_stuck || !current_patient.wants_to_switch {
-        return false;
+        return (false, false);
     }
 
     visited.insert(current_patient_id);
     path.push(current_patient_id);
     path_set.insert(current_patient_id);
 
-    // Get preferred doctor ID and collect switching patient IDs to avoid borrowing conflicts
+    // Get preferred doctor ID and number of switching patients to avoid borrowing conflicts
     let preferred_doctor_id = current_patient.preferred_doctor;
-    let switching_patient_ids: Vec<usize> = match state.get_doctor(preferred_doctor_id) {
-        Some(d) => d.switching_patients.iter().map(|p| p.id).collect(),
+    let num_switching = match state.get_doctor(preferred_doctor_id) {
+        Some(d) => d.switching_patients.len(),
         None => {
             path.pop();
-            return false;
+            return (false, false);
         }
     };
 
+    let mut found_any_in_any_subtree = false;
+
     // Visit switching patients of this doctor in priority order (already sorted)
-    for next_patient_id in switching_patient_ids {
-        if dfs_for_cycle_with_tracking(
+    // Re-fetch doctor each iteration to avoid Vec allocation
+    for i in 0..num_switching {
+        let next_patient_id = match state.get_doctor(preferred_doctor_id) {
+            Some(d) => d.switching_patients[i].id,
+            None => continue,
+        };
+
+        let (found_cycle, found_any_cycle_in_subtree) = dfs_for_cycle_with_tracking(
             next_patient_id,
             target_patient_id,
             path,
             path_set,
             visited,
-            found_any_cycle,
             state,
-        ) {
-            return true;
+        );
+
+        if found_cycle {
+            return (true, true);
+        }
+
+        if found_any_cycle_in_subtree {
+            found_any_in_any_subtree = true;
+        } else {
+            if let Some(patient) = state.get_patient_mut(next_patient_id) {
+                patient.is_stuck = true;
+            }
         }
     }
 
-    if !*found_any_cycle {
-        if let Some(patient) = state.get_patient_mut(current_patient_id) {
-            patient.is_stuck = true;
-        }
-    }
 
     path.pop();
     path_set.remove(&current_patient_id);
-    false
+    (false, found_any_in_any_subtree)
 }
 
 fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
@@ -672,37 +511,8 @@ fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
         return;
     }
 
-    // Create a mapping of old assignments
-    let mut patient_to_new_doctor = std::collections::HashMap::new();
-
-    // In a cycle, each patient gets the current doctor of the next patient in cycle
-    for i in 0..cycle.len() {
-        let current_patient_id = cycle[i];
-        let next_patient_id = cycle[(i + 1) % cycle.len()];
-
-        if let Some(next_patient) = state.get_patient(next_patient_id) {
-            patient_to_new_doctor.insert(current_patient_id, next_patient.current_doctor);
-        }
-    }
-
     // Remove patients from old doctors' switching lists
     for &patient_id in cycle {
-        if let Some(patient) = state.get_patient(patient_id) {
-            if let Some(current_doctor_id) = patient.current_doctor {
-                if let Some(doctor) = state.get_doctor_mut(current_doctor_id) {
-                    doctor.switching_patients.retain(|p| p.id != patient_id);
-                }
-            }
-        }
-    }
-
-    // Update patient assignments
-    for &patient_id in cycle {
-        if let (Some(patient), Some(&new_doctor_id)) = (
-            state.get_patient_mut(patient_id),
-            patient_to_new_doctor.get(&patient_id),
-        ) {
-            patient.current_doctor = new_doctor_id;
-        }
+        state.resolve_patient(patient_id);
     }
 }

@@ -1,4 +1,3 @@
-use crate::ttc_scc::TTCSCCSolverV2;
 use crate::{
     Doctor, Patient, SCCStats, TTCResultWithStats, TTCSCCSolver, TTCState, parse_data_file,
     ttc_algorithm_with_pruning,
@@ -25,8 +24,7 @@ pub struct BenchmarkRun {
     pub num_doctors: usize,
     pub run_number: usize,
     pub dfs_timing: AlgorithmTiming,
-    pub scc_v1_timing: AlgorithmTiming,
-    pub scc_v2_timing: AlgorithmTiming,
+    pub scc_timing: AlgorithmTiming,
     pub cycles_found: usize,
     pub patients_reassigned: usize,
 }
@@ -38,8 +36,7 @@ pub struct BenchmarkSummary {
     pub num_doctors: usize,
     pub num_runs: usize,
     pub dfs_avg: AlgorithmTiming,
-    pub scc_v1_avg: AlgorithmTiming,
-    pub scc_v2_avg: AlgorithmTiming,
+    pub scc_avg: AlgorithmTiming,
     pub avg_cycles_found: f64,
     pub avg_patients_reassigned: f64,
 }
@@ -61,7 +58,7 @@ impl Benchmarker {
 
     pub fn run_benchmarks(&mut self) -> Result<(), String> {
         println!("\n{}", "=".repeat(80));
-        println!("🚀 STARTING COMPREHENSIVE BENCHMARK");
+        println!("STARTING COMPREHENSIVE BENCHMARK");
         println!("{}", "=".repeat(80));
         println!("Files to benchmark: {}", self.data_files.len());
         println!("Runs per file: {}", self.num_runs);
@@ -73,14 +70,14 @@ impl Benchmarker {
 
         for (file_idx, file_path) in self.data_files.iter().enumerate() {
             println!(
-                "\n📁 [{}/{}] Processing file: {}",
+                "\n[{}/{}] Processing file: {}",
                 file_idx + 1,
                 self.data_files.len(),
                 file_path
             );
 
             if !Path::new(file_path).exists() {
-                eprintln!("⚠️  File not found: {}, skipping...", file_path);
+                eprintln!("File not found: {}, skipping...", file_path);
                 continue;
             }
 
@@ -88,7 +85,7 @@ impl Benchmarker {
             let (patients, doctors) = match parse_data_file(file_path) {
                 Ok(data) => data,
                 Err(e) => {
-                    eprintln!("❌ Error parsing {}: {}", file_path, e);
+                    eprintln!("Error parsing {}: {}", file_path, e);
                     continue;
                 }
             };
@@ -109,45 +106,37 @@ impl Benchmarker {
 
             // Run multiple iterations
             for run in 1..=self.num_runs {
-                println!("\n   🔄 Run {}/{} for {}", run, self.num_runs, file_name);
+                println!("\n   Run {}/{} for {}", run, self.num_runs, file_name);
 
                 // DFS Algorithm
-                println!("      [1/3] Running DFS Pruning...");
+                println!("      Running DFS Pruning...");
                 let (dfs_result, dfs_timing) =
                     self.run_dfs_algorithm(patients.clone(), doctors.clone());
 
-                // SCC V1 Algorithm
-                println!("      [2/3] Running SCC V1...");
-                let (scc_v1_result, scc_v1_timing) =
-                    self.run_scc_v1_algorithm(patients.clone(), doctors.clone());
-
-                // SCC V2 Algorithm
-                println!("      [3/3] Running SCC V2...");
-                let (scc_v2_result, scc_v2_timing) =
-                    self.run_scc_v2_algorithm(patients.clone(), doctors.clone());
+                // SCC Algorithm
+                println!("      Running SCC...");
+                let (scc_result, scc_timing) =
+                    self.run_scc_algorithm(patients.clone(), doctors.clone());
 
                 // Verify results match
-                if dfs_result.cycles_found != scc_v1_result.cycles_found
-                    || dfs_result.cycles_found != scc_v2_result.cycles_found
+                if dfs_result.cycles_found != scc_result.cycles_found
                 {
                     eprintln!(
-                        "      ⚠️  WARNING: Result mismatch! DFS: {}, SCC V1: {}, SCC V2: {}",
+                        "      WARNING: Result mismatch! DFS: {}, SCC: {}",
                         dfs_result.cycles_found,
-                        scc_v1_result.cycles_found,
-                        scc_v2_result.cycles_found
+                        scc_result.cycles_found,
                     );
                 }
 
                 // Print results before moving
                 println!(
-                    "      ✅ Completed: {} cycles, {} patients reassigned",
+                    "      Completed: {} cycles, {} patients reassigned",
                     dfs_result.cycles_found, dfs_result.patients_reassigned
                 );
                 println!(
-                    "         DFS: {:.2}ms | SCC V1: {:.2}ms | SCC V2: {:.2}ms",
+                    "         DFS: {:.2}ms | SCC: {:.2}ms",
                     dfs_timing.total_time_ms,
-                    scc_v1_timing.total_time_ms,
-                    scc_v2_timing.total_time_ms
+                    scc_timing.total_time_ms,
                 );
 
                 // Store results
@@ -157,8 +146,7 @@ impl Benchmarker {
                     num_doctors,
                     run_number: run,
                     dfs_timing,
-                    scc_v1_timing,
-                    scc_v2_timing,
+                    scc_timing,
                     cycles_found: dfs_result.cycles_found,
                     patients_reassigned: dfs_result.patients_reassigned,
                 };
@@ -192,31 +180,13 @@ impl Benchmarker {
         (result, timing)
     }
 
-    fn run_scc_v1_algorithm(
+    fn run_scc_algorithm(
         &self,
         patients: Vec<Patient>,
         doctors: Vec<Doctor>,
     ) -> (TTCResultWithStats, AlgorithmTiming) {
         let mut state = TTCState::new(patients, doctors);
         let mut solver = TTCSCCSolver::new();
-
-        let start = Instant::now();
-        let result = solver.solve(&mut state);
-        let total_time = start.elapsed();
-
-        let stats = solver.get_stats();
-        let timing = self.convert_scc_stats_to_timing(stats, total_time);
-
-        (result, timing)
-    }
-
-    fn run_scc_v2_algorithm(
-        &self,
-        patients: Vec<Patient>,
-        doctors: Vec<Doctor>,
-    ) -> (TTCResultWithStats, AlgorithmTiming) {
-        let mut state = TTCState::new(patients, doctors);
-        let mut solver = TTCSCCSolverV2::new();
 
         let start = Instant::now();
         let result = solver.solve(&mut state);
@@ -265,8 +235,7 @@ impl Benchmarker {
             let first_run = runs[0];
 
             let dfs_avg = Self::average_timing(runs.iter().map(|r| &r.dfs_timing));
-            let scc_v1_avg = Self::average_timing(runs.iter().map(|r| &r.scc_v1_timing));
-            let scc_v2_avg = Self::average_timing(runs.iter().map(|r| &r.scc_v2_timing));
+            let scc_avg = Self::average_timing(runs.iter().map(|r| &r.scc_timing));
 
             let avg_cycles_found =
                 runs.iter().map(|r| r.cycles_found as f64).sum::<f64>() / num_runs as f64;
@@ -282,8 +251,7 @@ impl Benchmarker {
                 num_doctors: first_run.num_doctors,
                 num_runs,
                 dfs_avg,
-                scc_v1_avg,
-                scc_v2_avg,
+                scc_avg,
                 avg_cycles_found,
                 avg_patients_reassigned,
             });
@@ -343,62 +311,32 @@ impl Benchmarker {
                 .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(
                 file,
-                "scc_v1_total_ms={:.2}",
-                summary.scc_v1_avg.total_time_ms
+                "scc_total_ms={:.2}",
+                summary.scc_avg.total_time_ms
             )
             .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(
                 file,
-                "scc_v1_graph_building_ms={:.2}",
-                summary.scc_v1_avg.graph_building_ms
+                "scc_graph_building_ms={:.2}",
+                summary.scc_avg.graph_building_ms
             )
             .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(
                 file,
-                "scc_v1_scc_finding_ms={:.2}",
-                summary.scc_v1_avg.scc_finding_ms
+                "scc_scc_finding_ms={:.2}",
+                summary.scc_avg.scc_finding_ms
             )
             .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(
                 file,
-                "scc_v1_cycle_finding_ms={:.2}",
-                summary.scc_v1_avg.cycle_finding_ms
+                "scc_cycle_finding_ms={:.2}",
+                summary.scc_avg.cycle_finding_ms
             )
             .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(
                 file,
-                "scc_v1_cycle_execution_ms={:.2}",
-                summary.scc_v1_avg.cycle_execution_ms
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(
-                file,
-                "scc_v2_total_ms={:.2}",
-                summary.scc_v2_avg.total_time_ms
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(
-                file,
-                "scc_v2_graph_building_ms={:.2}",
-                summary.scc_v2_avg.graph_building_ms
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(
-                file,
-                "scc_v2_scc_finding_ms={:.2}",
-                summary.scc_v2_avg.scc_finding_ms
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(
-                file,
-                "scc_v2_cycle_finding_ms={:.2}",
-                summary.scc_v2_avg.cycle_finding_ms
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(
-                file,
-                "scc_v2_cycle_execution_ms={:.2}",
-                summary.scc_v2_avg.cycle_execution_ms
+                "scc_cycle_execution_ms={:.2}",
+                summary.scc_avg.cycle_execution_ms
             )
             .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(file).map_err(|e| format!("Failed to write: {}", e))?;
@@ -418,22 +356,17 @@ impl Benchmarker {
         for result in &self.results {
             writeln!(
                 file,
-                "{},{},{},{},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{},{}",
+                "{},{},{},{},{:.2},{:.2},{:.2},{:.2},{:.2},{:.2},{},{}",
                 result.file_name,
                 result.num_patients,
                 result.num_doctors,
                 result.run_number,
                 result.dfs_timing.total_time_ms,
-                result.scc_v1_timing.total_time_ms,
-                result.scc_v2_timing.total_time_ms,
-                result.scc_v1_timing.graph_building_ms,
-                result.scc_v1_timing.scc_finding_ms,
-                result.scc_v1_timing.cycle_finding_ms,
-                result.scc_v1_timing.cycle_execution_ms,
-                result.scc_v2_timing.graph_building_ms,
-                result.scc_v2_timing.scc_finding_ms,
-                result.scc_v2_timing.cycle_finding_ms,
-                result.scc_v2_timing.cycle_execution_ms,
+                result.scc_timing.total_time_ms,
+                result.scc_timing.graph_building_ms,
+                result.scc_timing.scc_finding_ms,
+                result.scc_timing.cycle_finding_ms,
+                result.scc_timing.cycle_execution_ms,
                 result.cycles_found,
                 result.patients_reassigned
             )
@@ -451,7 +384,7 @@ impl Benchmarker {
         println!("{}", "=".repeat(100));
 
         for summary in &summaries {
-            println!("\n📁 File: {}", summary.file_name);
+            println!("\nFile: {}", summary.file_name);
             println!(
                 "   {} patients, {} doctors ({} runs)",
                 summary.num_patients, summary.num_doctors, summary.num_runs
@@ -463,27 +396,17 @@ impl Benchmarker {
             println!("\n   Algorithm Performance:");
             println!("      DFS:    {:>10.2}ms", summary.dfs_avg.total_time_ms);
             println!(
-                "      SCC V1: {:>10.2}ms (graph: {:.2}ms, scc: {:.2}ms, cycle: {:.2}ms, exec: {:.2}ms)",
-                summary.scc_v1_avg.total_time_ms,
-                summary.scc_v1_avg.graph_building_ms,
-                summary.scc_v1_avg.scc_finding_ms,
-                summary.scc_v1_avg.cycle_finding_ms,
-                summary.scc_v1_avg.cycle_execution_ms
-            );
-            println!(
-                "      SCC V2: {:>10.2}ms (graph: {:.2}ms, scc: {:.2}ms, cycle: {:.2}ms, exec: {:.2}ms)",
-                summary.scc_v2_avg.total_time_ms,
-                summary.scc_v2_avg.graph_building_ms,
-                summary.scc_v2_avg.scc_finding_ms,
-                summary.scc_v2_avg.cycle_finding_ms,
-                summary.scc_v2_avg.cycle_execution_ms
+                "      SCC: {:>10.2}ms (graph: {:.2}ms, scc: {:.2}ms, cycle: {:.2}ms, exec: {:.2}ms)",
+                summary.scc_avg.total_time_ms,
+                summary.scc_avg.graph_building_ms,
+                summary.scc_avg.scc_finding_ms,
+                summary.scc_avg.cycle_finding_ms,
+                summary.scc_avg.cycle_execution_ms
             );
 
-            let dfs_vs_v1 = summary.dfs_avg.total_time_ms / summary.scc_v1_avg.total_time_ms;
-            let dfs_vs_v2 = summary.dfs_avg.total_time_ms / summary.scc_v2_avg.total_time_ms;
+            let dfs_vs_v1 = summary.dfs_avg.total_time_ms / summary.scc_avg.total_time_ms;
             println!("\n   Speedup vs DFS:");
-            println!("      SCC V1: {:.2}x", dfs_vs_v1);
-            println!("      SCC V2: {:.2}x", dfs_vs_v2);
+            println!("      SCC: {:.2}x", dfs_vs_v1);
         }
 
         println!("\n{}", "=".repeat(100));
