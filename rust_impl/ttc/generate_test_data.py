@@ -114,7 +114,7 @@ def generate_chain_district_test_data(num_patients, num_doctors, num_districts, 
         f.write(",".join(map(str, patient_priorities)) + "\n")
 
 
-def generate_district_based_test_data(num_patients, num_doctors, num_districts, cross_district_prob, filename):
+def generate_district_based_test_data(num_patients, num_doctors, num_no_doctor_patients, num_districts, cross_district_prob, filename):
     # Create districts with varying sizes
     district_sizes = []
     remaining_capacity = 1.0
@@ -127,6 +127,7 @@ def generate_district_based_test_data(num_patients, num_doctors, num_districts, 
     # Assign patients and doctors to districts
     patient_districts = []
     doctor_districts = []
+    doctor_num_patients = [0] * num_doctors
 
     # Assign patients to districts
     for patient in tqdm(range(num_patients), desc="Assigning patients to districts"):
@@ -147,44 +148,67 @@ def generate_district_based_test_data(num_patients, num_doctors, num_districts, 
         current = []
         priorities = []
         
+        # Randomly select which patients will have no doctor
+        patients_without_doctor = set(random.sample(range(num_patients), num_no_doctor_patients))
+
         # Patients loop with progress bar
         for patient in tqdm(range(num_patients), desc="Generating patients (district-based)"):
             patient_district = patient_districts[patient]
-            
+
             if random.random() < cross_district_prob:
                 available_doctors = list(range(num_doctors))
             else:
                 available_doctors = [
-                    doc for doc in range(num_doctors) 
+                    doc for doc in range(num_doctors)
                     if doctor_districts[doc] == patient_district
                 ]
                 if not available_doctors:
                     available_doctors = list(range(num_doctors))
-            
+
             weights = [doctor_preferability[doc] for doc in available_doctors]
             preferred_doctor_idx = random.choices(available_doctors, weights=weights)[0]
             preferred.append(str(preferred_doctor_idx + 1))
-            
-            if cross_district_prob == 0.0:
-                same_district_doctors = [
-                    doc for doc in range(num_doctors)
-                    if doctor_districts[doc] == patient_district
-                ]
-                if same_district_doctors:
-                    current_doctor_idx = random.choice(same_district_doctors)
-                    current.append(str(current_doctor_idx + 1))
-                else:
-                    current.append(str(random.randint(1, num_doctors)))
+
+            # Assign no doctor (0) if this patient is in the no-doctor set
+            if patient in patients_without_doctor:
+                current.append("0")
             else:
-                current.append(str(random.randint(1, num_doctors)))
-            
+                current_doctor_idx = str(random.randint(1, num_doctors))
+
+                if cross_district_prob == 0.0:
+                    same_district_doctors = [
+                        doc for doc in range(num_doctors)
+                        if doctor_districts[doc] == patient_district
+                    ]
+                    if same_district_doctors:
+                        current_doctor_idx = random.choice(same_district_doctors) + 1
+
+                current.append(str(current_doctor_idx))
+                doctor_num_patients[int(current_doctor_idx) - 1] += 1
+
+        # Calculate doctor capacities
+        # Each doctor gets current patients + random extra capacity (0-5)
+        doctor_capacities = []
+        for i in range(num_doctors):
+            current_patients = doctor_num_patients[i]
+            extra = random.randint(0, 5)
+            capacity = current_patients + extra
+            doctor_capacities.append(capacity)
+
+        
+        doctor_num_patients_str = [str(num) for num in doctor_num_patients]
+
+        doctor_capacities_str = [str(cap) for cap in doctor_capacities]
+
         patient_priorities = list(range(1, num_patients + 1))
         random.shuffle(patient_priorities)
-        priorities.append(",".join(map(str, patient_priorities)))
-        
+
         f.write(",".join(preferred) + "\n")
         f.write(",".join(current) + "\n")
-        f.write(";".join(priorities) + "\n")
+        f.write(",".join(map(str, patient_priorities)) + "\n")
+        f.write(",".join(doctor_num_patients_str) + "\n")
+        f.write(",".join(doctor_capacities_str) + "\n")
+        print("done")
 
 
 if __name__ == "__main__":
@@ -196,6 +220,7 @@ if __name__ == "__main__":
 
     patients = int(input("How many Patients?: "))
     doctors = int(input("How many Doctors?: "))
+    no_doctor_patients = int(input("How many patients with no doctor?: "))
 
     if choice == "3":
         districts = int(input("How many Districts?: "))
@@ -206,7 +231,7 @@ if __name__ == "__main__":
         districts = int(input("How many Districts?: "))
         cross_district_prob = float(input("Cross district probability (0.0-1.0): "))
         filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_{cross_district_prob}_prob.txt"
-        generate_district_based_test_data(patients, doctors, districts, cross_district_prob, filename)
+        generate_district_based_test_data(patients, doctors, no_doctor_patients, districts, cross_district_prob, filename)
         print(f"Generated district-based test file: {filename}")
     else:
         filename = f"data/test_{patients}_patient_{doctors}_doctors.txt"

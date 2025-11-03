@@ -18,11 +18,11 @@ Both algorithms process the same patient-doctor reassignment problem but use dif
 cargo build
 
 # Run with optimizations (recommended for benchmarking)
-cargo build --release
-cargo run --release
+cargo build --release --bin ttc
+cargo run --release --bin ttc
 
 # Run in debug mode
-cargo run
+cargo run --bin ttc
 
 # Run tests
 cargo test

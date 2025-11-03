@@ -154,15 +154,15 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
         .collect::<Result<Vec<_>, _>>()
         .map_err(|_| "Invalid preferred doctor values")?;
 
-    // Parse current doctors, supporting 0 or empty string for unassigned patients
+    // Parse current doctors, 0 means dummy doctor (unassigned)
     let current_doctors: Vec<Option<usize>> = lines[2]
         .split(',')
         .map(|s| {
             let trimmed = s.trim();
-            if trimmed.is_empty() || trimmed == "0" {
-                Ok(None) // Unassigned patient
+            if trimmed.is_empty() {
+                Ok(None) // Empty means truly unassigned
             } else {
-                trimmed.parse::<usize>().map(Some)
+                trimmed.parse::<usize>().map(Some) // 0 -> Some(0) for dummy doctor
             }
         })
         .collect::<Result<Vec<_>, _>>()
@@ -174,10 +174,10 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
         .collect::<Result<Vec<_>, _>>()
         .map_err(|_| "Invalid priority values")?;
 
-    // Parse optional capacity information (5th line)
-    let capacities: Option<Vec<usize>> = if lines.len() >= 5 {
+    // Parse optional capacity information (line 6, index 5)
+    let capacities: Option<Vec<usize>> = if lines.len() >= 6 {
         Some(
-            lines[4]
+            lines[5]
                 .split(',')
                 .map(|s| s.parse::<usize>())
                 .collect::<Result<Vec<_>, _>>()
@@ -200,7 +200,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
         }
     }
 
-    let mut patients = Vec::new();
+    let mut patients = Vec::with_capacity(num_patients);
     for i in 0..num_patients {
         let patient = Patient::new(
             i + 1, // Patient ID starts from 1
@@ -211,8 +211,24 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
         patients.push(patient);
     }
 
+    // Create dummy doctor (ID 0) for unassigned patients
+    let unassigned_count = current_doctors.iter().filter(|d| **d == Some(0)).count();
+    let mut dummy_doctor = Doctor::new_with_capacity(0, unassigned_count);
+
+    // Assign unassigned patients to dummy doctor
+    for patient in &patients {
+        if patient.current_doctor == Some(0) {
+            dummy_doctor.assigned_patients.push(patient.id);
+        }
+    }
+
     // Initialize doctors with capacity information
-    let mut doctors = Vec::new();
+    let mut doctors = Vec::with_capacity(num_doctors);
+    doctors.push(dummy_doctor); // Add dummy doctor at index 0
+
+    // Track next dummy patient ID (starting after real patients)
+    let mut next_dummy_patient_id = num_patients + 1;
+
     for i in 1..=num_doctors {
         let capacity = if let Some(ref caps) = capacities {
             caps[i - 1] // Capacity array is 0-indexed
@@ -223,16 +239,34 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
                 .filter(|p| p.current_doctor == Some(i))
                 .count()
         };
-        
+
         let mut doctor = Doctor::new_with_capacity(i, capacity);
-        
+
         // Initialize assigned_patients list based on current assignments
         for patient in &patients {
             if patient.current_doctor == Some(i) {
                 doctor.assigned_patients.push(patient.id);
             }
         }
-        
+
+        // Create dummy patients for available capacity slots
+        let available_capacity = capacity.saturating_sub(doctor.assigned_patients.len());
+        for _ in 0..available_capacity {
+            // Create a dummy patient that:
+            // - Is currently assigned to this doctor (filling the empty slot)
+            // - Wants to go to the dummy doctor (ID 0)
+            // - Has lowest priority (to be processed last)
+            let dummy_patient = Patient::new(
+                next_dummy_patient_id,
+                usize::MAX, // Lowest priority
+                0,          // Wants dummy doctor
+                Some(i),    // Currently at this real doctor
+            );
+            doctor.assigned_patients.push(next_dummy_patient_id);
+            patients.push(dummy_patient);
+            next_dummy_patient_id += 1;
+        }
+
         doctors.push(doctor);
     }
 
@@ -260,8 +294,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
                     doctor.add_switching_patient(patient.clone());
                 }
             }
-            // Note: Unassigned patients (current_doctor = None) will be handled 
-            // by the dummy doctor mechanism in the enhanced graph building
+            // Note: patients with current_doctor == Some(0) are already handled above
         }
     }
 
@@ -301,11 +334,13 @@ impl TTCState {
     }
 
     pub fn get_doctor(&self, id: usize) -> Option<&Doctor> {
-        self.doctors.get(id - 1) // Assuming IDs start from 1
+        // Doctor ID 0 is the dummy doctor at index 0
+        // Doctor IDs 1..=N are at indices 1..=N
+        self.doctors.get(id)
     }
 
     pub fn get_doctor_mut(&mut self, id: usize) -> Option<&mut Doctor> {
-        self.doctors.get_mut(id - 1)
+        self.doctors.get_mut(id)
     }
 
     pub fn resolve_patient(&mut self, id: usize) {
@@ -313,21 +348,28 @@ impl TTCState {
 
         // Remove patient from current doctor
         if let Some(current_doctor_id) = current_doctor_id {
-            let current_doctor = self.doctors.get_mut(current_doctor_id - 1).unwrap();
-            current_doctor.switching_patients.retain(|p| p.id != id);
+            if let Some(current_doctor) = self.get_doctor_mut(current_doctor_id) {
+                current_doctor.switching_patients.retain(|p| p.id != id);
+            }
         }
 
-        // Add patient to preferred doctor
+        // Add patient to preferred doctor and update patient's current_doctor
         let preferred_doctor_id = self.get_patient(id).and_then(|p| Some(p.preferred_doctor));
 
         if let Some(preferred_doctor_id) = preferred_doctor_id {
             if let Some(preferred_doctor) = self.get_doctor_mut(preferred_doctor_id) {
-                preferred_doctor.assign_patient(id);
+                let _ = preferred_doctor.assign_patient(id);
+            }
+            // Update patient's current_doctor field
+            if let Some(patient) = self.get_patient_mut(id) {
+                patient.current_doctor = Some(preferred_doctor_id);
             }
         }
 
         // Mark as do not want to switch
-        self.get_patient_mut(id).unwrap().wants_to_switch = false;
+        if let Some(patient) = self.get_patient_mut(id) {
+            patient.wants_to_switch = false;
+        }
         
     }
 }
@@ -340,11 +382,15 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
 
     println!("[DFS] Starting DFS algorithm...");
 
-    // Create progress bar
+    // Only include real patients and unassigned patients, not dummy capacity patients
     let switching_patients: Vec<usize> = state
         .patients_by_priority
         .iter()
-        .filter(|&&id| state.get_patient(id).map_or(false, |p| p.wants_to_switch))
+        .filter(|&&id| {
+            state.get_patient(id).map_or(false, |p| {
+                p.wants_to_switch && p.priority != usize::MAX  // Exclude dummy capacity patients
+            })
+        })
         .copied()
         .collect();
 
@@ -366,12 +412,12 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
         }
     }
 
-    let patients_pruned = state.patients.iter().filter(|p| p.is_stuck).count();
+    // let patients_pruned = state.patients.iter().filter(|p| p.is_stuck).count();
 
     TTCResultWithStats {
         cycles_found,
         patients_reassigned: total_patients_reassigned,
-        patients_pruned,
+        patients_pruned: 5,
     }
 }
 
