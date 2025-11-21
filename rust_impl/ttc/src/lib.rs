@@ -7,6 +7,7 @@ use std::fs;
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Patient {
     pub id: usize,
+    pub is_dummy: bool,
     pub priority: usize,
     pub preferred_doctor: usize,
     pub current_doctor: Option<usize>, // Changed to Option to support unassigned patients
@@ -15,13 +16,14 @@ pub struct Patient {
 }
 
 impl Patient {
-    pub fn new(id: usize, priority: usize, preferred_doctor: usize, current_doctor: Option<usize>) -> Self {
+    pub fn new(id: usize, is_dummy: bool, priority: usize, preferred_doctor: usize, current_doctor: Option<usize>) -> Self {
         let wants_to_switch = match current_doctor {
             Some(doctor_id) => preferred_doctor != doctor_id,
             None => true, // Unassigned patients always want to switch
         };
         Patient {
             id,
+            is_dummy,
             priority,
             preferred_doctor,
             current_doctor,
@@ -50,24 +52,27 @@ impl Patient {
 #[derive(Debug, Clone)]
 pub struct Doctor {
     pub id: usize,
+    pub is_dummy: bool,
     pub capacity: usize, // Maximum number of patients this doctor can serve
     pub switching_patients: Vec<Patient>,
     pub assigned_patients: Vec<usize>, // All currently assigned patient IDs
 }
 
 impl Doctor {
-    pub fn new(id: usize) -> Self {
+    pub fn new(id: usize, is_dummy: bool) -> Self {
         Doctor {
             id,
+            is_dummy,
             capacity: 0, // Will be set during initialization
             switching_patients: Vec::new(),
             assigned_patients: Vec::new(),
         }
     }
 
-    pub fn new_with_capacity(id: usize, capacity: usize) -> Self {
+    pub fn new_with_capacity(id: usize, is_dummy: bool, capacity: usize) -> Self {
         Doctor {
             id,
+            is_dummy,
             capacity,
             switching_patients: Vec::new(),
             assigned_patients: Vec::new(),
@@ -95,8 +100,11 @@ impl Doctor {
     }
 
     /// Calculate the number of available capacity slots
+    /// Counts dummy patients in switching_patients as available slots
     pub fn available_capacity(&self) -> usize {
-        self.capacity.saturating_sub(self.assigned_patients.len())
+        self.switching_patients.iter()
+            .filter(|p| p.is_dummy)
+            .count()
     }
 
     /// Check if this doctor has any available capacity
@@ -203,7 +211,8 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
     let mut patients = Vec::with_capacity(num_patients);
     for i in 0..num_patients {
         let patient = Patient::new(
-            i + 1, // Patient ID starts from 1
+            i + 1, // Patient ID starts from 1,
+            false,
             priorities[i],
             preferred_doctors[i],
             current_doctors[i],
@@ -213,7 +222,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
 
     // Create dummy doctor (ID 0) for unassigned patients
     let unassigned_count = current_doctors.iter().filter(|d| **d == Some(0)).count();
-    let mut dummy_doctor = Doctor::new_with_capacity(0, unassigned_count);
+    let mut dummy_doctor = Doctor::new_with_capacity(0, true, unassigned_count);
 
     // Assign unassigned patients to dummy doctor
     for patient in &patients {
@@ -240,7 +249,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
                 .count()
         };
 
-        let mut doctor = Doctor::new_with_capacity(i, capacity);
+        let mut doctor = Doctor::new_with_capacity(i, false, capacity);
 
         // Initialize assigned_patients list based on current assignments
         for patient in &patients {
@@ -258,6 +267,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
             // - Has lowest priority (to be processed last)
             let dummy_patient = Patient::new(
                 next_dummy_patient_id,
+                true,
                 usize::MAX, // Lowest priority
                 0,          // Wants dummy doctor
                 Some(i),    // Currently at this real doctor
@@ -343,6 +353,13 @@ impl TTCState {
         self.doctors.get_mut(id)
     }
 
+    pub fn get_total_availability(&self) -> usize {
+        let result: usize = self.doctors.iter().map(|doctor| {
+            if doctor.is_dummy {0} else {doctor.available_capacity()}
+        }).sum();
+        result
+    }
+
     pub fn resolve_patient(&mut self, id: usize) {
         let current_doctor_id = self.get_patient(id).and_then(|p| p.current_doctor);
 
@@ -383,16 +400,32 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
     println!("[DFS] Starting DFS algorithm...");
 
     // Only include real patients and unassigned patients, not dummy capacity patients
-    let switching_patients: Vec<usize> = state
+    let mut switching_patients: Vec<usize> = state
         .patients_by_priority
         .iter()
         .filter(|&&id| {
             state.get_patient(id).map_or(false, |p| {
-                p.wants_to_switch && p.priority != usize::MAX  // Exclude dummy capacity patients
+                p.wants_to_switch
             })
         })
         .copied()
         .collect();
+
+    // Put those without doctor first in line
+    let mut new_switching_patients: Vec<usize> = Vec::with_capacity(switching_patients.len());
+    for (i, patient_id) in switching_patients.clone().iter().enumerate() {
+        let patient = state.get_patient(*patient_id).unwrap();
+        if patient.current_doctor == Some(0) {
+            new_switching_patients.push(*patient_id);
+        }
+    }
+
+    new_switching_patients.extend(switching_patients.iter().filter(|id| {
+        let patient = state.get_patient(**id).unwrap();
+        patient.current_doctor != Some(0)
+    }));
+
+    switching_patients = new_switching_patients;
 
     for (_i, &patient_id) in switching_patients.iter().enumerate() {
         let _patient = match state.get_patient(patient_id) {
@@ -418,6 +451,7 @@ pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
         cycles_found,
         patients_reassigned: total_patients_reassigned,
         patients_pruned: 5,
+        remaining_capacity: state.get_total_availability(),
     }
 }
 
@@ -425,6 +459,7 @@ pub struct TTCResultWithStats {
     pub cycles_found: usize,
     pub patients_reassigned: usize,
     pub patients_pruned: usize,
+    pub remaining_capacity: usize,
 }
 
 pub struct TTCResult {
@@ -433,7 +468,7 @@ pub struct TTCResult {
 }
 
 // Re-export the SCC-based TTC solver for easy access
-pub use ttc_scc::{SCCStats, TTCSCCSolver};
+// pub use ttc_scc::{SCCStats, TTCSCCSolver};
 
 
 // Optimized version with direct marking (no HashSet needed)

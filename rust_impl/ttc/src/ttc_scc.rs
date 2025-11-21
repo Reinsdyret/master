@@ -2,70 +2,26 @@ use crate::{TTCResultWithStats, TTCState, scc::TarjanSCC, execute_cycle};
 use rustc_hash::FxHashMap;
 use std::collections::HashSet;
 
-
 pub struct TTCSCCSolver {
-    stats: SCCStats,
     tarjan: TarjanSCC,
     graph: Vec<Vec<usize>>,
-    index_to_node: Vec<Option<GraphNode>>,
     patient_index: FxHashMap<usize, usize>,
-    doctor_index: FxHashMap<usize, usize>,
-    capacity_slot_index: FxHashMap<(usize, usize), usize>,
-    dummy_doctor_index: Option<usize>,
-    used_indices: Vec<usize>,
+    index_to_patient: Vec<usize>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum GraphNode {
-    Patient(usize),
-    Doctor(usize),
-    DummyDoctor,
-    CapacitySlot { doctor_id: usize, slot_id: usize },
-}
-
-#[derive(Debug)]
-pub struct SCCStats {
-    pub iterations: usize,
-    pub sccs_found: usize,
-    pub largest_scc_size: usize,
-    pub cycles_processed: usize,
-    pub total_graph_nodes: usize,
-    pub total_graph_edges: usize,
-    // Timing breakdown
-    pub time_graph_building: std::time::Duration,
-    pub time_scc_finding: std::time::Duration,
-    pub time_cycle_finding: std::time::Duration,
-    pub time_cycle_execution: std::time::Duration,
+pub fn scc_algorithm(state: &mut TTCState) -> TTCResultWithStats {
+    let mut solver = TTCSCCSolver::new();
+    solver.solve(state)
 }
 
 impl TTCSCCSolver {
     pub fn new() -> Self {
         TTCSCCSolver {
-            stats: SCCStats {
-                iterations: 0,
-                sccs_found: 0,
-                largest_scc_size: 0,
-                cycles_processed: 0,
-                total_graph_nodes: 0,
-                total_graph_edges: 0,
-                time_graph_building: std::time::Duration::ZERO,
-                time_scc_finding: std::time::Duration::ZERO,
-                time_cycle_finding: std::time::Duration::ZERO,
-                time_cycle_execution: std::time::Duration::ZERO,
-            },
             tarjan: TarjanSCC::new(),
             graph: Vec::new(),
-            index_to_node: Vec::new(),
             patient_index: FxHashMap::default(),
-            doctor_index: FxHashMap::default(),
-            capacity_slot_index: FxHashMap::default(),
-            dummy_doctor_index: None,
-            used_indices: Vec::new(),
+            index_to_patient: Vec::new(),
         }
-    }
-
-    pub fn get_stats(&self) -> &SCCStats {
-        &self.stats
     }
 
     pub fn solve(&mut self, state: &mut TTCState) -> TTCResultWithStats {
@@ -73,99 +29,170 @@ impl TTCSCCSolver {
             cycles_found: 0,
             patients_reassigned: 0,
             patients_pruned: 0,
+            remaining_capacity: state.get_total_availability(),
         };
 
         let mut num_sccs = 1;
+        let mut iteration = 0;
+
+        println!("[SCC] Starting SCC algorithm...");
 
         while num_sccs > 0 {
-            self.stats.iterations += 1;
+            iteration += 1;
 
-            // Time: Graph building (adjacency list)
-            let start = std::time::Instant::now();
-            let active_nodes = self.build_adjacency_list(state);
-            self.stats.time_graph_building += start.elapsed();
+            // Build patient-to-patient graph
+            self.build_patient_graph(state);
+            println!("[SCC] Iteration {}: Built graph with {} nodes", iteration, self.graph.len());
 
-            // Time: SCC finding
-            let start = std::time::Instant::now();
-            let sccs = self.find_sccs_with_tarjan(active_nodes);
-            self.stats.time_scc_finding += start.elapsed();
-
+            // Find SCCs
+            let sccs = self.find_sccs();
             num_sccs = sccs.len();
 
-            self.solve_once(state, &mut stats, &sccs);
+            println!("[SCC] Iteration {}: Found {} SCCs", iteration, num_sccs);
+
+            if num_sccs == 0 {
+                break;
+            }
+
+            // Process only the first SCC (like DFS processes one patient at a time)
+            // This makes progress more incremental and matches DFS behavior
+            let sccs_to_process = sccs.into_iter().take(1);
+
+            // Process each SCC
+            for (scc_idx, scc) in sccs_to_process.enumerate() {
+                println!("[SCC] Processing SCC {}/{} with {} patients", scc_idx + 1, 1, scc.len());
+                if scc.len() == 1 {
+                    // Single patient - mark as stuck if not happy
+                    let patient_id = scc[0];
+                    let Some(patient) = state.get_patient(patient_id) else {
+                        continue;
+                    };
+
+                    if patient.is_stuck || !patient.wants_to_switch {
+                        continue;
+                    }
+
+                    if patient.current_doctor == Some(patient.preferred_doctor) {
+                        let pat = state.get_patient_mut(patient_id).unwrap();
+                        pat.wants_to_switch = false;
+                    } else {
+                        let pat = state.get_patient_mut(patient_id).unwrap();
+                        pat.is_stuck = true;
+                        pat.wants_to_switch = false;
+                    }
+                    continue;
+                }
+
+                // Find and execute a cycle in this SCC
+                let scc_set: HashSet<usize> = scc.iter().copied().collect();
+
+                // Find lowest priority patient in the SCC
+                let min_patient = scc
+                    .iter()
+                    .filter_map(|id| state.get_patient(*id))
+                    .min_by(|p1, p2| p1.priority.cmp(&p2.priority))
+                    .unwrap();
+                let min_patient_id = min_patient.id;
+
+                // Find a cycle starting from this patient
+                let mut cycle = Vec::with_capacity(scc.len());
+                let mut visited = HashSet::with_capacity(scc.len());
+                self.dfs_find_cycle(
+                    min_patient_id,
+                    min_patient_id,
+                    &scc_set,
+                    state,
+                    &mut visited,
+                    &mut cycle,
+                );
+
+                if !cycle.is_empty() {
+                    stats.cycles_found += 1;
+                    stats.patients_reassigned += cycle.len();
+                    println!("[SCC] Executing cycle of length {}", cycle.len());
+                    execute_cycle(&cycle, state);
+                } else {
+                    println!("[SCC] WARNING: No cycle found in SCC of size {}", scc.len());
+                }
+            }
         }
 
+        println!("[SCC] Finished after {} iterations", iteration);
+        println!("[SCC] Total cycles found: {}", stats.cycles_found);
+        println!("[SCC] Total patients reassigned: {}", stats.patients_reassigned);
+
+        stats.remaining_capacity = state.get_total_availability();
         stats
     }
 
-    pub fn solve_once(
-        &mut self,
-        state: &mut TTCState,
-        stats: &mut TTCResultWithStats,
-        sccs: &Vec<Vec<usize>>,
-    ) {
-        for scc in sccs {
-            if scc.len() == 1 {
-                let patient_id = scc[0];
-                let Some(patient) = state.get_patient(patient_id) else {
-                    continue;
-                };
+    // Build patient-to-patient adjacency list
+    // Edge from A to B means: A wants the doctor that B currently has
+    fn build_patient_graph(&mut self, state: &TTCState) {
+        self.patient_index.clear();
+        self.index_to_patient.clear();
+        self.graph.clear();
 
-                if patient.is_stuck || !patient.wants_to_switch {
-                    continue;
-                }
+        let mut next_index = 0;
 
-                if patient.current_doctor == Some(patient.preferred_doctor) {
-                    let pat = state.get_patient_mut(patient_id).unwrap();
-                    pat.wants_to_switch = false;
-                } else {
-                    let pat = state.get_patient_mut(patient_id).unwrap();
-                    pat.is_stuck = true;
-                    pat.wants_to_switch = false;
-                }
+        // First pass: assign indices to all active patients
+        for patient in &state.patients {
+            if !patient.wants_to_switch || patient.is_stuck {
                 continue;
             }
 
-            let scc_set: HashSet<usize> = scc.iter().copied().collect();
+            let idx = next_index;
+            next_index += 1;
+            self.patient_index.insert(patient.id, idx);
+            self.index_to_patient.push(patient.id);
+            self.graph.push(Vec::new());
+        }
 
-            // Find lowest priority in the SCC
-            let min_patient = scc
-                .iter()
-                .filter_map(|id| state.get_patient(*id))
-                .min_by(|p1, p2| p1.priority.cmp(&p2.priority))
-                .unwrap();
-            let min_patient_id = min_patient.id;
+        // Second pass: create edges
+        for patient_a in &state.patients {
+            if !patient_a.wants_to_switch || patient_a.is_stuck {
+                continue;
+            }
 
-            // Time: Cycle finding (DFS)
-            let start = std::time::Instant::now();
-            let mut cycle = Vec::with_capacity(scc.len());
-            let mut visited = HashSet::with_capacity(scc.len());
-            self.dfs_find_one_cycle_from(
-                min_patient_id,
-                min_patient_id,
-                &scc_set,
-                state,
-                &mut visited,
-                &mut cycle,
-            );
-            self.stats.time_cycle_finding += start.elapsed();
+            let Some(&idx_a) = self.patient_index.get(&patient_a.id) else {
+                continue;
+            };
 
-            stats.cycles_found += 1;
-            stats.patients_reassigned += cycle.len();
+            let preferred_doctor_id = patient_a.preferred_doctor;
 
-            // Time: Cycle execution
-            let start = std::time::Instant::now();
-            execute_cycle(&cycle, state);
-            // for pat in &cycle {
-            //     let patient = state.get_patient_mut(*pat).unwrap();
-            //     patient.wants_to_switch = false;
-            // }
-            self.stats.time_cycle_execution += start.elapsed();
+            // Find all patients currently at this preferred doctor
+            if let Some(doctor) = state.get_doctor(preferred_doctor_id) {
+                for patient_b in &doctor.switching_patients {
+                    if !patient_b.wants_to_switch || patient_b.is_stuck {
+                        continue;
+                    }
+
+                    if let Some(&idx_b) = self.patient_index.get(&patient_b.id) {
+                        // A wants B's doctor, so edge A → B
+                        self.graph[idx_a].push(idx_b);
+                    }
+                }
+            }
         }
     }
 
-    fn dfs_find_one_cycle_from(
-        &mut self,
+    // Find SCCs and return as patient IDs
+    fn find_sccs(&mut self) -> Vec<Vec<usize>> {
+        let sccs_by_index = self.tarjan.find_sccs(&self.graph);
+
+        // Convert indices back to patient IDs
+        sccs_by_index
+            .into_iter()
+            .map(|scc| {
+                scc.into_iter()
+                    .map(|idx| self.index_to_patient[idx])
+                    .collect()
+            })
+            .collect()
+    }
+
+    // DFS to find one cycle within an SCC
+    fn dfs_find_cycle(
+        &self,
         current_patient_id: usize,
         target_patient_id: usize,
         scc_set: &HashSet<usize>,
@@ -196,7 +223,7 @@ impl TTCSCCSolver {
             if !target_patient.wants_to_switch || target_patient.is_stuck {
                 continue;
             }
-            if self.dfs_find_one_cycle_from(
+            if self.dfs_find_cycle(
                 target_patient.id,
                 target_patient_id,
                 scc_set,
@@ -209,106 +236,7 @@ impl TTCSCCSolver {
         }
 
         path.pop();
-
         false
-    }
-
-    // Build adjacency list directly (patients and active doctors only)
-    fn build_adjacency_list(&mut self, state: &TTCState) -> usize {
-
-        self.used_indices.clear();
-        self.patient_index.clear();
-        self.doctor_index.clear();
-        self.capacity_slot_index.clear();
-        self.dummy_doctor_index = None;
-
-        let mut next_index = 0;
-
-        for patient in &state.patients {
-            if !patient.wants_to_switch || patient.is_stuck {
-                continue;
-            }
-
-            let patient_idx = self.assign_patient_node(patient.id, &mut next_index);
-            let preferred_idx = self.assign_doctor_node(patient.preferred_doctor, &mut next_index);
-            
-            // Only create edge from current doctor if patient is assigned
-            if let Some(current_doctor_id) = patient.current_doctor {
-                let current_idx = self.assign_doctor_node(current_doctor_id, &mut next_index);
-                self.graph[current_idx].push(patient_idx);
-            }
-
-            self.graph[patient_idx].push(preferred_idx);
-        }
-
-        next_index
-    }
-
-    fn ensure_node_slot(&mut self, idx: usize) {
-        if self.graph.len() <= idx {
-            self.graph.resize_with(idx + 1, Vec::new);
-            self.index_to_node.resize(idx + 1, None);
-        }
-    }
-
-    fn assign_patient_node(&mut self, patient_id: usize, next_index: &mut usize) -> usize {
-        if let Some(&idx) = self.patient_index.get(&patient_id) {
-            return idx;
-        }
-
-        let idx = *next_index;
-        *next_index += 1;
-        self.ensure_node_slot(idx);
-        self.graph[idx].clear();
-        self.index_to_node[idx] = Some(GraphNode::Patient(patient_id));
-        self.patient_index.insert(patient_id, idx);
-        self.used_indices.push(idx);
-        idx
-    }
-
-    fn assign_doctor_node(&mut self, doctor_id: usize, next_index: &mut usize) -> usize {
-        if let Some(&idx) = self.doctor_index.get(&doctor_id) {
-            return idx;
-        }
-
-        let idx = *next_index;
-        *next_index += 1;
-        self.ensure_node_slot(idx);
-        self.graph[idx].clear();
-        self.index_to_node[idx] = Some(GraphNode::Doctor(doctor_id));
-        self.doctor_index.insert(doctor_id, idx);
-        self.used_indices.push(idx);
-        idx
-    }
-
-    // Run Tarjan's SCC algorithm and return patient IDs
-    fn find_sccs_with_tarjan(&mut self, active_nodes: usize) -> Vec<Vec<usize>> {
-        let all_sccs = self.tarjan.find_sccs(&self.graph[..active_nodes]);
-
-        // Filter: only return SCCs that contain at least one patient node
-        all_sccs
-            .into_iter()
-            .filter_map(|scc| {
-                let valid_ids: Vec<usize> = scc
-                    .into_iter()
-                    .filter_map(|idx| {
-                        self.index_to_node.get(idx).and_then(|node_opt| {
-                            if let Some(GraphNode::Patient(patient_id)) = node_opt {
-                                Some(*patient_id)
-                            } else {
-                                None
-                            }
-                        })
-                    })
-                    .collect();
-
-                if valid_ids.is_empty() {
-                    None
-                } else {
-                    Some(valid_ids)
-                }
-            })
-            .collect()
     }
 }
 

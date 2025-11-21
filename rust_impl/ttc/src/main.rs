@@ -1,4 +1,6 @@
-use ttc::benchmarking::Benchmarker;
+use ttc::benchmarking::{AlgorithmConfig, Benchmarker};
+use ttc::ttc_algorithm_with_pruning;
+use ttc::ttc_scc::scc_algorithm;
 
 fn main() {
     let data_files = vec![
@@ -10,12 +12,16 @@ fn main() {
         // "data/test_1500_patient_2_doctors_2_districts_0.1_prob.txt".to_string()
         // "data/test_200_patient_15_doctors_3_districts_0.1_prob.txt".to_string()
         // "data/test_150_patient_10_doctors_2_districts_0.0_prob.txt".to_string()
-        "data/test_1000_patient_20_doctors_1_districts_0.0_prob.txt".to_string(),
-        "data/test_100000_patient_2000_doctors_2_districts_0.2_prob.txt".to_string(),
+        // "data/test_1000_patient_20_doctors_1_districts_0.0_prob.txt".to_string(),
+        // "data/test_100000_patient_2000_doctors_2_districts_0.2_prob.txt".to_string(),
+        "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt".to_string(),
+        "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_25000_unassigned.txt".to_string(),
+        "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_50000_unassigned.txt".to_string(),
         // "data/test_100000_patient_2000_doctors_3_districts_0.15_prob.txt".to_string()
         // "data/test_500000_patient_25000_doctors_1000_districts_0.05_prob.txt".to_string(),
         // "data/test_150000_patient_2000_doctors_8_districts_0.05_prob.txt".to_string(),
-        "data/test_150000_patient_2000_doctors_16_districts_0.05_prob.txt".to_string(),
+        // "data/test_150000_patient_2000_doctors_16_districts_0.05_prob.txt".to_string(),
+        // "data/test_150000_patient_2000_doctors_5_districts_0.3_prob.txt".to_string(), // 0 Patients no doctor
         // "data/test_150000_patient_2000_doctors_32_districts_0.05_prob.txt".to_string(),
         // "data/test_150000_patient_2000_doctors_64_districts_0.05_prob.txt".to_string(),
         // "data/test_150000_patient_2000_doctors_128_districts_0.05_prob.txt".to_string(),
@@ -26,9 +32,17 @@ fn main() {
         // "data/test_1000_patient_100_doctors_10_districts_0.1_prob.txt".to_string()
     ];
 
-    const NUM_RUNS: usize = 10;
+    const NUM_RUNS: usize = 1;
 
-    let mut benchmarker = Benchmarker::new(data_files, NUM_RUNS);
+    // Configure algorithms to benchmark
+    let algorithms = vec![
+        AlgorithmConfig::new("DFS Pruning", ttc_algorithm_with_pruning),
+        // Add more algorithms here as you implement them:
+        // AlgorithmConfig::new("SCC", scc_algorithm),
+        // AlgorithmConfig::new("SCC v2", ttc_scc_v2),
+    ];
+
+    let mut benchmarker = Benchmarker::new(data_files, NUM_RUNS, algorithms);
 
     match benchmarker.run_benchmarks() {
         Ok(_) => {

@@ -224,17 +224,17 @@ if __name__ == "__main__":
 
     if choice == "3":
         districts = int(input("How many Districts?: "))
-        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_chain.txt"
+        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_{no_doctor_patients}_unassigned_chain.txt"
         generate_chain_district_test_data(patients, doctors, districts, filename)
         print(f"Generated chain district test file: {filename}")
     elif choice == "2":
         districts = int(input("How many Districts?: "))
         cross_district_prob = float(input("Cross district probability (0.0-1.0): "))
-        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_{cross_district_prob}_prob.txt"
+        filename = f"data/test_{patients}_patient_{doctors}_doctors_{districts}_districts_{cross_district_prob}_prob_{no_doctor_patients}_unassigned.txt"
         generate_district_based_test_data(patients, doctors, no_doctor_patients, districts, cross_district_prob, filename)
         print(f"Generated district-based test file: {filename}")
     else:
-        filename = f"data/test_{patients}_patient_{doctors}_doctors.txt"
+        filename = f"data/test_{patients}_patient_{doctors}_doctors_{no_doctor_patients}_unassigned.txt"
         generate_ttc_test_data(patients, doctors, filename)
         print(f"Generated original test file: {filename}")
 

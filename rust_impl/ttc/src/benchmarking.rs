@@ -1,12 +1,33 @@
 use crate::{
-    Doctor, Patient, SCCStats, TTCResultWithStats, TTCSCCSolver, TTCState, parse_data_file,
+    Doctor, Patient, TTCResultWithStats, TTCState, parse_data_file,
     ttc_algorithm_with_pruning,
 };
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
+use std::os::linux::raw::stat;
 use std::path::Path;
 use std::time::{Duration, Instant};
+
+/// Type alias for TTC algorithm functions
+/// Takes a mutable reference to TTCState and returns results with stats
+pub type AlgorithmFn = fn(&mut TTCState) -> TTCResultWithStats;
+
+/// Configuration for a TTC algorithm to benchmark
+pub struct AlgorithmConfig {
+    pub name: String,
+    pub run_fn: AlgorithmFn,
+}
+
+impl AlgorithmConfig {
+    pub fn new(name: impl Into<String>, run_fn: AlgorithmFn) -> Self {
+        Self {
+            name: name.into(),
+            run_fn,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AlgorithmTiming {
@@ -18,15 +39,31 @@ pub struct AlgorithmTiming {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AlgorithmResult {
+    pub timing: AlgorithmTiming,
+    pub cycles_found: usize,
+    pub patients_reassigned: usize,
+    pub remaining_capacity: usize,
+    pub unassigned_matched: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BenchmarkRun {
     pub file_name: String,
     pub num_patients: usize,
     pub num_doctors: usize,
     pub run_number: usize,
-    pub dfs_timing: AlgorithmTiming,
-    // pub scc_tsiming: AlgorithmTiming,
-    pub cycles_found: usize,
-    pub patients_reassigned: usize,
+    /// Results keyed by algorithm name
+    pub algorithm_results: HashMap<String, AlgorithmResult>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AlgorithmSummary {
+    pub avg_timing: AlgorithmTiming,
+    pub avg_cycles_found: f64,
+    pub avg_patients_reassigned: f64,
+    pub avg_remaining_capacity: f64,
+    pub avg_unassigned_matched: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,36 +72,38 @@ pub struct BenchmarkSummary {
     pub num_patients: usize,
     pub num_doctors: usize,
     pub num_runs: usize,
-    pub dfs_avg: AlgorithmTiming,
-    // pub scc_avg: AlgorithmTiming,
-    pub avg_cycles_found: f64,
-    pub avg_patients_reassigned: f64,
+    /// Algorithm summaries keyed by algorithm name
+    pub algorithm_summaries: HashMap<String, AlgorithmSummary>,
 }
 
 pub struct Benchmarker {
     data_files: Vec<String>,
     num_runs: usize,
+    algorithms: Vec<AlgorithmConfig>,
     results: Vec<BenchmarkRun>,
 }
 
 impl Benchmarker {
-    pub fn new(data_files: Vec<String>, num_runs: usize) -> Self {
+    pub fn new(data_files: Vec<String>, num_runs: usize, algorithms: Vec<AlgorithmConfig>) -> Self {
         Self {
             data_files,
             num_runs,
+            algorithms,
             results: Vec::new(),
         }
     }
 
     pub fn run_benchmarks(&mut self) -> Result<(), String> {
         println!("\n{}", "=".repeat(80));
-        println!("STARTING COMPREHENSIVE BENCHMARK");
-        println!("{}", "=".repeat(80));
         println!("Files to benchmark: {}", self.data_files.len());
+        println!("Algorithms to test: {}", self.algorithms.len());
+        for algo in &self.algorithms {
+            println!("   - {}", algo.name);
+        }
         println!("Runs per file: {}", self.num_runs);
         println!(
             "Total executions: {}",
-            self.data_files.len() * self.num_runs * 3
+            self.data_files.len() * self.num_runs * self.algorithms.len()
         );
         println!("{}", "=".repeat(80));
 
@@ -108,36 +147,32 @@ impl Benchmarker {
             for run in 1..=self.num_runs {
                 println!("\n   Run {}/{} for {}", run, self.num_runs, file_name);
 
-                // DFS Algorithm
-                println!("      Running DFS Pruning...");
-                let (dfs_result, dfs_timing, unassigned_matched) =
-                    self.run_dfs_algorithm(patients.clone(), doctors.clone());
+                let mut algorithm_results = HashMap::new();
 
-                // // SCC Algorithm
-                // println!("      Running SCC...");
-                // let (scc_result, scc_timing) =
-                //     self.run_scc_algorithm(patients.clone(), doctors.clone());
+                // Run each algorithm
+                for algo in &self.algorithms {
+                    println!("      Running {}...", algo.name);
+                    let (result, timing, unassigned_matched) =
+                        self.run_algorithm(algo, patients.clone(), doctors.clone());
 
-                // // Verify results match
-                // if dfs_result.cycles_found != scc_result.cycles_found
-                // {
-                //     eprintln!(
-                //         "      WARNING: Result mismatch! DFS: {}, SCC: {}",
-                //         dfs_result.cycles_found,
-                //         scc_result.cycles_found,
-                //     );
-                // }
+                    println!(
+                        "         Completed: {} cycles, {} patients reassigned, {} unassigned matched",
+                        result.cycles_found, result.patients_reassigned, unassigned_matched
+                    );
+                    println!("         Remaining capacity: {}", result.remaining_capacity);
+                    println!("         Time: {:.2}ms", timing.total_time_ms);
 
-                // Print results before moving
-                println!(
-                    "      Completed: {} cycles, {} patients reassigned, {} unassigned patients matched",
-                    dfs_result.cycles_found, dfs_result.patients_reassigned, unassigned_matched
-                );
-                println!(
-                    "         DFS: {:.2}ms",
-                    dfs_timing.total_time_ms,
-                    // scc_timing.total_time_ms,
-                );
+                    algorithm_results.insert(
+                        algo.name.clone(),
+                        AlgorithmResult {
+                            timing,
+                            cycles_found: result.cycles_found,
+                            patients_reassigned: result.patients_reassigned,
+                            remaining_capacity: result.remaining_capacity,
+                            unassigned_matched,
+                        },
+                    );
+                }
 
                 // Store results
                 let benchmark_run = BenchmarkRun {
@@ -145,10 +180,7 @@ impl Benchmarker {
                     num_patients,
                     num_doctors,
                     run_number: run,
-                    dfs_timing,
-                    // scc_timing,
-                    cycles_found: dfs_result.cycles_found,
-                    patients_reassigned: dfs_result.patients_reassigned,
+                    algorithm_results,
                 };
 
                 self.results.push(benchmark_run);
@@ -158,23 +190,30 @@ impl Benchmarker {
         Ok(())
     }
 
-    fn run_dfs_algorithm(
+    /// Generic algorithm runner that handles timing and state management
+    fn run_algorithm(
         &self,
+        algo: &AlgorithmConfig,
         patients: Vec<Patient>,
         doctors: Vec<Doctor>,
     ) -> (TTCResultWithStats, AlgorithmTiming, usize) {
+        let unassigned_patients = patients
+            .iter()
+            .filter(|p| p.current_doctor == Some(0))
+            .count();
 
-        let unassigned_patients = patients.iter().filter(|p| p.current_doctor == Some(0)).count();
         let mut state = TTCState::new(patients, doctors);
 
         let start = Instant::now();
-        let result = ttc_algorithm_with_pruning(&mut state);
+        let result = (algo.run_fn)(&mut state);
         let total_time = start.elapsed();
 
-        let unassigned_patients_now = state.patients.iter().filter(|p| p.current_doctor == Some(0) && p.priority != usize::MAX).count();
-        let unassigned_matched = unassigned_patients  - unassigned_patients_now;
-
-
+        let unassigned_patients_now = state
+            .patients
+            .iter()
+            .filter(|p| p.current_doctor == Some(0) && p.priority != usize::MAX)
+            .count();
+        let unassigned_matched = unassigned_patients - unassigned_patients_now;
 
         let timing = AlgorithmTiming {
             total_time_ms: total_time.as_secs_f64() * 1000.0,
@@ -187,42 +226,9 @@ impl Benchmarker {
         (result, timing, unassigned_matched)
     }
 
-    fn run_scc_algorithm(
-        &self,
-        patients: Vec<Patient>,
-        doctors: Vec<Doctor>,
-    ) -> (TTCResultWithStats, AlgorithmTiming) {
-        let mut state = TTCState::new(patients, doctors);
-        let mut solver = TTCSCCSolver::new();
-
-        let start = Instant::now();
-        let result = solver.solve(&mut state);
-        let total_time = start.elapsed();
-
-        let stats = solver.get_stats();
-        let timing = self.convert_scc_stats_to_timing(stats, total_time);
-
-        (result, timing)
-    }
-
-    fn convert_scc_stats_to_timing(
-        &self,
-        stats: &SCCStats,
-        total_time: Duration,
-    ) -> AlgorithmTiming {
-        AlgorithmTiming {
-            total_time_ms: total_time.as_secs_f64() * 1000.0,
-            graph_building_ms: stats.time_graph_building.as_secs_f64() * 1000.0,
-            scc_finding_ms: stats.time_scc_finding.as_secs_f64() * 1000.0,
-            cycle_finding_ms: stats.time_cycle_finding.as_secs_f64() * 1000.0,
-            cycle_execution_ms: stats.time_cycle_execution.as_secs_f64() * 1000.0,
-        }
-    }
-
     pub fn compute_summaries(&self) -> Vec<BenchmarkSummary> {
         let mut summaries = Vec::new();
-        let mut file_groups: std::collections::HashMap<String, Vec<&BenchmarkRun>> =
-            std::collections::HashMap::new();
+        let mut file_groups: HashMap<String, Vec<&BenchmarkRun>> = HashMap::new();
 
         // Group results by file
         for result in &self.results {
@@ -241,25 +247,38 @@ impl Benchmarker {
             let num_runs = runs.len();
             let first_run = runs[0];
 
-            let dfs_avg = Self::average_timing(runs.iter().map(|r| &r.dfs_timing));
+            // Compute summaries for each algorithm
+            let mut algorithm_summaries = HashMap::new();
 
-            let avg_cycles_found =
-                runs.iter().map(|r| r.cycles_found as f64).sum::<f64>() / num_runs as f64;
-            let avg_patients_reassigned = runs
-                .iter()
-                .map(|r| r.patients_reassigned as f64)
-                .sum::<f64>()
-                / num_runs as f64;
+            // Get all algorithm names from the first run
+            for algo_name in first_run.algorithm_results.keys() {
+                let algo_results: Vec<&AlgorithmResult> = runs
+                    .iter()
+                    .filter_map(|r| r.algorithm_results.get(algo_name))
+                    .collect();
+
+                if !algo_results.is_empty() {
+                    let count = algo_results.len() as f64;
+
+                    algorithm_summaries.insert(
+                        algo_name.clone(),
+                        AlgorithmSummary {
+                            avg_timing: Self::average_timing(algo_results.iter().map(|r| &r.timing)),
+                            avg_cycles_found: algo_results.iter().map(|r| r.cycles_found as f64).sum::<f64>() / count,
+                            avg_patients_reassigned: algo_results.iter().map(|r| r.patients_reassigned as f64).sum::<f64>() / count,
+                            avg_remaining_capacity: algo_results.iter().map(|r| r.remaining_capacity as f64).sum::<f64>() / count,
+                            avg_unassigned_matched: algo_results.iter().map(|r| r.unassigned_matched as f64).sum::<f64>() / count,
+                        },
+                    );
+                }
+            }
 
             summaries.push(BenchmarkSummary {
                 file_name,
                 num_patients: first_run.num_patients,
                 num_doctors: first_run.num_doctors,
                 num_runs,
-                dfs_avg,
-                // scc_avg,
-                avg_cycles_found,
-                avg_patients_reassigned,
+                algorithm_summaries,
             });
         }
 
@@ -295,6 +314,8 @@ impl Benchmarker {
             .map_err(|e| format!("Failed to write: {}", e))?;
         writeln!(file, "# Runs per file: {}", self.num_runs)
             .map_err(|e| format!("Failed to write: {}", e))?;
+        writeln!(file, "# Algorithms: {}", self.algorithms.iter().map(|a| &a.name).cloned().collect::<Vec<_>>().join(", "))
+            .map_err(|e| format!("Failed to write: {}", e))?;
         writeln!(file).map_err(|e| format!("Failed to write: {}", e))?;
 
         writeln!(file, "[summary]").map_err(|e| format!("Failed to write: {}", e))?;
@@ -305,78 +326,70 @@ impl Benchmarker {
                 .map_err(|e| format!("Failed to write: {}", e))?;
             writeln!(file, "num_doctors={}", summary.num_doctors)
                 .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(file, "avg_cycles_found={:.2}", summary.avg_cycles_found)
-                .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(
-                file,
-                "avg_patients_reassigned={:.2}",
-                summary.avg_patients_reassigned
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
-            writeln!(file, "dfs_total_ms={:.2}", summary.dfs_avg.total_time_ms)
-                .map_err(|e| format!("Failed to write: {}", e))?;
-            // writeln!(
-            //     file,
-            //     "scc_total_ms={:.2}",
-            //     summary.scc_avg.total_time_ms
-            // )
-            // .map_err(|e| format!("Failed to write: {}", e))?;
-            // writeln!(
-            //     file,
-            //     "scc_graph_building_ms={:.2}",
-            //     summary.scc_avg.graph_building_ms
-            // )
-            // .map_err(|e| format!("Failed to write: {}", e))?;
-            // writeln!(
-            //     file,
-            //     "scc_scc_finding_ms={:.2}",
-            //     summary.scc_avg.scc_finding_ms
-            // )
-            // .map_err(|e| format!("Failed to write: {}", e))?;
-            // writeln!(
-            //     file,
-            //     "scc_cycle_finding_ms={:.2}",
-            //     summary.scc_avg.cycle_finding_ms
-            // )
-            // .map_err(|e| format!("Failed to write: {}", e))?;
-            // writeln!(
-            //     file,
-            //     "scc_cycle_execution_ms={:.2}",
-            //     summary.scc_avg.cycle_execution_ms
-            // )
-            // .map_err(|e| format!("Failed to write: {}", e))?;
+
+            // Get sorted algorithm names for consistent output
+            let mut algo_names: Vec<&String> = summary.algorithm_summaries.keys().collect();
+            algo_names.sort();
+
+            for algo_name in algo_names {
+                if let Some(algo_summary) = summary.algorithm_summaries.get(algo_name) {
+                    writeln!(file, "{}_total_ms={:.2}", algo_name.to_lowercase().replace(" ", "_"), algo_summary.avg_timing.total_time_ms)
+                        .map_err(|e| format!("Failed to write: {}", e))?;
+                    writeln!(file, "{}_cycles={:.2}", algo_name.to_lowercase().replace(" ", "_"), algo_summary.avg_cycles_found)
+                        .map_err(|e| format!("Failed to write: {}", e))?;
+                    writeln!(file, "{}_patients_reassigned={:.2}", algo_name.to_lowercase().replace(" ", "_"), algo_summary.avg_patients_reassigned)
+                        .map_err(|e| format!("Failed to write: {}", e))?;
+                    writeln!(file, "{}_unassigned_matched={:.2}", algo_name.to_lowercase().replace(" ", "_"), algo_summary.avg_unassigned_matched)
+                        .map_err(|e| format!("Failed to write: {}", e))?;
+                    writeln!(file, "{}_remaining_capacity={:.2}", algo_name.to_lowercase().replace(" ", "_"), algo_summary.avg_remaining_capacity)
+                        .map_err(|e| format!("Failed to write: {}", e))?;
+                }
+            }
             writeln!(file).map_err(|e| format!("Failed to write: {}", e))?;
         }
 
         // Write detailed data for plotting
         writeln!(file, "[detailed_data]").map_err(|e| format!("Failed to write: {}", e))?;
-        writeln!(
-            file,
-            "file_name,num_patients,num_doctors,run,dfs_total_ms,scc_v1_total_ms,scc_v2_total_ms,\
-             scc_v1_graph_ms,scc_v1_scc_ms,scc_v1_cycle_ms,scc_v1_exec_ms,\
-             scc_v2_graph_ms,scc_v2_scc_ms,scc_v2_cycle_ms,scc_v2_exec_ms,\
-             cycles_found,patients_reassigned"
-        )
-        .map_err(|e| format!("Failed to write: {}", e))?;
 
+        // Build dynamic CSV header
+        let mut header = "file_name,num_patients,num_doctors,run".to_string();
+        if !self.results.is_empty() && !self.results[0].algorithm_results.is_empty() {
+            let mut algo_names: Vec<&String> = self.results[0].algorithm_results.keys().collect();
+            algo_names.sort();
+            for algo_name in &algo_names {
+                let safe_name = algo_name.to_lowercase().replace(" ", "_");
+                header.push_str(&format!(",{}_total_ms,{}_cycles,{}_patients_reassigned,{}_unassigned_matched,{}_remaining_capacity",
+                    safe_name, safe_name, safe_name, safe_name, safe_name));
+            }
+        }
+        writeln!(file, "{}", header).map_err(|e| format!("Failed to write: {}", e))?;
+
+        // Write detailed data rows
         for result in &self.results {
-            writeln!(
-                file,
-                "{},{},{},{},{:.2},{},{}",
+            let mut row = format!(
+                "{},{},{},{}",
                 result.file_name,
                 result.num_patients,
                 result.num_doctors,
-                result.run_number,
-                result.dfs_timing.total_time_ms,
-                // result.scc_timing.total_time_ms,
-                // result.scc_timing.graph_building_ms,
-                // result.scc_timing.scc_finding_ms,
-                // result.scc_timing.cycle_finding_ms,
-                // result.scc_timing.cycle_execution_ms,
-                result.cycles_found,
-                result.patients_reassigned
-            )
-            .map_err(|e| format!("Failed to write: {}", e))?;
+                result.run_number
+            );
+
+            let mut algo_names: Vec<&String> = result.algorithm_results.keys().collect();
+            algo_names.sort();
+
+            for algo_name in &algo_names {
+                if let Some(algo_result) = result.algorithm_results.get(*algo_name) {
+                    row.push_str(&format!(
+                        ",{:.2},{},{},{},{}",
+                        algo_result.timing.total_time_ms,
+                        algo_result.cycles_found,
+                        algo_result.patients_reassigned,
+                        algo_result.unassigned_matched,
+                        algo_result.remaining_capacity
+                    ));
+                }
+            }
+            writeln!(file, "{}", row).map_err(|e| format!("Failed to write: {}", e))?;
         }
 
         Ok(())
@@ -386,7 +399,7 @@ impl Benchmarker {
         let summaries = self.compute_summaries();
 
         println!("\n{}", "=".repeat(100));
-        println!("📊 BENCHMARK SUMMARY");
+        println!("BENCHMARK SUMMARY");
         println!("{}", "=".repeat(100));
 
         for summary in &summaries {
@@ -395,12 +408,22 @@ impl Benchmarker {
                 "   {} patients, {} doctors ({} runs)",
                 summary.num_patients, summary.num_doctors, summary.num_runs
             );
-            println!(
-                "   Results: {:.1} cycles, {:.1} patients reassigned",
-                summary.avg_cycles_found, summary.avg_patients_reassigned
-            );
+
+            // Get algorithm names and sort them for consistent output
+            let mut algo_names: Vec<&String> = summary.algorithm_summaries.keys().collect();
+            algo_names.sort();
+
             println!("\n   Algorithm Performance:");
-            println!("      DFS:    {:>10.2}ms", summary.dfs_avg.total_time_ms);
+            for algo_name in algo_names {
+                if let Some(algo_summary) = summary.algorithm_summaries.get(algo_name) {
+                    println!("      {}:", algo_name);
+                    println!("         Time:                   {:>10.2}ms", algo_summary.avg_timing.total_time_ms);
+                    println!("         Cycles:                 {:>10.1}", algo_summary.avg_cycles_found);
+                    println!("         Patients reassigned:    {:>10.1}", algo_summary.avg_patients_reassigned);
+                    println!("         Unassigned matched:     {:>10.1}", algo_summary.avg_unassigned_matched);
+                    println!("         Remaining capacity:     {:>10.1}", algo_summary.avg_remaining_capacity);
+                }
+            }
         }
 
         println!("\n{}", "=".repeat(100));
