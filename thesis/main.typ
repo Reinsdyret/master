@@ -22,22 +22,9 @@
   listing-index: (enabled: true),
 )
 
-= Introduction
-
-
-
-== Benefits of SoA
-
-#lorem(100)
-
-== Trade-offs and Considerations
-
-#lorem(100)
-
-= Implementation in Rust
-
-#lorem(100)
-
-= Conclusion
-
-#lorem(100)
+#include "chapters/01-introduction.typ"
+#include "chapters/02-background.typ"
+#include "chapters/03-problem.typ"
+#include "chapters/04-implementation.typ"
+#include "chapters/05-results.typ"
+#include "chapters/06-conclusion.typ"
