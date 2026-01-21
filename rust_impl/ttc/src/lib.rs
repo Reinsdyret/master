@@ -1,8 +1,23 @@
 pub mod benchmarking;
 pub mod scc;
 pub mod ttc_scc;
-use std::{collections::HashMap};
+use std::collections::{HashMap, HashSet};
 use std::fs;
+
+/// Strategy for ordering patients during TTC algorithm execution
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PriorityStrategy {
+    /// Process strictly by priority number (lower = higher priority)
+    StrictPriority,
+    /// Put unassigned patients (no current doctor) first, then by priority
+    UnassignedFirst,
+    /// Shuffle randomly (useful for baseline comparisons)
+    Random,
+    /// Process patients wanting popular doctors first (high demand → processed first)
+    HighDemandFirst,
+    /// Process patients wanting unpopular doctors first (low demand → processed first)  
+    LowDemandFirst,
+}
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Patient {
@@ -311,6 +326,7 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
     Ok((patients, doctors))
 }
 
+#[derive(Clone)]
 pub struct TTCState {
     pub patients: Vec<Patient>,
     pub doctors: Vec<Doctor>,
@@ -360,6 +376,33 @@ impl TTCState {
         result
     }
 
+    /// Get total capacity across all non-dummy doctors
+    pub fn get_total_capacity(&self) -> usize {
+        self.doctors.iter()
+            .filter(|d| !d.is_dummy)
+            .map(|d| d.capacity)
+            .sum()
+    }
+
+    /// Get current capacity utilization (slots filled)
+    pub fn get_capacity_used(&self) -> usize {
+        self.get_total_capacity() - self.get_total_availability()
+    }
+
+    /// Count patients who want to switch (excluding dummy patients)
+    pub fn count_unsatisfied_patients(&self) -> usize {
+        self.patients.iter()
+            .filter(|p| !p.is_dummy && p.wants_to_switch)
+            .count()
+    }
+
+    /// Count patients without a doctor (current_doctor == Some(0), excluding dummies)
+    pub fn count_unassigned_patients(&self) -> usize {
+        self.patients.iter()
+            .filter(|p| !p.is_dummy && p.current_doctor == Some(0))
+            .count()
+    }
+
     pub fn resolve_patient(&mut self, id: usize) {
         let current_doctor_id = self.get_patient(id).and_then(|p| p.current_doctor);
 
@@ -392,151 +435,340 @@ impl TTCState {
 }
 
 
-// Optimized version with pruning
+/// Backward compatibility wrapper: Unassigned patients first
 pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
+    ttc_algorithm(state, PriorityStrategy::UnassignedFirst)
+}
+
+/// Backward compatibility wrapper: Strict priority order
+pub fn ttc_algorithm_without_prioritization(state: &mut TTCState) -> TTCResultWithStats {
+    ttc_algorithm(state, PriorityStrategy::StrictPriority)
+}
+
+/// Main TTC algorithm with configurable patient ordering strategy
+pub fn ttc_algorithm(state: &mut TTCState, strategy: PriorityStrategy) -> TTCResultWithStats {
+    let mut solution: HashSet<usize> = HashSet::with_capacity(state.patients.len() + state.doctors.len());
     let mut cycles_found = 0;
     let mut total_patients_reassigned = 0;
+    let mut cycle_stats = CycleStats::new();
 
-    println!("[DFS] Starting DFS algorithm...");
+    println!("[TTC] Starting with strategy: {:?}", strategy);
 
-    // Build reverse_preferred map: DoctorID -> Vec<PatientID>
-    // This maps a doctor to all patients who prefer them
-    // We build this once at the start, but note that wants_to_switch status changes
-    let mut reverse_preferred: HashMap<usize, Vec<usize>> = HashMap::new();
-    for patient in &state.patients {
-        // We include all patients initially, filter by wants_to_switch during DFS
-        reverse_preferred
-            .entry(patient.preferred_doctor)
-            .or_default()
-            .push(patient.id);
-    }
-
-    // Only include real patients and unassigned patients, not dummy capacity patients
+    // Get all switching patients (base list, sorted by priority)
     let mut switching_patients: Vec<usize> = state
         .patients_by_priority
         .iter()
         .filter(|&&id| {
-            state.get_patient(id).map_or(false, |p| {
-                p.wants_to_switch
-            })
+            state.get_patient(id).map_or(false, |p| p.wants_to_switch)
         })
         .copied()
         .collect();
 
-    // Put those without doctor first in line
-    let mut new_switching_patients: Vec<usize> = Vec::with_capacity(switching_patients.len());
-    for (_i, patient_id) in switching_patients.clone().iter().enumerate() {
-        let patient = state.get_patient(*patient_id).unwrap();
-        if patient.current_doctor == Some(0) {
-            new_switching_patients.push(*patient_id);
+    // Apply the ordering strategy
+    match strategy {
+        PriorityStrategy::StrictPriority => {
+            // Already sorted by priority, nothing to do
+        }
+        PriorityStrategy::UnassignedFirst => {
+            // Partition: unassigned first, then rest (both groups maintain priority order)
+            let mut unassigned = Vec::new();
+            let mut assigned = Vec::new();
+            for &pid in &switching_patients {
+                if let Some(p) = state.get_patient(pid) {
+                    if p.current_doctor == Some(0) {
+                        unassigned.push(pid);
+                    } else {
+                        assigned.push(pid);
+                    }
+                }
+            }
+            switching_patients = unassigned;
+            switching_patients.extend(assigned);
+        }
+        PriorityStrategy::Random => {
+            use rand::seq::SliceRandom;
+            use rand::thread_rng;
+            switching_patients.shuffle(&mut thread_rng());
+        }
+        PriorityStrategy::HighDemandFirst | PriorityStrategy::LowDemandFirst => {
+            // Build demand map: count how many patients want each doctor
+            let mut doctor_demand: HashMap<usize, usize> = HashMap::new();
+            for patient in &state.patients {
+                if patient.wants_to_switch {
+                    *doctor_demand.entry(patient.preferred_doctor).or_insert(0) += 1;
+                }
+            }
+            
+            let ascending = matches!(strategy, PriorityStrategy::LowDemandFirst);
+            switching_patients.sort_by_cached_key(|&pid| {
+                let demand = state
+                    .get_patient(pid)
+                    .map(|p| doctor_demand.get(&p.preferred_doctor).copied().unwrap_or(0))
+                    .unwrap_or(if ascending { usize::MAX } else { 0 });
+                let priority = state.get_patient(pid).map(|p| p.priority).unwrap_or(usize::MAX);
+                if ascending {
+                    (demand, priority)
+                } else {
+                    (usize::MAX - demand, priority) // Reverse by subtracting from MAX
+                }
+            });
         }
     }
 
-    new_switching_patients.extend(switching_patients.iter().filter(|id| {
-        let patient = state.get_patient(**id).unwrap();
-        patient.current_doctor != Some(0)
-    }));
-
-    switching_patients = new_switching_patients;
-
-    for (_i, &patient_id) in switching_patients.iter().enumerate() {
+    // Process patients in the computed order
+    for &patient_id in &switching_patients {
         let _patient = match state.get_patient(patient_id) {
             Some(p) if p.wants_to_switch => p,
-            _ => {
-                continue; // Skip happy patients
-            }
+            _ => continue,
         };
-        if let Some(cycle) = find_cycle_from_patient_with_direct_pruning(patient_id, state, &reverse_preferred) {
+        
+        if let Some(cycle) = find_cycle_from_patient_with_direct_pruning(patient_id, state) {
             cycles_found += 1;
             
-            // Count only real patients (not dummy capacity nodes)
+            // Count only real patients (not dummy capacity nodes), also adding to solution set
             let real_patients_in_cycle = cycle.iter().filter(|&&pid| {
+                if let Some(p) = state.get_patient(pid) {
+                    if !p.is_dummy {
+                        solution.insert(p.priority);
+                    }
+                }
                 state.get_patient(pid).map_or(false, |p| !p.is_dummy)
             }).count();
             
+            cycle_stats.record_cycle(cycle.len());
             total_patients_reassigned += real_patients_in_cycle;
-
-            // println!("🔍 [DFS] Cycle #{}: {} patients: {:?}", cycles_found, cycle.len(), cycle);
-
-
-            execute_cycle(&cycle, state);
-        }
-    }
-
-    // let patients_pruned = state.patients.iter().filter(|p| p.is_stuck).count();
-
-    TTCResultWithStats {
-        cycles_found,
-        patients_reassigned: total_patients_reassigned,
-        patients_pruned: 5,
-        remaining_capacity: state.get_total_availability(),
-    }
-}
-
-// Version without prioritizing unassigned patients
-pub fn ttc_algorithm_without_prioritization(state: &mut TTCState) -> TTCResultWithStats {
-    let mut cycles_found = 0;
-    let mut total_patients_reassigned = 0;
-
-    println!("[DFS-NoPrio] Starting DFS algorithm (No Prioritization)...");
-
-    // Build reverse_preferred map: DoctorID -> Vec<PatientID>
-    let mut reverse_preferred: HashMap<usize, Vec<usize>> = HashMap::new();
-    for patient in &state.patients {
-        reverse_preferred
-            .entry(patient.preferred_doctor)
-            .or_default()
-            .push(patient.id);
-    }
-
-    // Only include real patients and unassigned patients, not dummy capacity patients
-    let switching_patients: Vec<usize> = state
-        .patients_by_priority
-        .iter()
-        .filter(|&&id| {
-            state.get_patient(id).map_or(false, |p| {
-                p.wants_to_switch
-            })
-        })
-        .copied()
-        .collect();
-
-    // SKIP REORDERING: We process strictly by priority (as they appear in patients_by_priority)
-
-    for (_i, &patient_id) in switching_patients.iter().enumerate() {
-        let _patient = match state.get_patient(patient_id) {
-            Some(p) if p.wants_to_switch => p,
-            _ => {
-                continue; // Skip happy patients
-            }
-        };
-        if let Some(cycle) = find_cycle_from_patient_with_direct_pruning(patient_id, state, &reverse_preferred) {
-            cycles_found += 1;
-            
-            // Count only real patients (not dummy capacity nodes)
-            let real_patients_in_cycle = cycle.iter().filter(|&&pid| {
-                state.get_patient(pid).map_or(false, |p| !p.is_dummy)
-            }).count();
-            
-            total_patients_reassigned += real_patients_in_cycle;
-
             execute_cycle(&cycle, state);
         }
     }
 
     TTCResultWithStats {
+        solution,
         cycles_found,
         patients_reassigned: total_patients_reassigned,
         patients_pruned: 0,
         remaining_capacity: state.get_total_availability(),
+        cycle_stats,
+        initial_unsatisfied: 0,
+        final_unsatisfied: 0,
+        initial_unassigned: 0,
+        final_unassigned: 0,
+        total_capacity: 0,
+        initial_capacity_used: 0,
+    }
+}
+
+pub fn restricted_ttc_algorithm(initState: &mut TTCState) -> TTCResultWithStats {
+    let mut state = initState.clone();
+    let mut solution: HashSet<usize> = HashSet::with_capacity(state.patients.len());
+
+    let mut cycles_found = 0;
+    let mut total_patients_reassigned = 0;
+    let mut cycle_stats = CycleStats::new();
+    // Get all switching patients (base list, sorted by priority)
+    let switching_patients: Vec<usize> = state
+        .patients_by_priority
+        .iter()
+        .filter(|&&id| {
+            state.get_patient(id).map_or(false, |p| p.wants_to_switch)
+        })
+        .copied()
+        .collect();
+
+    // Start cycle search on highest prio patient
+    for &patient_id in &switching_patients {
+        let _patient = match state.get_patient(patient_id) {
+            Some(p) if p.wants_to_switch => p,
+            _ => continue,
+        };
+
+        // search from patient
+        if let Some(cycle) = restricted_dfs(patient_id, &mut state) {
+            cycles_found += 1;
+            cycle_stats.cycle_lengths.push(cycle.len());
+            // We have simple cycle, add patients to solution and remove patients from doctor preffered
+            let mut is_doctor = false;
+            for id in cycle {
+                if is_doctor {
+                    if let Some(doctor) = state.get_doctor_mut(id) {
+                        doctor.switching_patients.remove(0);
+                    }
+                } else {
+                    // skip dummy patients
+                    if let Some(patient) = state.get_patient(id) {
+                        if patient.is_dummy {continue;}
+                        solution.insert(patient.priority);
+                        total_patients_reassigned += 1;
+                    }
+                }
+                is_doctor = !is_doctor;
+
+            }
+        }
+
+    }
+
+    TTCResultWithStats {
+        solution,
+        cycles_found,
+        patients_reassigned: total_patients_reassigned,
+        patients_pruned: 0,
+        remaining_capacity: state.get_total_availability(),
+        cycle_stats,
+        initial_unsatisfied: 0,
+        final_unsatisfied: 0,
+        initial_unassigned: 0,
+        final_unassigned: 0,
+        total_capacity: 0,
+        initial_capacity_used: 0,
+    }
+}
+
+pub fn restricted_dfs(patient_id: usize, state: &mut TTCState) -> Option<Vec<usize>>{
+    let mut path = Vec::new();
+    let mut visited = HashSet::new();
+
+    if actual_restricted_dfs(patient_id, patient_id, state, &mut path, &mut visited) {
+        Some(path)
+    } else {
+        None
+    }
+}
+
+pub fn actual_restricted_dfs(current_id: usize, goal_id: usize, state: &mut TTCState, path: &mut Vec<usize>, visited: &mut HashSet<usize>) -> bool{
+    // if patient:
+    if let Some(patient) = state.get_patient(current_id) {
+        // if equal to goal id: cycle
+        if current_id == goal_id && path.len() > 0{
+            return true
+        }
+        // if in visited: no cycle
+        if visited.contains(&current_id) {return false}
+        
+        // else: add to path and visited then visit doctor
+        path.push(current_id);
+        visited.insert(current_id);
+        return actual_restricted_dfs(patient.preferred_doctor, goal_id, state, path, visited);
+    }
+
+    // if doctor:
+    if let Some(doctor) = state.get_doctor(current_id) {
+        // if a next preffered not in visited: visit that patient
+        if let Some(preferred_patient) = doctor.switching_patients.iter().find(|p| !visited.contains(&p.id) && p.id != goal_id) {
+            return actual_restricted_dfs(preferred_patient.id, goal_id, state, path, visited);
+        } else {
+            // else: no cycle
+            return false;
+        }
+    }
+
+    assert!(false); // Shouldnt hit
+    return false;
+}
+
+/// Statistics about cycle lengths found during TTC execution
+#[derive(Debug, Clone, Default)]
+pub struct CycleStats {
+    pub cycle_lengths: Vec<usize>,
+}
+
+impl CycleStats {
+    pub fn new() -> Self {
+        Self {
+            cycle_lengths: Vec::new(),
+        }
+    }
+
+    pub fn record_cycle(&mut self, length: usize) {
+        self.cycle_lengths.push(length);
+    }
+
+    pub fn total_cycles(&self) -> usize {
+        self.cycle_lengths.len()
+    }
+
+    pub fn avg_cycle_length(&self) -> f64 {
+        if self.cycle_lengths.is_empty() {
+            0.0
+        } else {
+            self.cycle_lengths.iter().sum::<usize>() as f64 / self.cycle_lengths.len() as f64
+        }
+    }
+
+    pub fn max_cycle_length(&self) -> usize {
+        self.cycle_lengths.iter().copied().max().unwrap_or(0)
+    }
+
+    pub fn min_cycle_length(&self) -> usize {
+        self.cycle_lengths.iter().copied().min().unwrap_or(0)
+    }
+
+    /// Returns a histogram of cycle lengths: (length, count)
+    pub fn length_distribution(&self) -> Vec<(usize, usize)> {
+        let mut counts: HashMap<usize, usize> = HashMap::new();
+        for &len in &self.cycle_lengths {
+            *counts.entry(len).or_insert(0) += 1;
+        }
+        let mut dist: Vec<_> = counts.into_iter().collect();
+        dist.sort_by_key(|(len, _)| *len);
+        dist
     }
 }
 
 pub struct TTCResultWithStats {
+    pub solution: HashSet<usize>,
     pub cycles_found: usize,
     pub patients_reassigned: usize,
     pub patients_pruned: usize,
     pub remaining_capacity: usize,
+    // New metrics
+    pub cycle_stats: CycleStats,
+    pub initial_unsatisfied: usize,      // Patients wanting to switch at start
+    pub final_unsatisfied: usize,        // Patients still wanting to switch at end
+    pub initial_unassigned: usize,       // Patients without doctor at start
+    pub final_unassigned: usize,         // Patients without doctor at end
+    pub total_capacity: usize,           // Total doctor capacity
+    pub initial_capacity_used: usize,    // Capacity used at start
+}
+
+impl TTCResultWithStats {
+    /// Calculate satisfaction rate: proportion of unhappy patients who got satisfied
+    pub fn satisfaction_rate(&self) -> f64 {
+        if self.initial_unsatisfied == 0 {
+            1.0
+        } else {
+            let satisfied = self.initial_unsatisfied - self.final_unsatisfied;
+            satisfied as f64 / self.initial_unsatisfied as f64
+        }
+    }
+
+    /// Calculate unassigned resolution rate
+    pub fn unassigned_resolution_rate(&self) -> f64 {
+        if self.initial_unassigned == 0 {
+            1.0
+        } else {
+            let resolved = self.initial_unassigned - self.final_unassigned;
+            resolved as f64 / self.initial_unassigned as f64
+        }
+    }
+
+    /// Calculate capacity utilization (proportion of capacity filled)
+    pub fn capacity_utilization(&self) -> f64 {
+        if self.total_capacity == 0 {
+            0.0
+        } else {
+            let final_used = self.total_capacity - self.remaining_capacity;
+            final_used as f64 / self.total_capacity as f64
+        }
+    }
+
+    /// Calculate initial capacity utilization
+    pub fn initial_capacity_utilization(&self) -> f64 {
+        if self.total_capacity == 0 {
+            0.0
+        } else {
+            self.initial_capacity_used as f64 / self.total_capacity as f64
+        }
+    }
 }
 
 pub struct TTCResult {
@@ -548,31 +780,27 @@ pub struct TTCResult {
 // pub use ttc_scc::{SCCStats, TTCSCCSolver};
 
 
-// Optimized version with direct marking (no HashSet needed)
+// Find cycle starting from a patient using DFS with local pruning
 fn find_cycle_from_patient_with_direct_pruning(
     start_patient_id: usize,
     state: &mut TTCState,
-    reverse_preferred: &HashMap<usize, Vec<usize>>,
 ) -> Option<Vec<usize>> {
     let mut path = Vec::new();
     let mut path_set = std::collections::HashSet::new();
     let mut visited = std::collections::HashSet::new();
-    let _found_any_cycle = false;
 
-    let (found_target_cycle, _) = dfs_for_cycle_with_tracking(
+    let found_target_cycle = dfs_for_cycle_with_tracking(
         start_patient_id,
         start_patient_id,
         &mut path,
         &mut path_set,
         &mut visited,
         state,
-        reverse_preferred,
     );
 
     if found_target_cycle {
         Some(path)
     } else {
-        // No cycle found - patients were already marked during DFS backtrack
         None
     }
 }
@@ -585,150 +813,113 @@ fn dfs_for_cycle_with_tracking(
     path_set: &mut std::collections::HashSet<usize>,
     visited: &mut std::collections::HashSet<usize>,
     state: &mut TTCState,
-    reverse_preferred: &HashMap<usize, Vec<usize>>,
-) -> (bool, bool) {
+) -> bool {
     if path.len() > 1 && current_patient_id == target_patient_id {
-        return (true, true); // Found cycle back to start
+        return true; // Found cycle back to start
     }
 
     if path_set.contains(&current_patient_id) {
-        return (false, true);
+        return false;
     }
 
     if visited.contains(&current_patient_id) {
-        // We've explored this node before in a previous branch
-        // Check if it was marked as stuck - if so, it leads nowhere
-        if let Some(patient) = state.get_patient(current_patient_id) {
-            return (false, !patient.is_stuck);
-        }
-        return (false, false);
+        return false;
     }
 
-    let (preferred_doctor_id, is_dummy, current_doctor_id) = match state.get_patient(current_patient_id) {
+    let (preferred_doctor_id, is_dummy) = match state.get_patient(current_patient_id) {
         Some(p) => {
-            if p.is_stuck || !p.wants_to_switch {
-                return (false, false);
+            if !p.wants_to_switch || p.is_stuck {
+                return false;
             }
-            (p.preferred_doctor, p.is_dummy, p.current_doctor)
+            (p.preferred_doctor, p.is_dummy)
         },
-        None => return (false, false),
+        None => return false,
     };
 
-    visited.insert(current_patient_id);
-    path.push(current_patient_id);
-    path_set.insert(current_patient_id);
-
-    let mut found_any_in_any_subtree = false;
-
-    // 1. Standard Path: Go to preferred doctor's switching patients
+    // Check if this is a structural dead end: preferred doctor has no switching patients
+    // But DON'T mark dummy patients as stuck - they represent capacity slots
     let num_switching = match state.get_doctor(preferred_doctor_id) {
         Some(d) => d.switching_patients.len(),
         None => 0,
     };
 
-    // Visit switching patients of this doctor in priority order (already sorted)
-    // Re-fetch doctor each iteration to avoid Vec allocation
-    for i in 0..num_switching {
+    if num_switching == 0 && !is_dummy {
+        // This patient can NEVER be in a cycle - their preferred doctor has no one to trade
+        // Mark globally stuck and remove from current doctor's switching list
+        let current_doctor_id = state.get_patient(current_patient_id).and_then(|p| p.current_doctor);
+        if let Some(p) = state.get_patient_mut(current_patient_id) {
+            p.is_stuck = true;
+        }
+        // Remove from current doctor's switching_patients so the stuck status propagates
+        if let Some(doc_id) = current_doctor_id {
+            if let Some(doc) = state.get_doctor_mut(doc_id) {
+                doc.switching_patients.retain(|p| p.id != current_patient_id);
+            }
+        }
+        return false;
+    }
+
+    visited.insert(current_patient_id);
+    path.push(current_patient_id);
+    path_set.insert(current_patient_id);
+
+    // Visit switching patients of this doctor in priority order
+    // Use while loop since list may shrink during iteration (stuck patients get removed)
+    let mut i = 0;
+    while let Some(num) = state.get_doctor(preferred_doctor_id).map(|d| d.switching_patients.len()) {
+        if i >= num {
+            break;
+        }
+        
         let next_patient_id = match state.get_doctor(preferred_doctor_id) {
             Some(d) => d.switching_patients[i].id,
-            None => continue,
+            None => break,
         };
 
-        let (found_cycle, found_any_cycle_in_subtree) = dfs_for_cycle_with_tracking(
+        let found_cycle = dfs_for_cycle_with_tracking(
             next_patient_id,
             target_patient_id,
             path,
             path_set,
             visited,
             state,
-            reverse_preferred,
         );
 
         if found_cycle {
-            return (true, true);
+            return true;
         }
+        
+        // Only increment if the patient wasn't removed (still at same index)
+        let still_there = state.get_doctor(preferred_doctor_id)
+            .map(|d| d.switching_patients.get(i).map(|p| p.id) == Some(next_patient_id))
+            .unwrap_or(false);
+        if still_there {
+            i += 1;
+        }
+        // If patient was removed, don't increment - next patient shifted into this index
+    }
 
-        if found_any_cycle_in_subtree {
-            found_any_in_any_subtree = true;
-        } else {
-            if let Some(patient) = state.get_patient_mut(next_patient_id) {
-                patient.is_stuck = true;
+    // Re-check: if preferred doctor now has 0 switching patients, mark current as stuck
+    // But DON'T mark dummy patients as stuck - they represent capacity slots
+    let final_num_switching = state.get_doctor(preferred_doctor_id)
+        .map(|d| d.switching_patients.len())
+        .unwrap_or(0);
+    
+    if final_num_switching == 0 && !is_dummy {
+        let current_doctor_id = state.get_patient(current_patient_id).and_then(|p| p.current_doctor);
+        if let Some(p) = state.get_patient_mut(current_patient_id) {
+            p.is_stuck = true;
+        }
+        if let Some(doc_id) = current_doctor_id {
+            if let Some(doc) = state.get_doctor_mut(doc_id) {
+                doc.switching_patients.retain(|p| p.id != current_patient_id);
             }
         }
     }
-
-    // 2. Dummy Patient Path: If current patient is dummy (at host_doctor),
-    // we can also go to doctors Y where there is a patient P who wants host_doctor.
-    // Cycle: ... -> P (at Y) -> host_doctor -> Dummy (at host_doctor) -> Y -> P ...
-    // So from Dummy, we can go to patients at Y.
-    if is_dummy {
-        if let Some(host_doctor_id) = current_doctor_id {
-            if let Some(wanting_patients) = reverse_preferred.get(&host_doctor_id) {
-                // We need to iterate over patients who want this doctor
-                // But we can't iterate wanting_patients directly while calling DFS (borrow checker)
-                // So we collect valid next_doctor_ids first
-                let mut next_doctors = Vec::new();
-                
-                for &p_id in wanting_patients {
-                    if let Some(p) = state.get_patient(p_id) {
-                        if !p.wants_to_switch || p.is_stuck { continue; }
-                        if let Some(y_id) = p.current_doctor {
-                            if y_id != 0 { // Don't go to dummy doctor
-                                next_doctors.push(y_id);
-                            }
-                        }
-                    }
-                }
-                
-                // Now visit those doctors
-                for y_id in next_doctors {
-                    let num_switching_y = match state.get_doctor(y_id) {
-                        Some(d) => d.switching_patients.len(),
-                        None => 0,
-                    };
-                    
-                    for i in 0..num_switching_y {
-                         let next_patient_id = match state.get_doctor(y_id) {
-                            Some(d) => d.switching_patients[i].id,
-                            None => continue,
-                        };
-                        
-                        // Avoid infinite loops if we are just going back and forth
-                        if path_set.contains(&next_patient_id) {
-                             if next_patient_id == target_patient_id {
-                                 return (true, true);
-                             }
-                             found_any_in_any_subtree = true;
-                             continue;
-                        }
-
-                        let (found_cycle, found_any_cycle_in_subtree) = dfs_for_cycle_with_tracking(
-                            next_patient_id,
-                            target_patient_id,
-                            path,
-                            path_set,
-                            visited,
-                            state,
-                            reverse_preferred,
-                        );
-
-                        if found_cycle {
-                            return (true, true);
-                        }
-
-                        if found_any_cycle_in_subtree {
-                            found_any_in_any_subtree = true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 
     path.pop();
     path_set.remove(&current_patient_id);
-    (false, found_any_in_any_subtree)
+    false
 }
 
 fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
@@ -740,4 +931,55 @@ fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
     for &patient_id in cycle {
         state.resolve_patient(patient_id);
     }
+}
+
+
+// ====== Solution comparing ========
+/// Takes two solutions, compares lexicographically
+/// returns 1 if first is largest
+/// 2 if second is largest 
+/// 0 is equal
+fn compare_solutions_lexicographic_priority(s1: HashSet<usize>, s2: HashSet<usize>) -> usize {
+    let mut s1_prios: Vec<usize> = s1.iter().map(|id| {*id}).collect();
+    let mut s2_prios: Vec<usize> = s2.iter().map(|id| {*id}).collect();
+
+    s1_prios.sort();
+    s1_prios.reverse();
+    s2_prios.sort();
+    s2_prios.reverse();
+
+    let first_length = s1_prios.len() - 1;
+    let second_length = s2_prios.len() - 1;
+    if first_length < second_length {println!("First is smallest")}
+    else if second_length < first_length {println!("Second is smallest")}
+    else {println!("They are equal long")}
+
+    let min_length = usize::min(first_length,second_length);
+    if min_length < s1_prios.len() && min_length < s2_prios.len() {
+        println!("first: \n{:?}", &s1_prios[0..=min_length]);
+        println!("second: \n{:?}", &s2_prios[0..=min_length]);
+    }
+    
+
+    let mut i = 0;
+    while i < s1_prios.len() && i < s2_prios.len() {
+        if s1_prios[i] > s2_prios[i] {
+            return 1;
+        }
+        
+        if s2_prios[i] > s1_prios[i] {
+            return 2;
+        }
+        i += 1;
+    }
+
+    if i >= s1_prios.len() && i < s2_prios.len() {
+        return 2;
+    }
+
+    if i >= s2_prios.len() && i < s1_prios.len() {
+        return 1;
+    }
+
+    return 0;
 }

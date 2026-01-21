@@ -1,193 +1,114 @@
+#import "@preview/ctheorems:1.1.3": *
+#show: thmrules.with(qed-symbol: $square$)
+#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
+#let corollary = thmplain(
+  "corollary",
+  "Corollary",
+  base: "theorem",
+  titlefmt: strong
+)
+#let definition = thmbox("definition", "Definition", inset: (x: 1.2em, top: 1em))
+
+#let example = thmplain("example", "Example").with(numbering: none)
+#let proof = thmproof("proof", "Proof")
+
 = Problem Formalization <ch:problem>
 
-In this chapter we formally define the computational problems that arise from the Top Trading Cycles mechanism in the context of GP allocation. We show how the problem maps to cycle cover problems on directed graphs.
+In this chapter we try to define the GP allocation problem and variations of it. In addition we go through how to construct a graph given a GP allocation problem and finally how we can reduce the GP allocation problem to the Cycle Cover problem in directed graphs.
 
-== Graph Construction from TTC Instance
+== GP allocation problem
 
-Consider a TTC instance with a set of patients $P$ and a set of doctors $D$. Each patient $p in P$ has:
-- A _current doctor_ $d_p in D union {bot}$, where $bot$ denotes that the patient is currently unassigned
-- A _preferred doctor_ $d_p^* in D$
+=== Input
 
-We say a patient _wants to switch_ if $d_p != d_p^*$.
+Consider the GP allocation problem as given a list of patients $P$ and a list of doctors $D$. We then have patients $p_1, p_2, dots, p_n$ and doctors $d_1, d_2, dots, d_m$. We also are given the current and preferred doctor assignments as arrays:
+- $D_"current" [i]$ denotes the index of the current doctor assigned to patient $p_i$ (or $bot$ if unassigned)
+- $D_"preffered" [i]$ denotes the index of the preferred doctor for patient $p_i$
 
-#block(
-  width: 100%,
-  inset: 1em,
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Definition 3.1 (TTC Preference Graph).* Given a TTC instance $(P, D, d, d^*)$, the _preference graph_ is the directed graph $G = (V, E)$ where:
-  - $V = {p in P : d_p != d_p^*}$ #h(1em) (patients wanting to switch)
-  - $E = {(p, q) : d_p^* = d_q}$ #h(1em) (edge from $p$ to $q$ if $p$ wants $q$'s current doctor)
+In addition we are given a priority function $R : P arrow NN$, mapping some positive integer to each patient, the higher the number the higher the priority.
+
+=== Feasible solution
+A feasible solution for the GP allocation problem is a subset of patients $S subset.eq P$ such that the directed graph
+$
+G_S = (S, E_S), E_S = {(a,b) | a, b in S, D_"preffered" ["idx"(a)] = D_"current" ["idx(b)"]}
+$
+consists of a vertex-disjoint union of directed cycles that cover all vertices in $S$.
+Where $"idx"(x)$ is a function giving the index of a patient $x$.
+So this means our solution $S$ is a set of all patients that can exchange doctor in one or more cycles.
+
+=== Optimization criterion
+With this feasible solution defined we can start defining variants where we want feasible solution that maximizes some _score_.
+When choosing what patients should be exchanging we might have different qualities that we want in our solutions. 
+We might want a solution that exchanges as many patients as possible or that exchanges patients with the highest priority.
+
+First we define our general ordering
+#definition("Optimization criterion")[
+  An ordering $succ$ over feasible solutions. A solution is optimal if it is maximal under $succ$.
 ]
 
-An edge $(p, q)$ represents that patient $p$ would benefit from acquiring patient $q$'s doctor assignment. A directed cycle $C = (p_1 -> p_2 -> dots.c -> p_ell -> p_1)$ in this graph represents a valid exchange: patient $p_i$ receives $p_(i+1)$'s doctor (with indices taken modulo $ell$). After executing such a cycle, all participating patients receive their preferred doctor.
-
-== Cycle Cover Problems
-
-We first establish the standard terminology for cycle covers in directed graphs.
-
-#block(
-  width: 100%,
-  inset: 1em,
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Definition 3.2 (Cycle Cover).* A _cycle cover_ of a directed graph $G = (V, E)$ is a set of directed cycles $cal(C) = {C_1, C_2, dots, C_m}$ such that every vertex $v in V$ belongs to exactly one cycle $C_i in cal(C)$.
+Then we can build upon this to create our two variants
+==== Lexicographic maximization by priority
+#definition("Sorted priority vector")[
+  Given a feasible solution $S subset.eq P$ the sorted priority vector is:
+  $
+  pi(S) = "sort"((R(p)_(p in S)))
+  $
+  where the vector is sorted in decreasing order.
 ]
 
-A cycle cover, by definition, partitions $V$ into cycles—every vertex is covered exactly once. However, not every directed graph admits a cycle cover; for instance, a DAG has no cycles at all.
+This vector we can then use to compare solutions and order them lexicographically by priority.
 
-#block(
-  width: 100%,
-  inset: 1em,
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Definition 3.3 (Disjoint Cycle Cover / Cycle Packing).* A _disjoint cycle cover_ (also called _cycle packing_) of a directed graph $G = (V, E)$ is a collection $cal(C) = {C_1, C_2, dots, C_m}$ of _vertex-disjoint_ directed cycles. Unlike a cycle cover, a disjoint cycle cover need not cover all vertices. The _coverage_ of $cal(C)$ is $V(cal(C)) = union.big_(C in cal(C)) V(C)$.
+#definition("Lexicographic ordering by priority")[
+
+  $
+  S succ_"lex" S' "iff" pi(S) "is lexicographically larger than" pi(S')
+  $
+
+  In addition if $pi(S')$ is a strict prefix of $pi(S)$ then $pi(S)$ is greater.
 ]
 
-In the TTC setting, we seek disjoint cycle covers since some patients may be structurally unable to participate in any valid exchange.
+We can then using this, if given two solution $S$ and $S'$ determine which one is _better_ by the lexicographic ordering py priority.
 
-== Maximum Disjoint Cycle Cover
+#example("Ordering two solutions lexicographically by priority")[
 
-The first natural optimization objective is to maximize the total number of patients who receive their preferred doctor.
+  We use the example graph $G$ below as the graph to create solutions from.
+  
+  Given solutions
+  + $S = {4,5}$ represents the subgraph $G_S$ containing cycle $P_4 arrow P_5 arrow P_4$
+  + $S' = {1,2,3}$ represents the subgraph $G_S'$ containing cycles $P_1 arrow P_2 arrow P_3 arrow P_1$
 
-#block(
-  width: 100%,
-  inset: 1em,
-  fill: luma(248),
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Problem: Maximum Disjoint Cycle Cover (MDCC)*
-  
-  _Input:_ A directed graph $G = (V, E)$
-  
-  _Output:_ A disjoint cycle cover $cal(C)$ maximizing $|V(cal(C))|$
-  
-  Equivalently, minimize the number of _uncovered_ vertices: $ min_(cal(C)) |V| - |V(cal(C))| $
+  For simplicity's sake we say that the $R(x) = "idx"(x)$, so in S the priority values are the same as S.
+
+  Then $pi(S) = [5,4]$ and $pi(S') = [3,2,1]$ and we can see that $S$ is then greater by the ordering $succ_"lex"$.
+  Because at the first point they differ, $S[0] != S[1]$, $S[0]$ is greater.
 ]
 
-#block(
-  width: 100%,
-  inset: 1em,
-  fill: luma(248),
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Problem: $k$-Disjoint Cycle Cover (Decision Version)*
-  
-  _Input:_ A directed graph $G = (V, E)$ and integer $k$
-  
-  _Question:_ Does there exist a disjoint cycle cover $cal(C)$ such that $|V(cal(C))| >= k$?
+So for our first variant we want to find the maximal solution under the $succ_"lex"$ ordering.
+This means always prioritizing those with highest priority.
+
+==== Maximizing cardinality
+
+The other variant is finding a solution with the largest cardinality, e.g. the solution that contains the most patients.
+
+#definition("Ordering by cardinality")[
+  $
+  S succ_"size" S' "iff" |S| > |S'|
+  $
 ]
 
-== Maximum Priority Disjoint Cycle Cover
+This solution will be the one that exchanges the most patients and therefore makes the most amount of people happy.
 
-In the GP allocation setting, we distinguish between patients who currently have a GP but want a different one, and patients who have _no GP at all_ (unassigned). It is often desirable to prioritize getting unassigned patients into the system.
+#example("Ordering two solutions by cardinality")[
 
-#block(
-  width: 100%,
-  inset: 1em,
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Definition 3.4 (Priority Partition).* Given graph $G = (V, E)$, a _priority partition_ is $V = U union.sq A$ where:
-  - $U$ = _priority vertices_ (unassigned patients, i.e., $d_p = bot$)
-  - $A$ = _regular vertices_ (assigned patients wanting to switch)
+  Say we have graph G as in the figure below. Then our solution sets $S, S' subset.eq V(G)$
+
+  Given solutions
+  + $S = {4,5}$ represents the subgraph $G_S$ containing cycle $P_4 arrow P_5 arrow P_4$
+  + $S' = {1,2,3}$ represents the subgraph $G_S'$ containing cycles $P_1 arrow P_2 arrow P_3 arrow P_1$
+
+  By then the ordering $succ_"size"$ $|S| = 4, |S'| = 3$, so $S$ is greater than $S'$ under $succ_"size"$.
+  The absolute maximal solution under $succ_"size"$ would be ${1,2,3,4,5}$ since that solution would contain both cycles.
 ]
 
-#block(
-  width: 100%,
-  inset: 1em,
-  fill: luma(248),
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Problem: Maximum Priority Disjoint Cycle Cover (MPDCC)*
-  
-  _Input:_ A directed graph $G = (V, E)$ with vertex partition $V = U union.sq A$
-  
-  _Output:_ A disjoint cycle cover $cal(C)$ maximizing $|V(cal(C)) sect U|$
-  
-  That is, maximize the number of priority (unassigned) vertices covered.
-]
+#include "../figs/example-graph.typ"
 
-#block(
-  width: 100%,
-  inset: 1em,
-  fill: luma(248),
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Problem: $k$-Priority Disjoint Cycle Cover (Decision Version)*
-  
-  _Input:_ Directed graph $G = (V, E)$, partition $V = U union.sq A$, integer $k$
-  
-  _Question:_ Does there exist a disjoint cycle cover $cal(C)$ such that $|V(cal(C)) sect U| >= k$?
-]
-
-== Weighted Generalization
-
-Both problems can be unified under a weighted formulation:
-
-#block(
-  width: 100%,
-  inset: 1em,
-  fill: luma(248),
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Problem: Maximum Weighted Disjoint Cycle Cover (MWDCC)*
-  
-  _Input:_ Directed graph $G = (V, E)$, weight function $w: V -> RR_(>= 0)$
-  
-  _Output:_ A disjoint cycle cover $cal(C)$ maximizing $sum_(v in V(cal(C))) w(v)$
-]
-
-The MDCC problem corresponds to $w(v) = 1$ for all $v$. The MPDCC problem corresponds to:
-$ w(v) = cases(
-  1 & "if" v in U,
-  0 & "if" v in A
-) $
-
-A hybrid objective that prioritizes unassigned patients while still valuing coverage of assigned patients can use:
-$ w(v) = cases(
-  1 + epsilon & "if" v in U,
-  1 & "if" v in A
-) $
-for some small $epsilon > 0$.
-
-== Complexity
-
-#figure(
-  table(
-    columns: 2,
-    align: (left, left),
-    [*Problem*], [*Complexity*],
-    [MDCC on general digraphs], [NP-hard],
-    [MDCC on tournaments], [Polynomial],
-    [Cycle Cover existence], [NP-complete],
-    [MPDCC / MWDCC], [NP-hard (reduces from MDCC)],
-  ),
-  caption: [Computational complexity of disjoint cycle cover problems.],
-) <tab:complexity>
-
-The standard Top Trading Cycles algorithm does not solve MDCC optimally. Instead, it employs a greedy strategy: find _any_ cycle containing the highest-priority unsatisfied patient and execute it. The choice of priority ordering—corresponding to the different `PriorityStrategy` options in our implementation—yields different heuristic approaches to these optimization problems.
-
-== Connection to TTC Mechanism
-
-#block(
-  width: 100%,
-  inset: 1em,
-  stroke: 0.5pt + luma(180),
-  radius: 4pt,
-)[
-  *Proposition 3.1 (TTC-MDCC Correspondence).* Let $I$ be a TTC instance and $G_I$ its preference graph. A disjoint cycle cover $cal(C)$ of $G_I$ corresponds to a valid set of TTC exchanges. Each cycle $C = (p_1 -> p_2 -> dots.c -> p_ell -> p_1)$ represents an exchange where patient $p_i$ receives $p_(i+1)$'s doctor (indices modulo $ell$), and all patients in the cycle are subsequently satisfied.
-]
-
-*Corollary.* Maximizing patient satisfaction in TTC is equivalent to solving the Maximum Disjoint Cycle Cover problem on the preference graph.
-
-The key insight is that the TTC mechanism iteratively finds and executes cycles. The _order_ in which cycles are found and executed affects the final outcome when perfect coverage is not achievable. Different orderings correspond to different heuristics for the underlying optimization problem.
-
+#include "../figs/pareto-inefficient.typ"

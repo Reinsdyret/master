@@ -1,53 +1,23 @@
 # Benchmark Results
-# Generated: 2025-11-24 12:53:29.938282493 +01:00
+# Generated: 2026-01-21 15:43:54.644867857 +01:00
 # Runs per file: 1
-# Algorithms: DFS Pruning, DFS (No Prioritization)
+# Algorithms: Strict Priority, Restricted TTC
 
 [summary]
-file=test_250000_patient_5000_doctors_10_districts_0.25_prob_50000_unassigned.txt
+file=test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt
 num_patients=262366
 num_doctors=5001
-dfs_(no_prioritization)_total_ms=6204.37
-dfs_(no_prioritization)_cycles=9206.00
-dfs_(no_prioritization)_patients_reassigned=192920.00
-dfs_(no_prioritization)_unassigned_matched=12222.00
-dfs_(no_prioritization)_remaining_capacity=144.00
-dfs_pruning_total_ms=4484.58
-dfs_pruning_cycles=12222.00
-dfs_pruning_patients_reassigned=192920.00
-dfs_pruning_unassigned_matched=12222.00
-dfs_pruning_remaining_capacity=144.00
-
-file=test_250000_patient_5000_doctors_10_districts_0.25_prob_25000_unassigned.txt
-num_patients=262507
-num_doctors=5001
-dfs_(no_prioritization)_total_ms=4653.03
-dfs_(no_prioritization)_cycles=6482.00
-dfs_(no_prioritization)_patients_reassigned=214888.00
-dfs_(no_prioritization)_unassigned_matched=10943.00
-dfs_(no_prioritization)_remaining_capacity=1385.00
-dfs_pruning_total_ms=2962.27
-dfs_pruning_cycles=11090.00
-dfs_pruning_patients_reassigned=214887.00
-dfs_pruning_unassigned_matched=10944.00
-dfs_pruning_remaining_capacity=1384.00
-
-file=test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt
-num_patients=262558
-num_doctors=5001
-dfs_(no_prioritization)_total_ms=793.66
-dfs_(no_prioritization)_cycles=1658.00
-dfs_(no_prioritization)_patients_reassigned=228429.00
-dfs_(no_prioritization)_unassigned_matched=4111.00
-dfs_(no_prioritization)_remaining_capacity=2951.00
-dfs_pruning_total_ms=800.99
-dfs_pruning_cycles=4582.00
-dfs_pruning_patients_reassigned=228463.00
-dfs_pruning_unassigned_matched=4113.00
-dfs_pruning_remaining_capacity=2984.00
+restricted_ttc_total_ms=1221.79
+restricted_ttc_cycles=91.00
+restricted_ttc_patients_reassigned=1938.00
+restricted_ttc_unassigned_matched=0.00
+restricted_ttc_remaining_capacity=12366.00
+strict_priority_total_ms=2178.67
+strict_priority_cycles=11915.00
+strict_priority_patients_reassigned=192694.00
+strict_priority_unassigned_matched=12252.00
+strict_priority_remaining_capacity=114.00
 
 [detailed_data]
-file_name,num_patients,num_doctors,run,dfs_(no_prioritization)_total_ms,dfs_(no_prioritization)_cycles,dfs_(no_prioritization)_patients_reassigned,dfs_(no_prioritization)_unassigned_matched,dfs_(no_prioritization)_remaining_capacity,dfs_pruning_total_ms,dfs_pruning_cycles,dfs_pruning_patients_reassigned,dfs_pruning_unassigned_matched,dfs_pruning_remaining_capacity
-test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt,262558,5001,1,793.66,1658,228429,4111,2951,800.99,4582,228463,4113,2984
-test_250000_patient_5000_doctors_10_districts_0.25_prob_25000_unassigned.txt,262507,5001,1,4653.03,6482,214888,10943,1385,2962.27,11090,214887,10944,1384
-test_250000_patient_5000_doctors_10_districts_0.25_prob_50000_unassigned.txt,262366,5001,1,6204.37,9206,192920,12222,144,4484.58,12222,192920,12222,144
+file_name,num_patients,num_doctors,run,restricted_ttc_total_ms,restricted_ttc_cycles,restricted_ttc_patients_reassigned,restricted_ttc_unassigned_matched,restricted_ttc_remaining_capacity,strict_priority_total_ms,strict_priority_cycles,strict_priority_patients_reassigned,strict_priority_unassigned_matched,strict_priority_remaining_capacity
+test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt,262366,5001,1,1221.79,91,1938,0,12366,2178.67,11915,192694,12252,114

@@ -1,14 +1,11 @@
-use crate::{
-    Doctor, Patient, TTCResultWithStats, TTCState, parse_data_file,
-    ttc_algorithm_with_pruning,
-};
+use crate::{Doctor, Patient, TTCResultWithStats, TTCState, compare_solutions_lexicographic_priority, parse_data_file};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
+use std::hash::Hash;
 use std::io::Write;
-use std::os::linux::raw::stat;
 use std::path::Path;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 /// Type alias for TTC algorithm functions
 /// Takes a mutable reference to TTCState and returns results with stats
@@ -40,11 +37,20 @@ pub struct AlgorithmTiming {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AlgorithmResult {
+    pub solution: HashSet<usize>,
     pub timing: AlgorithmTiming,
     pub cycles_found: usize,
     pub patients_reassigned: usize,
     pub remaining_capacity: usize,
     pub unassigned_matched: usize,
+    // New metrics
+    pub satisfaction_rate: f64,
+    pub unassigned_resolution_rate: f64,
+    pub capacity_utilization: f64,
+    pub initial_capacity_utilization: f64,
+    pub avg_cycle_length: f64,
+    pub max_cycle_length: usize,
+    pub min_cycle_length: usize,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -64,6 +70,13 @@ pub struct AlgorithmSummary {
     pub avg_patients_reassigned: f64,
     pub avg_remaining_capacity: f64,
     pub avg_unassigned_matched: f64,
+    // New metrics
+    pub avg_satisfaction_rate: f64,
+    pub avg_unassigned_resolution_rate: f64,
+    pub avg_capacity_utilization: f64,
+    pub avg_initial_capacity_utilization: f64,
+    pub avg_cycle_length: f64,
+    pub avg_max_cycle_length: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -165,11 +178,19 @@ impl Benchmarker {
                     algorithm_results.insert(
                         algo.name.clone(),
                         AlgorithmResult {
+                            solution: result.solution.clone(),
                             timing,
                             cycles_found: result.cycles_found,
                             patients_reassigned: result.patients_reassigned,
                             remaining_capacity: result.remaining_capacity,
                             unassigned_matched,
+                            satisfaction_rate: result.satisfaction_rate(),
+                            unassigned_resolution_rate: result.unassigned_resolution_rate(),
+                            capacity_utilization: result.capacity_utilization(),
+                            initial_capacity_utilization: result.initial_capacity_utilization(),
+                            avg_cycle_length: result.cycle_stats.avg_cycle_length(),
+                            max_cycle_length: result.cycle_stats.max_cycle_length(),
+                            min_cycle_length: result.cycle_stats.min_cycle_length(),
                         },
                     );
                 }
@@ -197,23 +218,32 @@ impl Benchmarker {
         patients: Vec<Patient>,
         doctors: Vec<Doctor>,
     ) -> (TTCResultWithStats, AlgorithmTiming, usize) {
-        let unassigned_patients = patients
-            .iter()
-            .filter(|p| p.current_doctor == Some(0))
-            .count();
-
         let mut state = TTCState::new(patients, doctors);
 
-        let start = Instant::now();
-        let result = (algo.run_fn)(&mut state);
-        let total_time = start.elapsed();
+        // Compute initial metrics BEFORE timing (no runtime overhead)
+        let initial_unsatisfied = state.count_unsatisfied_patients();
+        let initial_unassigned = state.count_unassigned_patients();
+        let total_capacity = state.get_total_capacity();
+        let initial_capacity_used = state.get_capacity_used();
 
-        let unassigned_patients_now = state
-            .patients
-            .iter()
-            .filter(|p| p.current_doctor == Some(0) && p.priority != usize::MAX)
-            .count();
-        let unassigned_matched = unassigned_patients - unassigned_patients_now;
+        // === TIMED SECTION ===
+        let start = Instant::now();
+        let mut result = (algo.run_fn)(&mut state);
+        let total_time = start.elapsed();
+        // === END TIMED SECTION ===
+
+        // Compute final metrics AFTER timing (no runtime overhead)
+        let final_unsatisfied = state.count_unsatisfied_patients();
+        let final_unassigned = state.count_unassigned_patients();
+        let unassigned_matched = initial_unassigned - final_unassigned;
+
+        // Populate metrics into result
+        result.initial_unsatisfied = initial_unsatisfied;
+        result.final_unsatisfied = final_unsatisfied;
+        result.initial_unassigned = initial_unassigned;
+        result.final_unassigned = final_unassigned;
+        result.total_capacity = total_capacity;
+        result.initial_capacity_used = initial_capacity_used;
 
         let timing = AlgorithmTiming {
             total_time_ms: total_time.as_secs_f64() * 1000.0,
@@ -250,12 +280,17 @@ impl Benchmarker {
             // Compute summaries for each algorithm
             let mut algorithm_summaries = HashMap::new();
 
+            let mut solutions: Vec<HashSet<usize>> = Vec::new();
+
             // Get all algorithm names from the first run
             for algo_name in first_run.algorithm_results.keys() {
                 let algo_results: Vec<&AlgorithmResult> = runs
                     .iter()
                     .filter_map(|r| r.algorithm_results.get(algo_name))
                     .collect();
+
+                solutions.push(algo_results[0].solution.clone());
+                println!("{}", algo_name);
 
                 if !algo_results.is_empty() {
                     let count = algo_results.len() as f64;
@@ -268,10 +303,19 @@ impl Benchmarker {
                             avg_patients_reassigned: algo_results.iter().map(|r| r.patients_reassigned as f64).sum::<f64>() / count,
                             avg_remaining_capacity: algo_results.iter().map(|r| r.remaining_capacity as f64).sum::<f64>() / count,
                             avg_unassigned_matched: algo_results.iter().map(|r| r.unassigned_matched as f64).sum::<f64>() / count,
+                            avg_satisfaction_rate: algo_results.iter().map(|r| r.satisfaction_rate).sum::<f64>() / count,
+                            avg_unassigned_resolution_rate: algo_results.iter().map(|r| r.unassigned_resolution_rate).sum::<f64>() / count,
+                            avg_capacity_utilization: algo_results.iter().map(|r| r.capacity_utilization).sum::<f64>() / count,
+                            avg_initial_capacity_utilization: algo_results.iter().map(|r| r.initial_capacity_utilization).sum::<f64>() / count,
+                            avg_cycle_length: algo_results.iter().map(|r| r.avg_cycle_length).sum::<f64>() / count,
+                            avg_max_cycle_length: algo_results.iter().map(|r| r.max_cycle_length as f64).sum::<f64>() / count,
                         },
                     );
                 }
             }
+
+            let compare_res = compare_solutions_lexicographic_priority(solutions[0].clone(), solutions[1].clone());
+            println!("COMPARE RESULT: {}", compare_res);
 
             summaries.push(BenchmarkSummary {
                 file_name,
@@ -421,7 +465,11 @@ impl Benchmarker {
                     println!("         Cycles:                 {:>10.1}", algo_summary.avg_cycles_found);
                     println!("         Patients reassigned:    {:>10.1}", algo_summary.avg_patients_reassigned);
                     println!("         Unassigned matched:     {:>10.1}", algo_summary.avg_unassigned_matched);
-                    println!("         Remaining capacity:     {:>10.1}", algo_summary.avg_remaining_capacity);
+                    println!("         Satisfaction rate:      {:>10.1}%", algo_summary.avg_satisfaction_rate * 100.0);
+                    println!("         Unassigned resolved:    {:>10.1}%", algo_summary.avg_unassigned_resolution_rate * 100.0);
+                    println!("         Capacity utilization:   {:>10.1}%", algo_summary.avg_capacity_utilization * 100.0);
+                    println!("         Avg cycle length:       {:>10.2}", algo_summary.avg_cycle_length);
+                    println!("         Max cycle length:       {:>10.1}", algo_summary.avg_max_cycle_length);
                 }
             }
         }
