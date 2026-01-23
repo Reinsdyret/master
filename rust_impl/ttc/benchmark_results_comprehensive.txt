@@ -1,5 +1,5 @@
 # Benchmark Results
-# Generated: 2026-01-21 15:43:54.644867857 +01:00
+# Generated: 2026-01-23 11:41:23.100695344 +01:00
 # Runs per file: 1
 # Algorithms: Strict Priority, Restricted TTC
 
@@ -7,12 +7,12 @@
 file=test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt
 num_patients=262366
 num_doctors=5001
-restricted_ttc_total_ms=1221.79
+restricted_ttc_total_ms=1277.43
 restricted_ttc_cycles=91.00
 restricted_ttc_patients_reassigned=1938.00
 restricted_ttc_unassigned_matched=0.00
 restricted_ttc_remaining_capacity=12366.00
-strict_priority_total_ms=2178.67
+strict_priority_total_ms=2117.84
 strict_priority_cycles=11915.00
 strict_priority_patients_reassigned=192694.00
 strict_priority_unassigned_matched=12252.00
@@ -20,4 +20,4 @@ strict_priority_remaining_capacity=114.00
 
 [detailed_data]
 file_name,num_patients,num_doctors,run,restricted_ttc_total_ms,restricted_ttc_cycles,restricted_ttc_patients_reassigned,restricted_ttc_unassigned_matched,restricted_ttc_remaining_capacity,strict_priority_total_ms,strict_priority_cycles,strict_priority_patients_reassigned,strict_priority_unassigned_matched,strict_priority_remaining_capacity
-test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt,262366,5001,1,1221.79,91,1938,0,12366,2178.67,11915,192694,12252,114
+test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt,262366,5001,1,1277.43,91,1938,0,12366,2117.84,11915,192694,12252,114

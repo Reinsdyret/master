@@ -653,7 +653,7 @@ pub fn actual_restricted_dfs(current_id: usize, goal_id: usize, state: &mut TTCS
     // if doctor:
     if let Some(doctor) = state.get_doctor(current_id) {
         // if a next preffered not in visited: visit that patient
-        if let Some(preferred_patient) = doctor.switching_patients.iter().find(|p| !visited.contains(&p.id) && p.id != goal_id) {
+        if let Some(preferred_patient) = doctor.switching_patients.iter().find(|p| !visited.contains(&p.id)) {
             return actual_restricted_dfs(preferred_patient.id, goal_id, state, path, visited);
         } else {
             // else: no cycle
