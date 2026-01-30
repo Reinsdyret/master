@@ -1,23 +1,23 @@
 # Benchmark Results
-# Generated: 2026-01-23 11:41:23.100695344 +01:00
+# Generated: 2026-01-30 13:41:53.395128656 +01:00
 # Runs per file: 1
 # Algorithms: Strict Priority, Restricted TTC
 
 [summary]
-file=test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt
-num_patients=262366
-num_doctors=5001
-restricted_ttc_total_ms=1277.43
-restricted_ttc_cycles=91.00
-restricted_ttc_patients_reassigned=1938.00
+file=test_150000_patient_2000_doctors_5_districts_0.3_prob.txt
+num_patients=154979
+num_doctors=2001
+restricted_ttc_total_ms=430.09
+restricted_ttc_cycles=35.00
+restricted_ttc_patients_reassigned=320.00
 restricted_ttc_unassigned_matched=0.00
-restricted_ttc_remaining_capacity=12366.00
-strict_priority_total_ms=2117.84
-strict_priority_cycles=11915.00
-strict_priority_patients_reassigned=192694.00
-strict_priority_unassigned_matched=12252.00
-strict_priority_remaining_capacity=114.00
+restricted_ttc_remaining_capacity=4979.00
+strict_priority_total_ms=953.41
+strict_priority_cycles=76.00
+strict_priority_patients_reassigned=134818.00
+strict_priority_unassigned_matched=0.00
+strict_priority_remaining_capacity=4979.00
 
 [detailed_data]
 file_name,num_patients,num_doctors,run,restricted_ttc_total_ms,restricted_ttc_cycles,restricted_ttc_patients_reassigned,restricted_ttc_unassigned_matched,restricted_ttc_remaining_capacity,strict_priority_total_ms,strict_priority_cycles,strict_priority_patients_reassigned,strict_priority_unassigned_matched,strict_priority_remaining_capacity
-test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt,262366,5001,1,1277.43,91,1938,0,12366,2117.84,11915,192694,12252,114
+test_150000_patient_2000_doctors_5_districts_0.3_prob.txt,154979,2001,1,430.09,35,320,0,4979,953.41,76,134818,0,4979

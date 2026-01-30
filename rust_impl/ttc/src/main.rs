@@ -35,12 +35,13 @@ fn main() {
         
         // Medium test files
         // "data/test_100000_patient_2000_doctors_2_districts_0.2_prob.txt".to_string(),
+        "data/test_150000_patient_2000_doctors_5_districts_0.3_prob.txt".to_string(),
         
         // Large test files with unassigned patients
-        // "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt".to_string(),
+        //"data/test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt".to_string(),
         // "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_25000_unassigned.txt".to_string(),
         // "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_50000_unassigned.txt".to_string(),
-        "data/test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt".to_string(),
+        // "data/test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt".to_string(),
         // "data/test_250000_patient_5000_doctors_10_districts_0.05_prob_50000_unassigned.txt".to_string(),
     ];
 

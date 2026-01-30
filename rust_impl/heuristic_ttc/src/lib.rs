@@ -1,6 +1,9 @@
 use std::{collections::HashMap, fs};
 
 pub mod solution;
+pub mod operators;
+pub mod local_search;
+pub mod simulated_annealing;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Patient {
