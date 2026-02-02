@@ -1,5 +1,5 @@
 use heuristic_ttc::{
-    TTCState, local_search::run_local_search, operators::{RandomRemoveAndAddCycle, RemoveAndAddCycle}, parse_data_file, simulated_annealing::run_simulated_annealing, solution::{ScoringStrategy, Solution}
+    TTCState, local_search::run_local_search, operators::{RandomRemoveAndAddCycle, RandomRemoveOneAndRepair, RemoveAndAddCycle, RemoveAndAddCyclePLUSRandomRemoveOneAndRepair}, parse_data_file, simulated_annealing::run_simulated_annealing, solution::{ScoringStrategy, Solution}
 };
 
 
@@ -28,8 +28,13 @@ fn main() {
         // );
 
         // TODO: teste med flyttall på pariorites scoring
+        // TODO: Teste med bare sammenligne strenger i stedet for å gjøre om til bigint
+        // TODO: Kanskje bare sortere 10 og 10 om gangen og sammenligne, kanskje vi ikke trenger å sortere hele priority listen
+        // Halveis quicksort
+        
+        // TODO: 
 
-        let best_solution = run_simulated_annealing(&init_solution, RandomRemoveAndAddCycle, &state, ScoringStrategy::ByCardinality);
+        let best_solution = run_simulated_annealing(&init_solution, RemoveAndAddCyclePLUSRandomRemoveOneAndRepair, &state, ScoringStrategy::ByCardinality);
 
         println!(
             "{} -> score: {}, valid: {}",

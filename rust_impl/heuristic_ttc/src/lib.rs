@@ -81,11 +81,7 @@ impl Doctor {
     }
 
     pub fn add_switching_patient(&mut self, patient: Patient) {
-        let insert_pos = self
-            .switching_patients
-            .binary_search_by(|p| p.priority.cmp(&patient.priority))
-            .unwrap_or_else(|pos| pos);
-        self.switching_patients.insert(insert_pos, patient);
+        self.switching_patients.push(patient);
     }
 
     pub fn get_next_patient(&self) -> Option<&Patient> {

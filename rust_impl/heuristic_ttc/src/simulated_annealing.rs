@@ -12,7 +12,7 @@ pub fn run_simulated_annealing<T: Operator>(
     state: &TTCState,
     strategy: ScoringStrategy,
 ) -> Solution {
-    run_simulated_annealing_with_params(init_solution, operator, state, strategy, 0.9, 1e-3, 10_000)
+    run_simulated_annealing_with_params(init_solution, operator, state, strategy, 0.9, 1e-3, 100_000)
 }
 
 pub fn run_simulated_annealing_with_params<T: Operator>(
@@ -42,14 +42,20 @@ pub fn run_simulated_annealing_with_params<T: Operator>(
     let output_path = "simulated_annealing_scores.csv";
     let file = File::create(output_path).expect("failed to create simulated_annealing_scores.csv");
     let mut writer = BufWriter::new(file);
-    writeln!(writer, "iter,best_score").expect("failed to write header");
+    writeln!(writer, "iter,best_score,incumbent_score").expect("failed to write header");
 
     for i in 0..iterations {
         if i % 1000 == 0 {println!("{}", i)}
         let new_solution = operator.apply(&incumbent, state);
         if !new_solution.verify(state) {
             temp *= alpha;
-            writeln!(writer, "{},{}", i, best_score.to_str_radix(10))
+            writeln!(
+                writer,
+                "{},{},{}",
+                i,
+                best_score.to_str_radix(10),
+                incumbent_score.to_str_radix(10)
+            )
                 .expect("failed to write score row");
             continue;
         }
@@ -72,7 +78,13 @@ pub fn run_simulated_annealing_with_params<T: Operator>(
             }
         }
 
-        writeln!(writer, "{},{}", i, best_score.to_str_radix(10))
+        writeln!(
+            writer,
+            "{},{},{}",
+            i,
+            best_score.to_str_radix(10),
+            incumbent_score.to_str_radix(10)
+        )
             .expect("failed to write score row");
         temp *= alpha;
     }
@@ -94,7 +106,7 @@ fn estimate_avg_delta<T: Operator>(
 
     let mut deltas: Vec<f64> = Vec::new();
 
-    for _ in 0..10 {
+    for _ in 0..100 {
         let new_solution = operator.apply(&incumbent, state);
         if !new_solution.verify(state) {
             continue;
