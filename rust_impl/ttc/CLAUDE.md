@@ -38,6 +38,8 @@ current_doctor_1,current_doctor_2,...
 priority_1,priority_2,...
 ```
 
+
+
 The main program currently uses `data/test_10000_patient_1000_doctors_5_districts.txt`.
 
 ## Core Architecture

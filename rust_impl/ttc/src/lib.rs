@@ -1,6 +1,7 @@
 pub mod benchmarking;
 pub mod scc;
 pub mod ttc_scc;
+pub mod excact;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -97,7 +98,7 @@ impl Doctor {
     pub fn add_switching_patient(&mut self, patient: Patient) {
         let insert_pos = self
             .switching_patients
-            .binary_search_by(|p| p.priority.cmp(&patient.priority))
+            .binary_search_by(|p| patient.priority.cmp(&p.priority))
             .unwrap_or_else(|pos| pos);
         self.switching_patients.insert(insert_pos, patient);
     }
@@ -341,6 +342,7 @@ impl TTCState {
         patient_priority_pairs.sort_by(|a, b| a.1.cmp(&b.1)); // Sort by priority
         let patients_by_priority: Vec<usize> = patient_priority_pairs
             .into_iter()
+            .rev()
             .map(|(id, _)| id)
             .collect();
 
@@ -521,6 +523,8 @@ pub fn ttc_algorithm(state: &mut TTCState, strategy: PriorityStrategy) -> TTCRes
             Some(p) if p.wants_to_switch => p,
             _ => continue,
         };
+
+        // println!("Starting dfs from patient: {}", patient_id);
         
         if let Some(cycle) = find_cycle_from_patient_with_direct_pruning(patient_id, state) {
             cycles_found += 1;
@@ -799,6 +803,7 @@ fn find_cycle_from_patient_with_direct_pruning(
     );
 
     if found_target_cycle {
+        // println!("Found cycle");
         Some(path)
     } else {
         None
@@ -814,6 +819,8 @@ fn dfs_for_cycle_with_tracking(
     visited: &mut std::collections::HashSet<usize>,
     state: &mut TTCState,
 ) -> bool {
+
+    // println!("DFS in {}, path_len: {}", current_patient_id, path.len());
     if path.len() > 1 && current_patient_id == target_patient_id {
         return true; // Found cycle back to start
     }

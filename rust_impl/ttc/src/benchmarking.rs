@@ -314,8 +314,7 @@ impl Benchmarker {
                 }
             }
 
-            let compare_res = compare_solutions_lexicographic_priority(solutions[0].clone(), solutions[1].clone());
-            println!("COMPARE RESULT: {}", compare_res);
+            
 
             summaries.push(BenchmarkSummary {
                 file_name,
