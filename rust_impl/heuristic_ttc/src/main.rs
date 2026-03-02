@@ -1,13 +1,21 @@
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use heuristic_ttc::operators::{RandomRemoveAndAddCycle, RandomRemoveOneAndRepair};
 use heuristic_ttc::{
-    TTCState, local_search::run_local_search, operators::{RandomRemoveAndAddCycle, RandomRemoveOneAndRepair, RemoveAndAddCycle, RemoveAndAddCyclePLUSRandomRemoveOneAndRepair}, parse_data_file, simulated_annealing::run_simulated_annealing, solution::{ScoringStrategy, Solution}
+    TTCState,
+    operators::{InsertOneBetween, Operator, RemoveOneIfEdge},
+    cycle_ilp::select_cycles_via_ilp,
+    parse_data_file,
+    simulated_annealing::run_simulated_annealing_multi,
+    solution::{ScoringStrategy, Solution},
 };
 
 
 fn main() {
     let files = vec![
-        "data/test_150000_patient_2000_doctors_5_districts_0.3_prob.txt"
+        "data/test_100000_patient_1500_doctors_0_unassigned.txt"
         // "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt",
-    ];
+    ]; 
 
     for file in files {
         let (patients, doctors) = match parse_data_file(file) {
@@ -34,20 +42,50 @@ fn main() {
         
         // TODO: 
 
-        let best_solution = run_simulated_annealing(&init_solution, RemoveAndAddCyclePLUSRandomRemoveOneAndRepair, &state, ScoringStrategy::ByCardinality);
+        let op1 = InsertOneBetween;
+        let op2 = RemoveOneIfEdge;
+        let op3 = RandomRemoveAndAddCycle;
+        let op4 = RandomRemoveOneAndRepair;
+        let operators: [&dyn Operator; 4] = [&op1, &op2, &op3, &op4];
+
+        let best_solution = run_simulated_annealing_multi(
+            &init_solution,
+            &state,
+            &operators,
+            ScoringStrategy::ByCardinality,
+            0.9,
+            1e-3,
+            10_000,
+        );
 
         println!(
-            "{} -> score: {}, valid: {}",
+            "{} -> SA score: {}, valid: {}",
             file,
             best_solution.score(&ScoringStrategy::ByCardinality),
             best_solution.verify(&state),
         );
 
         println!(
-            "{} Total cycles\n
+            "{} SA cycles\n
             Average length: {}",
             best_solution.cycles.len(),
             best_solution.cycles.iter().map(|c| c.len()).sum::<usize>() as f64 / best_solution.cycles.len() as f64
-        )
+        );
+
+        // let output_path = format!("{}_sa_switched_priorities.txt", file.replace("/", "_"));
+        // let file = File::create(&output_path).expect("failed to create priorities file");
+        // let mut writer = BufWriter::new(file);
+        // for priority in &best_solution.repr {
+        //     writeln!(writer, "{}", priority).expect("failed to write priority");
+        // }
+        // println!("Wrote SA priorities to {}", output_path);
+
+        // let output_path = format!("{}_ilp_switched_priorities.txt", file.replace("/", "_"));
+        // let file = File::create(&output_path).expect("failed to create priorities file");
+        // let mut writer = BufWriter::new(file);
+        // for priority in &ilp_solution.repr {
+        //     writeln!(writer, "{}", priority).expect("failed to write priority");
+        // }
+        // println!("Wrote ILP priorities to {}", output_path);
     }
 }

@@ -4,6 +4,7 @@ pub mod solution;
 pub mod operators;
 pub mod local_search;
 pub mod simulated_annealing;
+pub mod cycle_ilp;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Patient {

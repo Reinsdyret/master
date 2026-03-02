@@ -8,3 +8,5 @@ rand = "0.9.2"
 num-bigint = "0.4"
 num-traits = "0.2"
 libm = "0.2"
+good_lp = { version = "1.14", features = ["scip"] }
+rayon = "1.10"

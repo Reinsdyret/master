@@ -941,6 +941,96 @@ fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
 }
 
 
+// ====== Solution verification ========
+
+/// Verify a TTC result by inspecting the final TTCState.
+/// Checks:
+///   1. Every non-dummy patient marked as satisfied (wants_to_switch=false and moved)
+///      actually has current_doctor == their original preferred_doctor.
+///   2. No doctor has more assigned patients than their capacity.
+/// Returns true if all checks pass.
+pub fn verify_ttc_result(
+    original_patients: &[Patient],
+    final_state: &TTCState,
+) -> bool {
+    let mut valid = true;
+
+    // Build lookup: patient id -> original preferred_doctor
+    let preferred: HashMap<usize, usize> = original_patients
+        .iter()
+        .map(|p| (p.id, p.preferred_doctor))
+        .collect();
+
+    // Check 1: every patient that was moved ended up at their preferred doctor
+    // Build lookup: patient id -> original current_doctor
+    let orig_current: HashMap<usize, Option<usize>> = original_patients
+        .iter()
+        .map(|p| (p.id, p.current_doctor))
+        .collect();
+
+    let mut satisfied_count = 0;
+    for p in &final_state.patients {
+        if p.is_dummy {
+            continue;
+        }
+        let orig_preferred = match preferred.get(&p.id) {
+            Some(&d) => d,
+            None => {
+                println!("VERIFY ERROR: patient {} not found in original list", p.id);
+                valid = false;
+                continue;
+            }
+        };
+        let orig_doc = orig_current.get(&p.id).copied().flatten();
+
+        // Only count patients who actually moved (were unsatisfied originally)
+        let wanted_to_switch = orig_doc != Some(orig_preferred);
+        if wanted_to_switch && p.current_doctor == Some(orig_preferred) {
+            satisfied_count += 1;
+        }
+
+        // If wants_to_switch is false but they're not at their preferred doctor, that's a bug
+        if !p.wants_to_switch && p.current_doctor != Some(orig_preferred) {
+            println!(
+                "VERIFY ERROR: patient {} marked satisfied but current_doctor={:?} != preferred={}",
+                p.id, p.current_doctor, orig_preferred
+            );
+            valid = false;
+        }
+    }
+
+    // Check 2: no doctor exceeds capacity
+    for doc in &final_state.doctors {
+        if doc.is_dummy {
+            continue;
+        }
+        let real_assigned = doc.assigned_patients
+            .iter()
+            .filter(|&&pid| {
+                final_state
+                    .patients
+                    .get(pid.saturating_sub(1))
+                    .map_or(false, |p| !p.is_dummy)
+            })
+            .count();
+        if real_assigned > doc.capacity {
+            println!(
+                "VERIFY ERROR: doctor {} has {} real patients but capacity is {}",
+                doc.id, real_assigned, doc.capacity
+            );
+            valid = false;
+        }
+    }
+
+    if valid {
+        println!(
+            "TTC solution verified: {} real patients are satisfied, all capacities respected.",
+            satisfied_count
+        );
+    }
+    valid
+}
+
 // ====== Solution comparing ========
 /// Takes two solutions, compares lexicographically
 /// returns 1 if first is largest

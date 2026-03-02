@@ -1,9 +1,8 @@
 use std::collections::HashSet;
 
-use num_traits::zero;
-use rand::{random_bool, random_range, seq::{IteratorRandom, index::sample}};
+use rand::{random_bool, random_range, seq::IteratorRandom};
 
-use crate::{Doctor, TTCState, solution::Solution};
+use crate::{TTCState, solution::Solution};
 
 
 pub trait Operator {
@@ -21,6 +20,11 @@ pub struct RemoveAndAddCyclePLUSRandomRemoveOneAndRepair;
 // Search for cycle with nodes not used, if find any overlap with existing cycle, ban that node and get new cycle try to fix old cycle.
 
 pub struct RandomRemoveAndAddCycle;
+
+pub struct InsertOneBetween;
+pub struct RemoveOneIfEdge;
+
+pub struct AnyCycle;
 
 impl Operator for RemoveCycle {
     fn apply(&self, solution: &Solution, state: &TTCState) -> Solution {
@@ -155,6 +159,148 @@ impl Operator for RandomRemoveAndAddCycle {
     }
 }
 
+impl Operator for AnyCycle {
+    fn apply(&self, solution: &Solution, state: &TTCState) -> Solution {
+        let mut rng = rand::rng();
+        let max_cycle_len = 10_000;
+
+        let candidate_starts: Vec<usize> = state.patients.iter()
+            .filter(|p| !p.is_dummy)
+            .map(|p| p.id)
+            .collect();
+
+        let start = match candidate_starts.iter().choose(&mut rng) {
+            Some(id) => *id,
+            None => return solution.clone(),
+        };
+
+        let mut path = vec![start];
+        let mut visited: HashSet<usize> = HashSet::from([start]);
+        let mut steps_left = std::cmp::min(state.patients.len().saturating_mul(2).max(1), 50_000);
+
+        if dfs_any_cycle(
+            state,
+            start,
+            start,
+            max_cycle_len,
+            &mut visited,
+            &mut path,
+            &mut steps_left,
+        ) {
+            let mut new_cycles = solution.cycles.clone();
+            new_cycles.push(path);
+            return Solution::new(new_cycles, state);
+        }
+
+        solution.clone()
+    }
+}
+
+impl Operator for InsertOneBetween {
+    fn apply(&self, solution: &Solution, state: &TTCState) -> Solution {
+        if solution.cycles.is_empty() {
+            return solution.clone();
+        }
+
+        let mut rng = rand::rng();
+        let cycle_idx = random_range(0..solution.cycles.len());
+        let mut cycle = solution.cycles[cycle_idx].clone();
+        if cycle.len() < 2 {
+            return solution.clone();
+        }
+
+        let edge_idx = random_range(0..(cycle.len() - 1));
+        let prev = cycle[edge_idx];
+        let next = cycle[edge_idx + 1];
+
+        let unique_nodes: HashSet<usize> = solution
+            .cycles
+            .clone()
+            .into_iter()
+            .flat_map(|vec| vec.into_iter())
+            .collect();
+        let nodes: HashSet<usize> = HashSet::from_iter(state.patients.iter().map(|p| p.id));
+        let not_used_nodes: Vec<usize> = nodes.difference(&unique_nodes).cloned().collect();
+
+        let prev_pref = match state.get_patient(prev) {
+            Some(patient) => patient.preferred_doctor,
+            None => return solution.clone(),
+        };
+        let next_current = match state.get_patient(next) {
+            Some(patient) => patient.current_doctor,
+            None => return solution.clone(),
+        };
+
+        let candidates: Vec<usize> = not_used_nodes
+            .into_iter()
+            .filter(|id| {
+                let patient = match state.get_patient(*id) {
+                    Some(p) => p,
+                    None => return false,
+                };
+                if patient.is_dummy {
+                    return false;
+                }
+                let current_doctor = match patient.current_doctor {
+                    Some(doc) => doc,
+                    None => return false,
+                };
+                let next_current = match next_current {
+                    Some(doc) => doc,
+                    None => return false,
+                };
+                current_doctor == prev_pref && next_current == patient.preferred_doctor
+            })
+            .collect();
+
+        let candidate = match candidates.iter().choose(&mut rng) {
+            Some(id) => *id,
+            None => return solution.clone(),
+        };
+
+        cycle.insert(edge_idx + 1, candidate);
+        let mut new_cycles = solution.cycles.clone();
+        new_cycles[cycle_idx] = cycle;
+        Solution::new(new_cycles, state)
+    }
+}
+
+impl Operator for RemoveOneIfEdge {
+    fn apply(&self, solution: &Solution, state: &TTCState) -> Solution {
+        if solution.cycles.is_empty() {
+            return solution.clone();
+        }
+
+        let cycle_idx = random_range(0..solution.cycles.len());
+        let mut cycle = solution.cycles[cycle_idx].clone();
+        if cycle.len() < 3 {
+            return solution.clone();
+        }
+
+        let index = random_range(1..(cycle.len() - 1));
+        let prev = cycle[index - 1];
+        let next = cycle[index + 1];
+
+        let prev_pref = match state.get_patient(prev) {
+            Some(patient) => patient.preferred_doctor,
+            None => return solution.clone(),
+        };
+        let next_current = match state.get_patient(next) {
+            Some(patient) => patient.current_doctor,
+            None => return solution.clone(),
+        };
+
+        if next_current != Some(prev_pref) {
+            return solution.clone();
+        }
+
+        cycle.remove(index);
+        let mut new_cycles = solution.cycles.clone();
+        new_cycles[cycle_idx] = cycle;
+        Solution::new(new_cycles, state)
+    }
+}
+
 impl Operator for RandomRemoveOneAndRepair {
     fn apply(&self, solution: &Solution, state: &TTCState) -> Solution {
         if solution.cycles.len() == 0 {
@@ -252,4 +398,53 @@ fn dfs(current: usize, goal: usize, state: &TTCState, not_used: &HashSet<usize>,
     // println!("Ran out of neighbors");
 
     return false;
+}
+
+fn dfs_any_cycle(
+    state: &TTCState,
+    start: usize,
+    current: usize,
+    max_cycle_len: usize,
+    visited: &mut HashSet<usize>,
+    path: &mut Vec<usize>,
+    steps_left: &mut usize,
+) -> bool {
+    if *steps_left == 0 {
+        return false;
+    }
+    *steps_left -= 1;
+
+    let doctor_id = match state.get_patient(current) {
+        Some(p) => p.preferred_doctor,
+        None => return false,
+    };
+    let doctor = match state.get_doctor(doctor_id) {
+        Some(d) => d,
+        None => return false,
+    };
+
+    for next_id in doctor.switching_patients.iter().map(|p| p.id) {
+        if *steps_left == 0 {
+            return false;
+        }
+        if next_id == start {
+            path.push(next_id);
+            return true;
+        }
+        if path.len() >= max_cycle_len {
+            continue;
+        }
+        if visited.contains(&next_id) {
+            continue;
+        }
+        visited.insert(next_id);
+        path.push(next_id);
+        if dfs_any_cycle(state, start, next_id, max_cycle_len, visited, path, steps_left) {
+            return true;
+        }
+        path.pop();
+        visited.remove(&next_id);
+    }
+
+    false
 }

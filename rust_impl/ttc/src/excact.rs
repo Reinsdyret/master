@@ -2,10 +2,12 @@
 // All of this until otimal solution is found
 
 use crate::{Doctor, Patient};
+use std::collections::{HashMap, VecDeque};
 
 #[derive(Clone, Debug)]
 struct Edge {
     to: usize,
+    start_capacity: usize,
     capacity: usize, // Number of times we can use this edge
     cost: i32,       // +1 for original, -1 for residual
     rev: usize,      // Index in adj[to]
@@ -13,6 +15,12 @@ struct Edge {
 
 pub struct CyclePacker {
     adj: Vec<Vec<Edge>>,
+    // Scratch space reused across SPFA calls to avoid repeated allocation
+    dist: Vec<i64>,
+    pred_node: Vec<usize>,
+    pred_edge: Vec<usize>,
+    in_queue: Vec<bool>,
+    enqueue_count: Vec<usize>,
 }
 
 impl CyclePacker {
@@ -22,7 +30,15 @@ impl CyclePacker {
             adj.push(Vec::with_capacity(doctors.len()));
         }
 
-        let mut g = Self { adj };
+        let n = doctors.len();
+        let mut g = Self {
+            adj,
+            dist: vec![0i64; n],
+            pred_node: vec![n; n],
+            pred_edge: vec![0; n],
+            in_queue: vec![false; n],
+            enqueue_count: vec![0; n],
+        };
 
         let mut edges: Vec<(usize, usize)> =
             Vec::with_capacity(doctors.len() * doctors.len());
@@ -61,12 +77,14 @@ impl CyclePacker {
     pub fn add_edge(&mut self, u: usize, v: usize, capacity: usize) {
         let forward: Edge = Edge {
             to: v,
+            start_capacity: capacity,
             capacity,
             rev: self.adj[v].len(),
             cost: 1,
         };
         let back: Edge = Edge {
             to: u,
+            start_capacity: 0,
             capacity: 0,
             rev: self.adj[u].len(),
             cost: -1,
@@ -77,130 +95,108 @@ impl CyclePacker {
     }
 
     pub fn pack_cycles(&mut self) {
-        let n = self.adj.len();
-        let mut total_gain = 0;
-        let mut iteration = 0;
-        let mut last_reported_gain = 0;
+        let mut total_gain = 0i32;
+        let mut last_reported_gain = 0i32;
         let report_interval = 1000;
 
         loop {
-            let mut path = Vec::new();
-            let mut visited_cost = vec![None; n];
-            let mut on_stack = vec![false; n];
-            let mut found_in_this_pass = false;
-
-            for start_node in 0..n {
-                if let Some(cycle) = self.find_positive_cycle(
-                    start_node,
-                    &mut path,
-                    &mut visited_cost,
-                    &mut on_stack,
-                    0,
-                ) {
-                    iteration += 1;
-
-                    // Calculate the cost of this specific cycle
-                    let cycle_cost: i32 = cycle.iter().map(|&(u, idx)| self.adj[u][idx].cost).sum();
-
-                    total_gain += cycle_cost;
-
+            match self.find_positive_cycle() {
+                Some(cycle) => {
+                    let cost: i32 = cycle.iter().map(|&(u, idx)| self.adj[u][idx].cost).sum();
+                    total_gain += cost;
                     if total_gain >= last_reported_gain + report_interval {
                         println!("Total gain: {}", total_gain);
                         last_reported_gain = total_gain;
                     }
-                    // DEBUG PRINT
-                    // println!(
-                    //     "[Iteration {}] Found Cycle! Gain: +{}, Total Edges Covered: {}",
-                    //     iteration, cycle_cost, total_gain
-                    // );
-
-                    // cycle_edges is built in reverse; display in forward order
-                    /*
-                    let cycle_str: String = cycle
-                        .iter()
-                        .rev()
-                        .map(|&(u, idx)| {
-                            let v = self.adj[u][idx].to;
-                            let c = self.adj[u][idx].cost;
-                            format!("{}--({})-->{}", u, if c > 0 { "+" } else { "-" }, v)
-                        })
-                        .collect::<Vec<_>>()
-                        .join(", ");
-                    println!("   Cycle (len {}): {}", cycle.len(), cycle_str);
-                    */
-
                     self.apply_cycle(cycle);
-                    found_in_this_pass = true;
+                }
+                None => {
+                    println!("Finished. No more positive cycles found.");
                     break;
                 }
             }
+        }
+    }
 
-            if !found_in_this_pass {
-                println!("Finished. No more positive cycles found.");
+    fn find_positive_cycle(&mut self) -> Option<Vec<(usize, usize)>> {
+        let n = self.adj.len();
+
+        // Reset scratch arrays (reuse allocations)
+        self.dist.iter_mut().for_each(|x| *x = 0);
+        self.pred_node.iter_mut().for_each(|x| *x = n);
+        self.pred_edge.iter_mut().for_each(|x| *x = 0);
+        self.in_queue.iter_mut().for_each(|x| *x = false);
+        self.enqueue_count.iter_mut().for_each(|x| *x = 0);
+
+        // Seed all nodes
+        let mut queue: VecDeque<usize> = (0..n).collect();
+        for v in 0..n {
+            self.in_queue[v] = true;
+            self.enqueue_count[v] = 1;
+        }
+
+        let mut cycle_node = n;
+
+        'outer: while let Some(u) = queue.pop_front() {
+            self.in_queue[u] = false;
+
+            for (idx, edge) in self.adj[u].iter().enumerate() {
+                if edge.capacity == 0 {
+                    continue;
+                }
+                let v = edge.to;
+                let new_dist = self.dist[u] + edge.cost as i64;
+                if new_dist > self.dist[v] {
+                    self.dist[v] = new_dist;
+                    self.pred_node[v] = u;
+                    self.pred_edge[v] = idx;
+                    if !self.in_queue[v] {
+                        self.enqueue_count[v] += 1;
+                        if self.enqueue_count[v] >= n {
+                            cycle_node = v;
+                            break 'outer;
+                        }
+                        // SLF: push to front if dist[v] > dist of current front
+                        if queue.front().map_or(true, |&f| new_dist > self.dist[f]) {
+                            queue.push_front(v);
+                        } else {
+                            queue.push_back(v);
+                        }
+                        self.in_queue[v] = true;
+                    }
+                }
+            }
+        }
+
+        if cycle_node == n {
+            return None;
+        }
+
+        // Walk back n steps to land inside the cycle
+        let mut v = cycle_node;
+        for _ in 0..n {
+            v = self.pred_node[v];
+        }
+
+        // Collect the cycle
+        let cycle_start = v;
+        let mut cycle_edges = Vec::new();
+        loop {
+            let u = self.pred_node[v];
+            let idx = self.pred_edge[v];
+            cycle_edges.push((u, idx));
+            v = u;
+            if v == cycle_start {
                 break;
             }
         }
+
+        Some(cycle_edges)
     }
-
-    fn find_positive_cycle(
-    &self,
-    u: usize,
-    path: &mut Vec<(usize, usize)>,
-    visited_cost: &mut Vec<Option<i32>>,
-    on_stack: &mut Vec<bool>,
-    current_cost: i32,
-) -> Option<Vec<(usize, usize)>> {
-    visited_cost[u] = Some(current_cost);
-    on_stack[u] = true;
-
-    for (idx, edge) in self.adj[u].iter().enumerate() {
-        if edge.capacity > 0 {
-            let v = edge.to;
-
-            if on_stack[v] {
-                // Potential Cycle Found!
-                let mut cycle_edges = Vec::new();
-                cycle_edges.push((u, idx));
-                let mut cycle_sum = edge.cost;
-
-                // SNIP: Only collect edges back until we hit node 'v'
-                let mut found_start = false;
-                if u == v {
-                    // This is a self-loop (u -> u)
-                    found_start = true;
-                } else {
-                    for &(node, e_idx) in path.iter().rev() {
-                        cycle_edges.push((node, e_idx));
-                        cycle_sum += self.adj[node][e_idx].cost;
-                        if node == v {
-                            found_start = true;
-                            break;
-                        }
-                    }
-                }
-
-                if found_start && cycle_sum > 0 {
-                    return Some(cycle_edges);
-                }
-            } else if visited_cost[v].is_none() {
-                path.push((u, idx));
-                if let Some(res) = self.find_positive_cycle(v, path, visited_cost, on_stack, current_cost + edge.cost) {
-                    return Some(res);
-                }
-                path.pop();
-            }
-        }
-    }
-
-    on_stack[u] = false;
-    None
-}
-    /// Flips the capacity between the edge and its residual counterpart
     fn apply_cycle(&mut self, cycle: Vec<(usize, usize)>) {
         for (u, idx) in cycle {
             let v = self.adj[u][idx].to;
             let rev_idx = self.adj[u][idx].rev;
-
             self.adj[u][idx].capacity -= 1;
             self.adj[v][rev_idx].capacity += 1;
         }
@@ -212,12 +208,10 @@ impl CyclePacker {
         for (u, list) in self.adj.iter().enumerate() {
             for edge in list {
                 if edge.cost == 1 {
-                    let v = edge.to;
-                    let rev_idx = edge.rev;
-                    let used_count = self.adj[v][rev_idx].capacity;
+                    let used_count = edge.start_capacity - edge.capacity;
 
                     if used_count > 0 {
-                        results.push((u, v, used_count));
+                        results.push((u, edge.to, used_count));
                     }
                 }
             }
@@ -226,7 +220,7 @@ impl CyclePacker {
     }
 
     /// Verify that the solution forms a valid circulation (flow conservation at every node).
-    pub fn verify_solution(&self) -> bool {
+    pub fn verify_solution(&self, patients: &Vec<Patient>, doctors: &Vec<Doctor>) -> bool {
         let n = self.adj.len();
         let mut in_flow = vec![0i64; n];
         let mut out_flow = vec![0i64; n];
@@ -257,6 +251,60 @@ impl CyclePacker {
         }
         if valid {
             println!("Solution verified: flow conservation holds at all {} nodes.", n);
+        }
+        valid
+    }
+
+    /// Count how many real (non-dummy) patients are satisfied by the solution.
+    /// Maps each used edge (from_doc -> to_doc, count) back to actual patients.
+    pub fn count_satisfied_real_patients(&self, patients: &[Patient]) -> usize {
+        // Build remaining quota for each used edge
+        let mut edge_quota: HashMap<(usize, usize), usize> = HashMap::new();
+        for (u, v, count) in self.get_solution_edges() {
+            edge_quota.insert((u, v), count);
+        }
+
+        let mut satisfied = 0;
+        for p in patients {
+            if p.is_dummy {
+                continue;
+            }
+            let curr = match p.current_doctor {
+                Some(d) => d,
+                None => continue,
+            };
+            if curr == p.preferred_doctor {
+                continue;
+            }
+            if let Some(quota) = edge_quota.get_mut(&(curr, p.preferred_doctor)) {
+                if *quota > 0 {
+                    *quota -= 1;
+                    satisfied += 1;
+                }
+            }
+        }
+        satisfied
+    }
+
+    /// Verify that every used edge (u->v, count) is backed by enough real patients
+    /// who have current_doctor=u and preferred_doctor=v.
+    pub fn verify_patient_edges(&self, patients: &[Patient]) -> bool {
+        let mut valid = true;
+        for (u, v, count) in self.get_solution_edges() {
+            let available = patients
+                .iter()
+                .filter(|p| !p.is_dummy && p.current_doctor == Some(u) && p.preferred_doctor == v)
+                .count();
+            if available < count {
+                println!(
+                    "VIOLATION: edge ({}->{}) claims {} patients but only {} real patients exist for it",
+                    u, v, count, available
+                );
+                valid = false;
+            }
+        }
+        if valid {
+            println!("Patient edge check passed: all solution edges are backed by real patients.");
         }
         valid
     }
