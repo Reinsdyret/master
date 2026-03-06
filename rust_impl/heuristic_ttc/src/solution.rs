@@ -17,7 +17,13 @@ pub struct Solution {
 
 impl Solution {
     pub fn new(cycles: Vec<Vec<usize>>, state: &TTCState) -> Self {
-        let unique_nodes: Vec<usize> = cycles.clone().into_iter().flat_map(|vec| vec.into_iter()).collect();
+        // Cycles are stored as [a, b, c, a] — drop the repeated last node before collecting.
+        let unique_nodes: Vec<usize> = cycles.clone().into_iter()
+            .flat_map(|vec| {
+                let len = vec.len();
+                vec.into_iter().take(if len > 0 { len - 1 } else { 0 })
+            })
+            .collect();
         let mut unique_non_dummy: Vec<usize> = unique_nodes.into_iter().filter(|p| {
             if let Some(patient) = state.get_patient(*p) {
                 !patient.is_dummy

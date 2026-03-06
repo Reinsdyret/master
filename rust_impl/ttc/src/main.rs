@@ -1,148 +1,111 @@
-use ttc::benchmarking::{AlgorithmConfig, Benchmarker};
 use ttc::excact::CyclePacker;
-use ttc::{ttc_algorithm, restricted_ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCResultWithStats, TTCState, parse_data_file};
+use ttc::{ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCState, parse_data_file};
 use std::fs::File;
 use std::io::Write;
-// use ttc::ttc_scc::scc_algorithm;
 
-// Wrapper functions for each strategy (required for benchmarker's function pointer interface)
-fn strategy_strict_priority(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::StrictPriority)
-}
-
-fn strategy_unassigned_first(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::UnassignedFirst)
-}
-
-fn strategy_random(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::Random)
-}
-
-fn strategy_high_demand_first(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::HighDemandFirst)
-}
-
-fn strategy_low_demand_first(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::LowDemandFirst)
-}
-
-fn restricted_ttc(state: &mut TTCState) ->  TTCResultWithStats {
-    restricted_ttc_algorithm(state)
+struct RunResult {
+    dataset: String,
+    num_patients: usize,
+    num_doctors: usize,
+    algorithm: String,
+    patients_satisfied: usize,
+    patients_wanting_switch: usize,
+    time_ms: u128,
 }
 
 fn main() {
     let data_files = vec![
-        // Small test files
-        // "data/test_4_patient_3_doctors_mini.txt".to_string()
-        // "data/test_200_patient_15_doctors_3_districts_0.1_prob.txt".to_string(),
-        "data/test_1000_patient_30_doctors_0_unassigned.txt".to_string(),
-        // "data/test_1000_patient_100_doctors_10_districts_0.1_prob.txt".to_string(),
-        
-        // Medium test files
-        // "data/test_100000_patient_2000_doctors_2_districts_0.2_prob.txt".to_string(),
-        // "data/test_150000_patient_2000_doctors_5_districts_0.3_prob.txt".to_string(),
-        
-        // Large test files with unassigned patients
-        //"data/test_250000_patient_5000_doctors_10_districts_0.25_prob_5000_unassigned.txt".to_string(),
-        // "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_25000_unassigned.txt".to_string(),
-        // "data/test_250000_patient_5000_doctors_10_districts_0.25_prob_50000_unassigned.txt".to_string(),
-        // "data/test_250000_patient_5000_doctors_10_districts_0.001_prob_50000_unassigned.txt".to_string(),
-        // "data/test_250000_patient_5000_doctors_10_districts_0.05_prob_50000_unassigned.txt".to_string(),
+        "data/test_100_patient_15_doctors_0_unassigned.txt",
+        "data/test_1000_patient_30_doctors_0_unassigned.txt",
+        "data/test_10000_patient_150_doctors_0_unassigned.txt",
+        "data/test_100000_patient_1500_doctors_0_unassigned.txt",
     ];
 
-    
-    let test_file = "data/test_100000_patient_1500_doctors_0_unassigned.txt";
-    let (patients, doctors) = parse_data_file(test_file).unwrap();
+    let mut results: Vec<RunResult> = Vec::new();
 
-    // ---- CyclePacker (exact) ----
-    println!("\n=== CyclePacker (exact) ===");
-    let t0 = std::time::Instant::now();
-    let mut packer = CyclePacker::new(&patients, &doctors);
-    packer.pack_cycles();
-    let exact_ms = t0.elapsed().as_millis();
-    packer.verify_solution(&patients, &doctors);
-    packer.verify_patient_edges(&patients);
-    let exact_satisfied = packer.count_satisfied_real_patients(&patients);
-    println!("CyclePacker satisfied real patients: {} (took {}ms)", exact_satisfied, exact_ms);
+    for file in &data_files {
+        println!("\n=== Dataset: {} ===", file);
+        let (patients, doctors) = match parse_data_file(file) {
+            Ok(d) => d,
+            Err(e) => { eprintln!("Failed to parse {}: {}", file, e); continue; }
+        };
 
-    // ---- TTC heuristic ----
-    println!("\n=== TTC (StrictPriority) ===");
-    let original_patients = patients.clone();
-    let t1 = std::time::Instant::now();
-    let mut ttc_state = TTCState::new(patients.clone(), doctors.clone());
-    let ttc_result = ttc_algorithm(&mut ttc_state, PriorityStrategy::StrictPriority);
-    let ttc_ms = t1.elapsed().as_millis();
-    println!("TTC satisfied real patients: {} (took {}ms)", ttc_result.patients_reassigned, ttc_ms);
-    verify_ttc_result(&original_patients, &ttc_state);
+        let num_patients = patients.iter().filter(|p| !p.is_dummy).count();
+        let num_doctors = doctors.iter().filter(|d| !d.is_dummy).count();
+        let patients_wanting_switch = patients.iter().filter(|p| !p.is_dummy && p.wants_to_switch).count();
 
-    println!("\n=== Summary ===");
-    println!("CyclePacker: {} patients satisfied in {}ms", exact_satisfied, exact_ms);
-    println!("TTC heuristic: {} patients satisfied in {}ms", ttc_result.patients_reassigned, ttc_ms);
+        // Extract dataset label (e.g. "100p_15d")
+        let dataset = format!("{}p_{}d", num_patients, num_doctors);
 
-    /*
-    const NUM_RUNS: usize = 1;
+        // --- CyclePacker (exact) ---
+        print!("  CyclePacker... ");
+        let _ = std::io::stdout().flush();
+        let t0 = std::time::Instant::now();
+        let mut packer = CyclePacker::new(&patients, &doctors);
+        packer.pack_cycles();
+        let exact_ms = t0.elapsed().as_millis();
+        let exact_satisfied = packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
 
-    // Configure algorithms to benchmark - try different priority strategies!
-    let algorithms = vec![
-        AlgorithmConfig::new("Strict Priority", strategy_strict_priority),
-        // AlgorithmConfig::new("Restricted TTC", restricted_ttc),
-        // AlgorithmConfig::new("Unassigned First", strategy_unassigned_first),
-        // AlgorithmConfig::new("Random Order", strategy_random),
-        // AlgorithmConfig::new("High Demand First", strategy_high_demand_first),  // Slow - 2x runtime
-        // AlgorithmConfig::new("Low Demand First", strategy_low_demand_first),
-        // AlgorithmConfig::new("SCC", scc_algorithm),
-    ];
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "CyclePacker".to_string(),
+            patients_satisfied: exact_satisfied,
+            patients_wanting_switch,
+            time_ms: exact_ms,
+        });
 
-    let mut benchmarker = Benchmarker::new(data_files, NUM_RUNS, algorithms);
+        // --- TTC heuristic (StrictPriority) ---
+        print!("  TTC (StrictPriority)... ");
+        let _ = std::io::stdout().flush();
+        let original_patients = patients.clone();
+        let t1 = std::time::Instant::now();
+        let mut ttc_state = TTCState::new(patients.clone(), doctors.clone());
+        let ttc_result = ttc_algorithm(&mut ttc_state, PriorityStrategy::StrictPriority);
+        let ttc_ms = t1.elapsed().as_millis();
+        println!("{} satisfied in {}ms", ttc_result.patients_reassigned, ttc_ms);
+        verify_ttc_result(&original_patients, &ttc_state);
 
-    match benchmarker.run_benchmarks() {
-        Ok(_) => {
-            println!("\nAll benchmarks completed successfully!");
-
-            benchmarker.print_summary();
-
-            match benchmarker.save_results("benchmark_results_comprehensive.txt") {
-                Ok(_) => {
-                    println!("\nResults saved to benchmark_results_comprehensive.txt");
-                }
-                Err(e) => eprintln!("Failed to save results: {}", e),
-            }
-        }
-        Err(e) => {
-            eprintln!("Benchmark failed: {}", e);
-        }
+        results.push(RunResult {
+            dataset,
+            num_patients,
+            num_doctors,
+            algorithm: "TTC_StrictPriority".to_string(),
+            patients_satisfied: ttc_result.patients_reassigned,
+            patients_wanting_switch,
+            time_ms: ttc_ms,
+        });
     }
 
-    // Log solutions to files for comparison
-    /*let test_file = "data/test_150000_patient_2000_doctors_5_districts_0.3_prob.txt";
-    if let Ok((patients, doctors)) = parse_data_file(test_file) {
-        // Run Strict Priority
-        let mut state1 = TTCState::new(patients.clone(), doctors.clone());
-        let result1 = ttc_algorithm(&mut state1, PriorityStrategy::StrictPriority);
-        log_solution_to_file(&result1.solution, "solution_strict_priority.txt");
+    // Write CSV
+    let csv_path = "benchmark_scaling.csv";
+    match File::create(csv_path) {
+        Ok(mut f) => {
+            writeln!(f, "dataset,num_patients,num_doctors,algorithm,patients_satisfied,patients_wanting_switch,satisfaction_rate,time_ms").unwrap();
+            for r in &results {
+                let rate = if r.patients_wanting_switch > 0 {
+                    r.patients_satisfied as f64 / r.patients_wanting_switch as f64
+                } else {
+                    0.0
+                };
+                writeln!(
+                    f,
+                    "{},{},{},{},{},{},{:.4},{}",
+                    r.dataset, r.num_patients, r.num_doctors, r.algorithm,
+                    r.patients_satisfied, r.patients_wanting_switch, rate, r.time_ms
+                ).unwrap();
+            }
+            println!("\nResults saved to {}", csv_path);
+        }
+        Err(e) => eprintln!("Failed to write CSV: {}", e),
+    }
 
-        // Run Restricted TTC
-        let mut state2 = TTCState::new(patients, doctors);
-        let result2 = restricted_ttc_algorithm(&mut state2);
-        log_solution_to_file(&result2.solution, "solution_restricted_ttc.txt");
-
-        println!("\nSolutions logged to solution_strict_priority.txt and solution_restricted_ttc.txt");
-    }*/
-    */
-}
-
-/// Logs patient priorities to a file, sorted in decreasing order
-fn log_solution_to_file(solution: &std::collections::HashSet<usize>, filename: &str) {
-    let mut priorities: Vec<usize> = solution.iter().copied().collect();
-    priorities.sort();
-    priorities.reverse(); // Decreasing order (highest priority first)
-
-    if let Ok(mut file) = File::create(filename) {
-        let content = priorities
-            .iter()
-            .map(|p| p.to_string())
-            .collect::<Vec<_>>()
-            .join("\n");
-        let _ = file.write_all(content.as_bytes());
+    // Print summary table
+    println!("\n{:<20} {:<22} {:>12} {:>12}", "Dataset", "Algorithm", "Satisfied", "Time (ms)");
+    println!("{}", "-".repeat(70));
+    for r in &results {
+        println!("{:<20} {:<22} {:>12} {:>12}", r.dataset, r.algorithm, r.patients_satisfied, r.time_ms);
     }
 }

@@ -382,7 +382,7 @@ pub fn run_simulated_annealing_timed(
     let mut i: u64 = 0;
     while start.elapsed() < duration {
         i += 1;
-        if i % 1000 == 0 {println!("Iteration: {}", i)}
+        // if i % 100000 == 0 {println!("Iteration: {}", i)}
         let op_idx = random_range(0..operators.len());
         let operator = operators[op_idx];
         let new_solution = operator.apply(&incumbent, state);
@@ -400,7 +400,6 @@ pub fn run_simulated_annealing_timed(
             if new_score > best_score {
                 best_solution = incumbent.clone();
                 best_score = new_score;
-                println!("New best score: {}", best_score);
             }
         } else {
             let p: f64 = libm::exp(delta / temp);

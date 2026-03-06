@@ -333,10 +333,10 @@ impl Operator for RandomRemoveOneAndRepair {
             // Extend the cycle with this path
             cycle.splice(next_index..next_index, path.into_iter());
 
-            let mut new_solution = solution.clone();
-            new_solution.cycles[cycle_idx] = cycle;
+            let mut new_cycles = solution.cycles.clone();
+            new_cycles[cycle_idx] = cycle;
 
-            return new_solution;
+            return Solution::new(new_cycles, state);
         }
         
         return solution.clone();
