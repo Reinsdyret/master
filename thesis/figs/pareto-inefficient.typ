@@ -4,11 +4,30 @@
   render("digraph {
     nodesep=0.6; // horizontal spacing
     ranksep=0.8; // vertical spacing
-    4 -> 3;
-    4 -> 2;
-    3 -> 4;
-    2 -> 1;
-    1 -> 4;
+
+
+    // Default node style
+    node [style=filled];
+    // Blue p-nodes
+    p4 [fillcolor=\"#4a90d9\"];
+    p2 [fillcolor=\"#4a90d9\"];
+    p3 [fillcolor=\"#4a90d9\"];
+    p1 [fillcolor=\"#4a90d9\"];
+
+    // Red d-nodes
+    d1 [fillcolor=\"#e05252\"];
+    d2 [fillcolor=\"#e05252\"];
+    d3 [fillcolor=\"#e05252\"];
+
+    p4 -> d2;
+    p2 -> d1;
+    p3 -> d1;
+    p1 -> d3;
+    d2 -> p2;
+    d2 -> p1;
+    d1 -> p4;
+    d3 -> p3;
+    
   }"),
-  caption: [ DANGER!!!! PERSON WITH PRIO 6 HAS TWO PREFERENCES HERE! An example where algorithm would chose a pareto inefficient solution. Numbers are priority values.]
+  caption: [ Example graph G where algorithm would choose suboptimal solution. Numbers are priority values.]
 )

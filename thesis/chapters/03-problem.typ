@@ -22,14 +22,14 @@ In this chapter we try to define the GP allocation problem and variations of it.
 
 Consider the GP allocation problem as given a list of patients $P$ and a list of doctors $D$. We then have patients $p_1, p_2, dots, p_n$ and doctors $d_1, d_2, dots, d_m$. We also are given the current and preferred doctor assignments as arrays:
 - $D_"current" [i]$ denotes the index of the current doctor assigned to patient $p_i$ (or $bot$ if unassigned)
-- $D_"preffered" [i]$ denotes the index of the preferred doctor for patient $p_i$
+- $D_"preferred" [i]$ denotes the index of the preferred doctor for patient $p_i$
 
 In addition we are given a priority function $R : P arrow NN$, mapping some positive integer to each patient, the higher the number the higher the priority.
 
 === Feasible solution
 A feasible solution for the GP allocation problem is a subset of patients $S subset.eq P$ such that the directed graph
 $
-G_S = (S, E_S), E_S = {(a,b) | a, b in S, D_"preffered" ["idx"(a)] = D_"current" ["idx(b)"]}
+G_S = (S, E_S), E_S = {(a,b) | a, b in S, D_"preferred" ["idx"(a)] = D_"current" ["idx(b)"]}
 $
 consists of a vertex-disjoint union of directed cycles that cover all vertices in $S$.
 Where $"idx"(x)$ is a function giving the index of a patient $x$.
@@ -110,5 +110,3 @@ This solution will be the one that exchanges the most patients and therefore mak
 ]
 
 #include "../figs/example-graph.typ"
-
-#include "../figs/pareto-inefficient.typ"
