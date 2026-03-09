@@ -102,8 +102,11 @@ impl CyclePacker {
         loop {
             match self.find_positive_cycle() {
                 Some(cycle) => {
-                    let cost: i32 = cycle.iter().map(|&(u, idx)| self.adj[u][idx].cost).sum();
-                    total_gain += cost;
+                    let (cost, bottleneck) = cycle.iter().fold((0i32, usize::MAX), |(c, b), &(u, idx)| {
+                        (c + self.adj[u][idx].cost, b.min(self.adj[u][idx].capacity))
+                    });
+                    let bottleneck = bottleneck.max(1);
+                    total_gain += cost * bottleneck as i32;
                     if total_gain >= last_reported_gain + report_interval {
                         println!("Total gain: {}", total_gain);
                         last_reported_gain = total_gain;
@@ -194,11 +197,16 @@ impl CyclePacker {
         Some(cycle_edges)
     }
     fn apply_cycle(&mut self, cycle: Vec<(usize, usize)>) {
+        let bottleneck = cycle.iter()
+            .map(|&(u, idx)| self.adj[u][idx].capacity)
+            .min()
+            .unwrap_or(1);
+
         for (u, idx) in cycle {
             let v = self.adj[u][idx].to;
             let rev_idx = self.adj[u][idx].rev;
-            self.adj[u][idx].capacity -= 1;
-            self.adj[v][rev_idx].capacity += 1;
+            self.adj[u][idx].capacity -= bottleneck;
+            self.adj[v][rev_idx].capacity += bottleneck;
         }
     }
 
