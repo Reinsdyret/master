@@ -1,0 +1,101 @@
+Priority comparison: PW vs TTC (100p_15d)
+Sorted by priority descending (highest priority number = most important)
+Patient ID   PW    TTC    Priority  Verdict
+------------------------------------------
+        37    Y      Y          99   both
+        60    Y      Y          98   both
+        97    Y      Y          97   both
+        62    Y      Y          96   both
+        56    Y      Y          95   both
+        11    Y      Y          94   both
+         8    Y      Y          93   both
+         2    Y      Y          92   both
+        14    Y      Y          90   both
+        38    Y      N          89  PW only
+        78    N      N          87  neither
+        52    N      N          86  neither
+        87    Y      Y          85   both
+        13    Y      Y          84   both
+        19    Y      Y          83   both
+        45    Y      Y          82   both
+        33    N      N          81  neither
+        42    Y      Y          80   both
+        79    Y      Y          79   both
+        22    Y      Y          78   both
+        96    Y      Y          76   both
+        75    Y      Y          75   both
+        69    N      N          74  neither
+        67    Y      Y          73   both
+        18    Y      Y          72   both
+        63    Y      Y          71   both
+        41    Y      Y          70   both
+       100    Y      Y          69   both
+        59    N      N          68  neither
+        31    N      N          67  neither
+        85    Y      Y          66   both
+        64    Y      N          65  PW only
+        73    Y      Y          64   both
+        20    Y      Y          63   both
+        70    N      Y          62  TTC only
+        72    N      N          61  neither
+        32    Y      Y          60   both
+        81    Y      N          59  PW only
+        43    Y      Y          58   both
+         6    Y      Y          57   both
+        12    Y      Y          56   both
+        26    N      N          55  neither
+        68    N      N          54  neither
+        24    Y      Y          53   both
+        82    N      N          52  neither
+        83    Y      Y          51   both
+        74    N      N          50  neither
+        51    Y      Y          49   both
+        95    Y      Y          48   both
+        17    N      N          47  neither
+        29    N      N          46  neither
+        94    N      N          45  neither
+        76    Y      Y          43   both
+        15    N      N          42  neither
+        28    Y      Y          41   both
+        91    Y      Y          40   both
+        86    N      N          39  neither
+        77    N      N          38  neither
+        30    N      N          37  neither
+        49    Y      Y          36   both
+        47    N      N          35  neither
+        80    N      N          33  neither
+        61    Y      Y          32   both
+        44    N      N          31  neither
+        46    Y      Y          30   both
+        53    N      N          29  neither
+        36    Y      N          28  PW only
+        98    N      N          27  neither
+        65    N      N          26  neither
+        71    N      N          25  neither
+        84    N      N          24  neither
+        34    N      N          23  neither
+        55    N      N          21  neither
+        50    Y      Y          20   both
+        21    Y      Y          19   both
+        99    N      N          18  neither
+        25    N      N          17  neither
+        66    N      N          16  neither
+        54    Y      Y          15   both
+        23    N      N          14  neither
+         5    N      N          12  neither
+        40    N      N          11  neither
+        88    N      N          10  neither
+         7    N      N           9  neither
+        48    N      N           8  neither
+         1    N      N           7  neither
+        39    N      N           6  neither
+        27    N      N           5  neither
+        35    N      N           4  neither
+        90    N      N           3  neither
+        93    N      N           2  neither
+         9    N      N           1  neither
+------------------------------------------
+Both satisfied : 43
+PW only        : 4
+TTC only       : 1
+Neither        : 44
