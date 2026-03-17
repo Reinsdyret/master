@@ -2,8 +2,9 @@
 
 #figure(
   render("digraph {
-    nodesep=0.6; // horizontal spacing
-    ranksep=0.8; // vertical spacing
+    rankdir=LR;
+    nodesep=0.4; // horizontal spacing
+    ranksep=0.4; // vertical spacing
 
 
     // Default node style
@@ -29,5 +30,5 @@
     d3 -> p3;
     
   }"),
-  caption: [ Example graph G where algorithm would choose suboptimal solution. Numbers are priority values.]
-)
+  caption: [ Example graph G where algorithm would choose suboptimal solution. p$x$ means patient $x$ and has priority $x$.]
+) <pareto-inefficient-graph>
