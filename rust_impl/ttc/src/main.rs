@@ -19,7 +19,7 @@ fn main() {
         "data/test_100_patient_15_doctors_0_unassigned.txt",
         "data/test_1000_patient_30_doctors_0_unassigned.txt",
         "data/test_10000_patient_150_doctors_0_unassigned.txt",
-        "data/test_100000_patient_1500_doctors_0_unassigned.txt",
+        // "data/test_100000_patient_1500_doctors_0_unassigned.txt",
     ];
 
     let mut results: Vec<RunResult> = Vec::new();
@@ -39,23 +39,23 @@ fn main() {
         let dataset = format!("{}p_{}d", num_patients, num_doctors);
 
         // --- CyclePacker (exact, cardinality) ---
-        // print!("  CyclePacker... ");
-        // let _ = std::io::stdout().flush();
-        // let t0 = std::time::Instant::now();
-        // let mut packer = CyclePacker::new(&patients, &doctors);
-        // packer.pack_cycles();
-        // let exact_ms = t0.elapsed().as_millis();
-        // let exact_satisfied = packer.count_satisfied_real_patients(&patients);
-        // println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
-        // results.push(RunResult {
-        //     dataset: dataset.clone(),
-        //     num_patients,
-        //     num_doctors,
-        //     algorithm: "CyclePacker".to_string(),
-        //     patients_satisfied: exact_satisfied,
-        //     patients_wanting_switch,
-        //     time_ms: exact_ms,
-        // });
+        print!("  CyclePacker... ");
+        let _ = std::io::stdout().flush();
+        let t0 = std::time::Instant::now();
+        let mut packer = CyclePacker::new(&patients, &doctors);
+        packer.pack_cycles();
+        let exact_ms = t0.elapsed().as_millis();
+        let exact_satisfied = packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "CyclePacker".to_string(),
+            patients_satisfied: exact_satisfied,
+            patients_wanting_switch,
+            time_ms: exact_ms,
+        });
 
         // --- CyclePacker (priority-weighted) ---
         print!("  CyclePacker (priority-weighted)... ");
