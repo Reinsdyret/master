@@ -7,7 +7,7 @@
 
 == Greedy DFS
 
-We first consider a greedy approach inspired by the Top Trading Cycles implementation of Huitfeld et al. Their algorithm preserves Pareto optimality at each round by restricting each doctor node to a single outgoing edge. We relaxed this constraint, allowing each doctor to maintain outgoing edges to all of its current patients simultaneously, and resolved ties by patient priority.
+We first consider a greedy approach inspired by the Top Trading Cycles implementation of Huitfeld et al. Their algorithm preserves TTC properties at each round by restricting each doctor node to a single outgoing edge. We relaxed this constraint, allowing each doctor to maintain outgoing edges to all of its current patients simultaneously, and resolved ties by patient priority.
 
 We are given the lists of patients and doctors $P, D$, the assignment arrays $D_"cur", D_"pref"$, and a priority function $R : P arrow NN$, where a higher number means higher priority. We model the problem as a bipartite directed graph over patients and doctors. Let $I = {0, ..., |P|-1}$. Then:
 
@@ -47,7 +47,7 @@ Had the DFS chosen $p 1$ at $d 2$ instead, it would have found the longer cycle 
 
 == Exact algorithm for maximizing total switches
 
-This algorithm applies the classical cycle canceling technique from network flow theory to the GP-switching problem, finding the maximum-cardinality feasible solution in polynomial time. The key insight is that the problem reduces to a maximum integer circulation, for which efficient algorithms are known.
+This algorithm applies the classical cycle canceling technique from network flow theory to the GP-switching problem, finding the maximum-cardinality feasible solution in polynomial time @ahuja1993[§9.6]. The key insight is that the problem reduces to a maximum integer circulation, for which efficient algorithms are known.
 
 === Graph structure
 

@@ -21,15 +21,15 @@ In this chapter we try to define the GP allocation problem and variations of it.
 === Input
 
 Consider the GP allocation problem as given a list of patients $P$ and a list of doctors $D$. We then have patients $p_1, p_2, dots, p_n$ and doctors $d_1, d_2, dots, d_m$. We also are given the current and preferred doctor assignments as arrays:
-- $D_"current" [i]$ denotes the index of the current doctor assigned to patient $p_i$ (or $bot$ if unassigned)
-- $D_"preferred" [i]$ denotes the index of the preferred doctor for patient $p_i$
+- $D_"cur" [i]$ denotes the index of the current doctor assigned to patient $p_i$ (or $bot$ if unassigned)
+- $D_"pref" [i]$ denotes the index of the preferred doctor for patient $p_i$
 
 In addition we are given a priority function $R : P arrow NN$, mapping some positive integer to each patient, the higher the number the higher the priority.
 
 === Feasible solution
 A feasible solution for the GP allocation problem is a subset of patients $S subset.eq P$ such that the directed graph
 $
-G_S = (S, E_S), E_S = {(a,b) | a, b in S, D_"preferred" ["idx"(a)] = D_"current" ["idx"(b)]}
+G_S = (S, E_S), E_S = {(a,b) | a, b in S, D_"pref" ["idx"(a)] = D_"cur" ["idx"(b)]}
 $
 consists of a vertex-disjoint union of directed cycles that cover all vertices in $S$.
 Where $"idx"(x)$ is a function giving the index of a patient $x$.
@@ -66,11 +66,11 @@ Intuitively, $chi(S)$ is a binary number whose most significant bit corresponds 
 
 #example("Ordering two solutions lexicographically by priority")[
 
-  We use the example graph $G$ below as the graph to create solutions from.
+  We use the example graph in @example-graph as the graph to create solutions from.
 
   Given solutions
   + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing cycle $P_4 arrow P_5 arrow P_4$
-  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_{S'}$ containing cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
+  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_S'$ containing cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
 
   For simplicity's sake we say that $R(P_i) = i$, so $P_5$ has the highest priority.
 

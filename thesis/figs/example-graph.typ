@@ -11,4 +11,4 @@
     3 -> 1;
   }"),
   caption: [An example graph G.]
-)
+) <example-graph>
