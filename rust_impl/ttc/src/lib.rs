@@ -2,6 +2,7 @@ pub mod benchmarking;
 pub mod scc;
 pub mod ttc_scc;
 pub mod excact;
+pub mod dinic;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -625,6 +626,117 @@ pub fn restricted_ttc_algorithm(initState: &mut TTCState) -> TTCResultWithStats 
         total_capacity: 0,
         initial_capacity_used: 0,
     }
+}
+
+/// Classic Top Trading Cycles algorithm.
+///
+/// Each round:
+///   - Every doctor points to their highest-priority switching patient (outdegree 1).
+///   - Every patient points to their preferred doctor (outdegree 1).
+/// Because every active node has outdegree 1, cycles are guaranteed and disjoint.
+/// All cycles in a round are found in O(n) by following chains, then executed simultaneously.
+/// Rounds continue until no active patients remain.
+pub fn true_ttc_algorithm(state: &mut TTCState) -> TTCResultWithStats {
+    let mut solution: HashSet<usize> = HashSet::new();
+    let mut cycles_found = 0;
+    let mut total_reassigned = 0;
+    let mut cycle_stats = CycleStats::new();
+
+    loop {
+        let cycles = find_all_ttc_cycles(state);
+        if cycles.is_empty() {
+            break;
+        }
+        for cycle in &cycles {
+            cycles_found += 1;
+            cycle_stats.record_cycle(cycle.len());
+            for &pid in cycle {
+                if let Some(p) = state.get_patient(pid) {
+                    if !p.is_dummy {
+                        solution.insert(p.priority);
+                        total_reassigned += 1;
+                    }
+                }
+            }
+            execute_cycle(cycle, state);
+        }
+    }
+
+    TTCResultWithStats {
+        solution,
+        cycles_found,
+        patients_reassigned: total_reassigned,
+        patients_pruned: 0,
+        remaining_capacity: state.get_total_availability(),
+        cycle_stats,
+        initial_unsatisfied: 0,
+        final_unsatisfied: 0,
+        initial_unassigned: 0,
+        final_unassigned: 0,
+        total_capacity: 0,
+        initial_capacity_used: 0,
+    }
+}
+
+/// Find all cycles in the current TTC functional graph.
+///
+/// The graph has two node types that alternate in every cycle:
+///   patient → preferred_doctor → top_patient_of(preferred_doctor) → ...
+///
+/// Since every node has outdegree 1, cycles are disjoint and found by
+/// following chains with a 3-color scheme (unvisited / in-path / done).
+/// Only real (non-dummy) patients are used as chain starting points; dummy
+/// patients can appear mid-chain as capacity-slot participants.
+fn find_all_ttc_cycles(state: &TTCState) -> Vec<Vec<usize>> {
+    let max_id = state.patients.len();
+    // 0 = unvisited, 1 = in current chain, 2 = done (no new cycle reachable)
+    let mut color = vec![0u8; max_id + 1];
+    let mut path_pos = vec![0usize; max_id + 1]; // position in `path` when a node was colored 1
+
+    let mut cycles: Vec<Vec<usize>> = Vec::new();
+
+    for start in &state.patients {
+        if start.is_dummy || !start.wants_to_switch || color[start.id] != 0 {
+            continue;
+        }
+
+        let mut path: Vec<usize> = Vec::new();
+        let mut cur = start.id;
+
+        loop {
+            match color[cur] {
+                2 => break, // dead end — already fully processed
+                1 => {
+                    // We've closed a cycle: extract the cycle portion of the path
+                    cycles.push(path[path_pos[cur]..].to_vec());
+                    break;
+                }
+                _ => {}
+            }
+
+            // Follow: patient → preferred doctor → top switching patient of that doctor
+            let pref_doc = match state.patients.get(cur - 1) {
+                Some(p) if p.wants_to_switch => p.preferred_doctor,
+                _ => break,
+            };
+            let next = match state.doctors.get(pref_doc) {
+                Some(d) if !d.switching_patients.is_empty() => d.switching_patients[0].id,
+                _ => break,
+            };
+
+            color[cur] = 1;
+            path_pos[cur] = path.len();
+            path.push(cur);
+            cur = next;
+        }
+
+        // Everything we touched in this chain is done for this round
+        for &pid in &path {
+            color[pid] = 2;
+        }
+    }
+
+    cycles
 }
 
 pub fn restricted_dfs(patient_id: usize, state: &mut TTCState) -> Option<Vec<usize>>{

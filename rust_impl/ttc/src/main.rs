@@ -1,5 +1,5 @@
-use ttc::excact::{CyclePacker, PwCyclePacker};
-use ttc::{ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCState, parse_data_file};
+use ttc::excact::{CyclePacker, PwCyclePacker, solve_with_dinic_polynomial};
+use ttc::{ttc_algorithm, true_ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCState, parse_data_file};
 use std::fs::File;
 use std::io::Write;
 use std::collections::HashSet;
@@ -19,7 +19,7 @@ fn main() {
         "data/test_100_patient_15_doctors_0_unassigned.txt",
         "data/test_1000_patient_30_doctors_0_unassigned.txt",
         "data/test_10000_patient_150_doctors_0_unassigned.txt",
-        // "data/test_100000_patient_1500_doctors_0_unassigned.txt",
+        "data/test_100000_patient_1500_doctors_0_unassigned.txt",
     ];
 
     let mut results: Vec<RunResult> = Vec::new();
@@ -39,23 +39,23 @@ fn main() {
         let dataset = format!("{}p_{}d", num_patients, num_doctors);
 
         // --- CyclePacker (exact, cardinality) ---
-        print!("  CyclePacker... ");
-        let _ = std::io::stdout().flush();
-        let t0 = std::time::Instant::now();
-        let mut packer = CyclePacker::new(&patients, &doctors);
-        packer.pack_cycles();
-        let exact_ms = t0.elapsed().as_millis();
-        let exact_satisfied = packer.count_satisfied_real_patients(&patients);
-        println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
-        results.push(RunResult {
-            dataset: dataset.clone(),
-            num_patients,
-            num_doctors,
-            algorithm: "CyclePacker".to_string(),
-            patients_satisfied: exact_satisfied,
-            patients_wanting_switch,
-            time_ms: exact_ms,
-        });
+        // print!("  CyclePacker... ");
+        // let _ = std::io::stdout().flush();
+        // let t0 = std::time::Instant::now();
+        // let mut packer = CyclePacker::new(&patients, &doctors);
+        // packer.pack_cycles();
+        // let exact_ms = t0.elapsed().as_millis();
+        // let exact_satisfied = packer.count_satisfied_real_patients(&patients);
+        // println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
+        // results.push(RunResult {
+        //     dataset: dataset.clone(),
+        //     num_patients,
+        //     num_doctors,
+        //     algorithm: "CyclePacker".to_string(),
+        //     patients_satisfied: exact_satisfied,
+        //     patients_wanting_switch,
+        //     time_ms: exact_ms,
+        // });
 
         // --- CyclePacker (priority-weighted) ---
         print!("  CyclePacker (priority-weighted)... ");
@@ -101,6 +101,26 @@ fn main() {
             patients_satisfied: ttc_result.patients_reassigned,
             patients_wanting_switch,
             time_ms: ttc_ms,
+        });
+
+        // --- True TTC ---
+        print!("  TTC (True)... ");
+        let _ = std::io::stdout().flush();
+        let t2 = std::time::Instant::now();
+        let mut true_ttc_state = TTCState::new(patients.clone(), doctors.clone());
+        let true_ttc_result = true_ttc_algorithm(&mut true_ttc_state);
+        let true_ttc_ms = t2.elapsed().as_millis();
+        println!("{} satisfied in {}ms", true_ttc_result.patients_reassigned, true_ttc_ms);
+        verify_ttc_result(&original_patients, &true_ttc_state);
+
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "TTC_True".to_string(),
+            patients_satisfied: true_ttc_result.patients_reassigned,
+            patients_wanting_switch,
+            time_ms: true_ttc_ms,
         });
 
         // --- Patient-by-patient comparison (PW vs TTC, sorted by priority descending) ---

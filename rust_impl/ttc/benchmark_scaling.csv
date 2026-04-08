@@ -1,9 +1,13 @@
 dataset,num_patients,num_doctors,algorithm,patients_satisfied,patients_wanting_switch,satisfaction_rate,time_ms
 100p_15d,100,15,CyclePacker_PriorityWeighted,47,92,0.5109,0
 100p_15d,100,15,TTC_StrictPriority,44,92,0.4783,0
+100p_15d,100,15,TTC_True,22,92,0.2391,0
 1000p_30d,1000,30,CyclePacker_PriorityWeighted,591,962,0.6143,2
 1000p_30d,1000,30,TTC_StrictPriority,647,962,0.6726,0
-10000p_150d,10000,150,CyclePacker_PriorityWeighted,5872,9941,0.5907,260
-10000p_150d,10000,150,TTC_StrictPriority,6397,9941,0.6435,33
-100000p_1500d,100000,1500,CyclePacker_PriorityWeighted,59832,99924,0.5988,30045
-100000p_1500d,100000,1500,TTC_StrictPriority,65258,99924,0.6531,107
+1000p_30d,1000,30,TTC_True,441,962,0.4584,3
+10000p_150d,10000,150,CyclePacker_PriorityWeighted,5872,9941,0.5907,247
+10000p_150d,10000,150,TTC_StrictPriority,6397,9941,0.6435,32
+10000p_150d,10000,150,TTC_True,4006,9941,0.4030,76
+100000p_1500d,100000,1500,CyclePacker_PriorityWeighted,59832,99924,0.5988,24674
+100000p_1500d,100000,1500,TTC_StrictPriority,65258,99924,0.6531,99
+100000p_1500d,100000,1500,TTC_True,31800,99924,0.3182,2577

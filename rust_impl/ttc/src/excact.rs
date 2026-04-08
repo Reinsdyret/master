@@ -1,7 +1,7 @@
 // Implementation of the excact algorithm finding cycles, then using residual graph from cycles finds extension of existing cycles or new cycles
 // All of this until otimal solution is found
 
-use crate::{Doctor, Patient};
+use crate::{Doctor, Patient, dinic::Dinic};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Clone, Debug)]
@@ -21,6 +21,9 @@ pub struct CyclePacker {
     pred_edge: Vec<usize>,
     in_queue: Vec<bool>,
     enqueue_count: Vec<usize>,
+    // Generation-stamped array for cycle entry detection — no per-call reset
+    walk_visited: Vec<u32>,
+    walk_gen: u32,
 }
 
 impl CyclePacker {
@@ -38,6 +41,8 @@ impl CyclePacker {
             pred_edge: vec![0; n],
             in_queue: vec![false; n],
             enqueue_count: vec![0; n],
+            walk_visited: vec![0u32; n],
+            walk_gen: 0,
         };
 
         let mut edges: Vec<(usize, usize)> =
@@ -159,9 +164,16 @@ impl CyclePacker {
             return None;
         }
 
-        // Walk back n steps to land inside the cycle
+        // Walk back through predecessors until we revisit a node — that's the true cycle entry.
+        // Uses a generation stamp so no reset is needed.
+        self.walk_gen = self.walk_gen.wrapping_add(1);
+        let stamp = self.walk_gen;
         let mut v = cycle_node;
-        for _ in 0..n {
+        loop {
+            if self.walk_visited[v] == stamp {
+                break;
+            }
+            self.walk_visited[v] = stamp;
             v = self.pred_node[v];
         }
 
@@ -651,4 +663,64 @@ impl PwCyclePacker {
         }
         result
     }
+}
+
+
+pub fn solve_with_dinic_polynomial(patients: &Vec<Patient>, doctors: &Vec<Doctor>) -> i32 {
+    let n = doctors.len();
+    // 2 nodes per doctor + Super S + Super T
+    let mut dinic = Dinic::new(2 * n + 2);
+    let s = 2 * n;
+    let t = 2 * n + 1;
+
+    // 1. Map Doctors to In/Out nodes
+    for i in 0..n {
+        let node_in = i;
+        let node_out = i + n;
+        // Internal doctor edge
+        dinic.add_edge(node_in, node_out, i32::MAX);
+        // Connect to Super S/T
+        dinic.add_edge(s, node_in, i32::MAX);
+        dinic.add_edge(node_out, t, i32::MAX);
+    }
+
+    let mut edges: Vec<(usize, usize)> =
+            Vec::with_capacity(doctors.len() * doctors.len());
+
+        for p in patients {
+            let curr_doc = p.current_doctor.unwrap();
+            let pref_doc = p.preferred_doctor;
+            if curr_doc == pref_doc {
+                continue;
+            }
+
+            edges.push((curr_doc, pref_doc));
+        }
+
+        edges.sort();
+
+    // 2. Add Patient Request Edges
+    // Use your merged edges logic here
+    let mut merged: Vec<(usize, usize, usize)> =
+            Vec::with_capacity(doctors.len() * doctors.len());
+        for (u, v) in edges {
+            if let Some(last) = merged.last_mut() {
+                if last.0 == u && last.1 == v {
+                    last.2 += 1;
+                    continue;
+                }
+            }
+            merged.push((u, v, 1));
+        }
+    for (u_idx, v_idx, count) in merged {
+        // Patients move from u's Out-node to v's In-node
+        dinic.add_edge(u_idx + n, v_idx, count as i32);
+    }
+
+    // 3. The Circulation Return Edge
+    // This allows flow to circulate back from Sink to Source
+    dinic.add_edge(t, s, i32::MAX);
+
+    // 4. Run Dinic once
+    dinic.max_flow(s, t)
 }
