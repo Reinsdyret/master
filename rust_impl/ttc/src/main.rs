@@ -1,8 +1,69 @@
 use ttc::excact::{CyclePacker, PwCyclePacker, solve_with_dinic_polynomial};
-use ttc::{ttc_algorithm, true_ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCState, parse_data_file};
+use ttc::{ttc_algorithm, true_ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCState, parse_data_file, Patient};
 use std::fs::File;
 use std::io::Write;
 use std::collections::HashSet;
+
+fn lex_compare(
+    a_set: &HashSet<usize>,
+    b_set: &HashSet<usize>,
+    switching: &[&Patient],
+    label_a: &str,
+    label_b: &str,
+    out_path: &str,
+) {
+    let mut a_leads = 0usize;
+    let mut b_leads = 0usize;
+    let mut both = 0usize;
+    let mut neither = 0usize;
+
+    let mut f = File::create(out_path).expect("failed to create comparison file");
+    writeln!(f, "Lex comparison: {} vs {} — sorted by priority descending", label_a, label_b).unwrap();
+    writeln!(f, "{:>10}  {:>5}  {:>5}  {:>10}  {:>10}",
+        "PatientID", label_a, label_b, "Priority", "Verdict").unwrap();
+    writeln!(f, "{}", "-".repeat(50)).unwrap();
+
+    for p in switching {
+        let in_a = a_set.contains(&p.priority);
+        let in_b = b_set.contains(&p.priority);
+        let verdict = match (in_a, in_b) {
+            (true,  true)  => { both    += 1; "both" }
+            (true,  false) => { a_leads += 1; "A only" }
+            (false, true)  => { b_leads += 1; "B only" }
+            (false, false) => { neither += 1; "neither" }
+        };
+        writeln!(f, "{:>10}  {:>5}  {:>5}  {:>10}  {:>10}",
+            p.id,
+            if in_a { "Y" } else { "N" },
+            if in_b { "Y" } else { "N" },
+            p.priority,
+            verdict).unwrap();
+    }
+
+    writeln!(f, "{}", "-".repeat(50)).unwrap();
+    writeln!(f, "Both      : {}", both).unwrap();
+    writeln!(f, "A only    : {}", a_leads).unwrap();
+    writeln!(f, "B only    : {}", b_leads).unwrap();
+    writeln!(f, "Neither   : {}", neither).unwrap();
+    println!("  Lex comparison written to {}", out_path);
+
+    let first_a_only = switching.iter().find(|p| a_set.contains(&p.priority) && !b_set.contains(&p.priority));
+    let first_b_only = switching.iter().find(|p| !a_set.contains(&p.priority) && b_set.contains(&p.priority));
+    match (first_a_only, first_b_only) {
+        (Some(ap), Some(bp)) if ap.priority > bp.priority =>
+            println!("  [{}  wins lex] first divergence: {} satisfies priority {} (patient {}), {} satisfies priority {} (patient {})",
+                label_a, label_a, ap.priority, ap.id, label_b, bp.priority, bp.id),
+        (Some(ap), Some(bp)) =>
+            println!("  [{} wins lex] first divergence: {} satisfies priority {} (patient {}), {} satisfies priority {} (patient {})",
+                label_b, label_b, bp.priority, bp.id, label_a, ap.priority, ap.id),
+        (Some(ap), None) =>
+            println!("  [{} strictly dominates] first exclusive at priority {} (patient {})", label_a, ap.priority, ap.id),
+        (None, Some(bp)) =>
+            println!("  [{} strictly dominates] first exclusive at priority {} (patient {})", label_b, bp.priority, bp.id),
+        (None, None) =>
+            println!("  [Equal] both algorithms satisfy exactly the same patients"),
+    }
+}
 
 struct RunResult {
     dataset: String,
@@ -110,6 +171,7 @@ fn main() {
         let mut true_ttc_state = TTCState::new(patients.clone(), doctors.clone());
         let true_ttc_result = true_ttc_algorithm(&mut true_ttc_state);
         let true_ttc_ms = t2.elapsed().as_millis();
+        let true_ttc_satisfied_priorities: &HashSet<usize> = &true_ttc_result.solution;
         println!("{} satisfied in {}ms", true_ttc_result.patients_reassigned, true_ttc_ms);
         verify_ttc_result(&original_patients, &true_ttc_state);
 
@@ -123,73 +185,30 @@ fn main() {
             time_ms: true_ttc_ms,
         });
 
-        // --- Patient-by-patient comparison (PW vs TTC, sorted by priority descending) ---
+        // --- Lex comparisons ---
 
-        // Get all switching real patients, sort by priority descending (highest = most important)
-        
         let mut switching: Vec<_> = patients.iter()
             .filter(|p| !p.is_dummy && p.wants_to_switch)
             .collect();
         switching.sort_by(|a, b| b.priority.cmp(&a.priority));
 
-        let mut pw_leads = 0usize;
-        let mut ttc_leads = 0usize;
-        let mut both = 0usize;
-        let mut neither = 0usize;
+        lex_compare(
+            &pw_satisfied_priorities,
+            ttc_satisfied_priorities,
+            &switching,
+            "PW",
+            "SP",
+            &format!("lex_pw_vs_sp_{}.txt", dataset),
+        );
 
-        let cmp_path = format!("priority_comparison_{}.txt", dataset);
-        let mut cmp_file = File::create(&cmp_path).expect("failed to create comparison file");
-        writeln!(cmp_file, "Priority comparison: PW vs TTC ({})", dataset).unwrap();
-        writeln!(cmp_file, "Sorted by priority descending (highest priority number = most important)").unwrap();
-        writeln!(cmp_file, "{:>10}  {:>3}  {:>5}  {:>10}  {:>5}",
-            "Patient ID", "PW", "TTC", "Priority", "Verdict").unwrap();
-        writeln!(cmp_file, "{}", "-".repeat(42)).unwrap();
-
-        for p in &switching {
-            let in_pw  = pw_satisfied_priorities.contains(&p.priority);
-            let in_ttc = ttc_satisfied_priorities.contains(&p.priority);
-
-            let verdict = match (in_pw, in_ttc) {
-                (true,  true)  => { both      += 1; "both" }
-                (true,  false) => { pw_leads  += 1; "PW only" }
-                (false, true)  => { ttc_leads += 1; "TTC only" }
-                (false, false) => { neither   += 1; "neither" }
-            };
-
-            writeln!(cmp_file, "{:>10}  {:>3}  {:>5}  {:>10}  {:>5}",
-                p.id,
-                if in_pw  { "Y" } else { "N" },
-                if in_ttc { "Y" } else { "N" },
-                p.priority,
-                verdict).unwrap();
-        }
-
-        writeln!(cmp_file, "{}", "-".repeat(42)).unwrap();
-        writeln!(cmp_file, "Both satisfied : {}", both).unwrap();
-        writeln!(cmp_file, "PW only        : {}", pw_leads).unwrap();
-        writeln!(cmp_file, "TTC only       : {}", ttc_leads).unwrap();
-        writeln!(cmp_file, "Neither        : {}", neither).unwrap();
-        println!("  Per-patient comparison written to {}", cmp_path);
-
-        // Console summary: find the highest-priority patient where the algorithms first diverge
-        let first_pw_only  = switching.iter().find(|p| pw_satisfied_priorities.contains(&p.priority) && !ttc_satisfied_priorities.contains(&p.priority));
-        let first_ttc_only = switching.iter().find(|p| !pw_satisfied_priorities.contains(&p.priority) && ttc_satisfied_priorities.contains(&p.priority));
-        match (first_pw_only, first_ttc_only) {
-            (Some(pw_p), Some(ttc_p)) if pw_p.priority > ttc_p.priority =>
-                println!("  [OK] PW leads at priority {} (patient {}), TTC's first exclusive is priority {} (patient {}) — PW wins the lex comparison",
-                    pw_p.priority, pw_p.id, ttc_p.priority, ttc_p.id),
-            (Some(pw_p), Some(ttc_p)) =>
-                println!("  [WARN] TTC leads at priority {} (patient {}) before PW leads at priority {} (patient {}) — TTC wins the lex comparison; priority weighting is NOT dominating",
-                    ttc_p.priority, ttc_p.id, pw_p.priority, pw_p.id),
-            (Some(pw_p), None) =>
-                println!("  [OK] PW strictly dominates: first exclusive gain at priority {} (patient {}), TTC never satisfies a patient that PW misses",
-                    pw_p.priority, pw_p.id),
-            (None, Some(ttc_p)) =>
-                println!("  [WARN] TTC dominates: TTC satisfies priority {} (patient {}) that PW misses, and PW never satisfies anyone TTC misses — priority weighting is WORSE than TTC",
-                    ttc_p.priority, ttc_p.id),
-            (None, None) =>
-                println!("  [OK] Both algorithms satisfy exactly the same patients"),
-        }
+        lex_compare(
+            ttc_satisfied_priorities,
+            true_ttc_satisfied_priorities,
+            &switching,
+            "SP",
+            "True",
+            &format!("lex_sp_vs_true_{}.txt", dataset),
+        );
     }
     
 
