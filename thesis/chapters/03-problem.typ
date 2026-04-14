@@ -38,7 +38,7 @@ So this means our solution $S$ is a set of all patients that can exchange doctor
 === Optimization criterion
 With this feasible solution defined we can start defining variants where we want feasible solution that maximizes some _score_.
 When choosing what patients should be exchanging we might have different qualities that we want in our solutions. 
-We might want a solution that exchanges as many patients as possible or that exchanges patients with the highest priority.
+We might want a solution that exchanges as many patients as possible, exchanges patients with the highest priority or mix of these.
 
 First we define our general ordering
 #definition("Optimization criterion")[
@@ -86,7 +86,7 @@ This means always prioritizing those with highest priority.
 
 ==== Maximizing cardinality
 
-The other variant is finding a solution with the largest cardinality, e.g. the solution that contains the most patients.
+Another variant is finding a solution with the largest cardinality, e.g. the solution that contains the most patients.
 
 #definition("Ordering by cardinality")[
   $
@@ -108,3 +108,51 @@ This solution will be the one that exchanges the most patients and therefore mak
 ]
 
 #include "../figs/example-graph.typ"
+
+
+==== Maximizing utility
+
+Finally we can formulate an ordering that is somewhat of a combination of $succ_"lex"$ and $succ_"size"$ which is the total utility of a solution.
+We define the total utility to be sum of priorities.
+
+#definition("Total utility function")[
+  $
+  U(S) = sum_(p in S) R(p)
+  $
+]
+
+#definition("Ordering by total utility")[
+  $
+  S succ_"util" S' "iff" U(S) > U(S')
+  $
+]
+
+This means that even though solution $S'$ contains some high priority patients, if $S$ contains enough lower priority patients then $S$ can be more maximal under $succ_"util"$.
+
+#example("Ordering two solutions by total utility")[
+  
+  We use the following solutions from @example-graph-2:
+  + $S = {1,2,3,4}$ representing the cycle $P_1 arrow P_2 arrow P_3 arrow P_4 arrow P_1$
+  + $S' = {4,5}$ representing the cycle $P_4 arrow P_5 arrow P_4$
+
+  Now the total utility is as follows: \
+  $U(S) = 1 + 2 + 3 + 4 = 10$ \
+  $U(S') = 4 + 5 = 9$
+
+  So $S succ_"util" S'$, here we see that its the combination of more patients with lesser priority that can make a solution be better under $succ_"util"$ than another with greater priority.
+]
+
+#include "../figs/example-graph-2.typ"
+
+
+=== Priority function
+The priority function has quite a large effect on the switches we end up taking. As the priority of a patient decides if that patient will be in the solution or not for most of the algorithms, except for the exact algorithm maximizing cardinality $succ_"size"$.
+This is why its important to discuss what effects the function can have on solutions when we are maximizing the ordering $succ_"util"$.
+
+If we make the priority function exponential such that $R(a) = 2^a$ then using the ordering $succ_"util"$ becomes equal to $succ_"lex"$.
+While this ordering is in terms maybe the most fair it might not always be the best for the collective good, since a high priority patient might block a lot of lower priority patients from switching.
+This way we might want a priority function like $R(a) = "Days patient" a "has been waiting for a switch"$.
+This way if we have the choice between patient $P_i$ who has waited for 30 days $R(P_i) = 30$ and 4 patients who have waited 40 days in total an algorithm maximizing $succ_"util"$ will choose the 4 patients.
+
+We can adjust the priority function to prioritize higher priority by making it exponential but still under the 2^a. When we use days waited we can make $R(a) = 1.1 ^ ("Days patient a has been waiting")$
+Adjusting this 1.1 closer and closer to 2 makes higher priority patients more prioritized and vice versa for lowering it.

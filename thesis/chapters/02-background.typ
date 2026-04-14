@@ -1,6 +1,6 @@
 = Background <ch:background>
 
-#lorem(100)
+Problems like the GP allocation problem have been studied for quite some time with a lot of variations. 
 
 == The GP Allocation Problem in Norway
 
