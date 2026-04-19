@@ -132,12 +132,12 @@ This means that even though solution $S'$ contains some high priority patients, 
 #example("Ordering two solutions by total utility")[
   
   We use the following solutions from @example-graph-2:
-  + $S = {1,2,3,4}$ representing the cycle $P_1 arrow P_2 arrow P_3 arrow P_4 arrow P_1$
-  + $S' = {4,5}$ representing the cycle $P_4 arrow P_5 arrow P_4$
+  + $S = {1,3,4}$ representing the cycle $P_1 arrow P_3 arrow P_4 arrow P_1$
+  + $S' = {5,2}$ representing the cycle $P_5 arrow P_2 arrow P_5$
 
   Now the total utility is as follows: \
-  $U(S) = 1 + 2 + 3 + 4 = 10$ \
-  $U(S') = 4 + 5 = 9$
+  $U(S) = 1 + 3 + 4 = 8$ \
+  $U(S') = 2 + 5 = 7$
 
   So $S succ_"util" S'$, here we see that its the combination of more patients with lesser priority that can make a solution be better under $succ_"util"$ than another with greater priority.
 ]
@@ -155,4 +155,4 @@ This way we might want a priority function like $R(a) = "Days patient" a "has be
 This way if we have the choice between patient $P_i$ who has waited for 30 days $R(P_i) = 30$ and 4 patients who have waited 40 days in total an algorithm maximizing $succ_"util"$ will choose the 4 patients.
 
 We can adjust the priority function to prioritize higher priority by making it exponential but still under the 2^a. When we use days waited we can make $R(a) = 1.1 ^ ("Days patient a has been waiting")$
-Adjusting this 1.1 closer and closer to 2 makes higher priority patients more prioritized and vice versa for lowering it.
+Adjusting this closer to 2 makes higher priority patients more prioritized and vice versa for lowering it.

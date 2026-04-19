@@ -45,7 +45,10 @@ In @pareto-inefficient-graph each patient $p x$ has priority $x$. The DFS begins
 
 Had the DFS chosen $p 1$ at $d 2$ instead, it would have found the longer cycle $p 4 arrow d 2 arrow p 1 arrow d 3 arrow p 3 arrow d 1 arrow p 4$, satisfying three patients. The greedy choice at $d 2$ was locally motivated by priority but globally suboptimal. This motivates the exact algorithms in the following sections.
 
+
+
 == Exact algorithm for maximizing total switches
+#text(fill: red)[*NB: HER OG NESTE ER DET MYE AI, NOE JEG VIL HØRE DERES MENING OM. NOE AV DETTE SYNES JEG ER SKREVET BRA, ANDRE LITT USIKKER. INKLUDERT KILDENE ER IKKE RIKTIG*]
 
 This algorithm applies the classical cycle canceling technique from network flow theory to the GP-switching problem, finding the maximum-cardinality feasible solution in polynomial time @ahuja1993[§9.6]. The key insight is that the problem reduces to a maximum integer circulation, for which efficient algorithms are known.
 
