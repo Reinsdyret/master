@@ -1,9 +1,9 @@
 = Introduction <ch:introduction>
 
-The norwegian general practitioner (GP) system, started in 2001, has aim to serve the norwegian population with a stable GP.
-This GP can follow their patients over time, with focus that creates a trustful and safe relation. @legelisten2024
-Today this system runs great, GPs are respected and handles most of the populations needs.
-As of December 2025 the number of GPs in Norway is 5720 and the total number of citizents in the norwegian GP system is 5.6 million, so about a thousand patients per GP. @helfo2024
+The Norwegian general practitioner (GP) system, started in 2001, has aim to serve the Norwegian population with a stable GP.
+A GP can follow his or hers patients over time, creating a trustful and safe relationship @legelisten2024.
+Today this system works as intended, and GPs handle most of the populations needs.
+As of December 2025 the number of GPs in Norway is 5720 and the total number of citizents in the Norwegian GP system is 5.6 million. The amount of patients each GP has varies but on average each GP has about a thousand patients @helfo2024.
 
 /*
 #figure(
@@ -12,19 +12,20 @@ As of December 2025 the number of GPs in Norway is 5720 and the total number of 
 ) <fig:max-patients-per-gp>
 */
 
-The current inefficiency in the GP system is when a person wants to switch their GP. They then have to find a GP they would rather want and switch to it.
-If that GP has a full list, the person has to get in a queue for a space at that GP. In December the number of open GP lists was 1340, so about 77% of all GPs had no extra capacity. @ssb12005
-In a more densely populated city like Bergen, the numbers are even worse. In December 2025 Bergen had 268 GPs and only 7 GPs that were not full, thats 97% of GPs in Bergen had no extra capacity. @ssb12005
+One inefficiency in the GP system is when a person wants to switch from one GP to another.
+If the GP they want to switch to does not have any more capacity for new patients, the person has to sign up in a queue and wait for a free slot to open up with that GP. In December the number of open GP lists was 1340, indicating that 77% of all GPs had no extra capacity @ssb12005.
+In a more densely populated city such as Bergen, the numbers are even worse. In December 2025 Bergen had 268 GPs and only 7 GPs that had available capacity for new patients. Thats 97% of the GPs in Bergen had no extra capacity @ssb12005.
 
-When a person wants to switch GP they often have to choose a full GP and then wait in line. In December 2025 there was about 300,000 people in waitlists for GPs in Norway. @helfo2024
-This many in waitlists on only 5720 doctors leads to a very dense network, meaning many people want the same doctor or each others doctors. We can then often encounter cycles, in that a person $P_A$ wants doctor $D_A$ which currently has $P_B$ as a patient, but $P_B$ wants to switch to doctor $D_B$ who currently has $P_A$ as a patient.
-With this case patient $P_A$ ends up waiting for an open space in $P_B$'s doctor and vice versa, but logically instead of waiting $P_A$ and $P_B$ could just swap doctors.
+When a person wants to switch to a GP that has no excess capacity they must sign up and then wait in line. In December 2025 there were about 300,000 people waiting for GPs in Norway @helfo2024.
+As there are only 5720 doctors each doctor has on average more than 50 people on his or hers waiting list. Since many are switching from a GP it follows that it is likely that there are cycles, in that a person $P_A$ wants doctor $D_A$ which currently has $P_B$ as a patient, but $P_B$ wants to switch to doctor $D_B$ who currently has $P_A$ as a patient.
+In this case patient $P_A$ ends up waiting for an open slot with $P_B$'s doctor and vice versa, but logically instead of waiting $P_A$ and $P_B$ could just swap doctors. This can be generalized to longer "waiting cycles" that could all be serviced by allowing for simultaneous switching.
 
-We propose that we can, using cycle detecting algorithms, in polynomial time find optimal switches between patients and massively reduce the number of people on waitlists by using these algorithms periodically.
-Our algorithms are based on existing cycle cancelling and TTC algorithms, and focus on two measures of "good":
+In this thesis, we study this problem and come up with solutions for how one can help people who are waiting in line so that they can get their preferred choice.
+In particular we propose that we can use cycle detecting algorithms, to find optimal switches between patients and massively reduce the number of people on waiting lists by using these algorithms periodically.
+Our algorithms are based on existing cycle cancelling and TTC algorithms, and focus on two measures of fairness:
  - Switching as many patients as possible
- - Swtiching as high priority patients as possible
-And we have developed algorithms for these cases. 
+ - Switching as high priority patients as possible
+We have developed and tested algorithms for these cases. 
 
 In addition we compare these optimal algorithms with the existing TTC algorithm and a greedy algorithm, comparing gain of good vs runtime.
 
