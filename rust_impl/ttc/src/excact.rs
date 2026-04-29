@@ -1,7 +1,7 @@
 // Implementation of the excact algorithm finding cycles, then using residual graph from cycles finds extension of existing cycles or new cycles
 // All of this until otimal solution is found
 
-use crate::{Doctor, Patient, dinic::Dinic};
+use crate::{AssignmentState, CycleStats, Doctor, Patient, dinic::Dinic};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Clone, Debug)]
@@ -27,7 +27,9 @@ pub struct CyclePacker {
 }
 
 impl CyclePacker {
-    pub fn new(patients: &Vec<Patient>, doctors: &Vec<Doctor>) -> Self {
+    pub fn new(state: &AssignmentState) -> Self {
+        let patients = &state.patients;
+        let doctors = &state.doctors;
         let mut adj = Vec::with_capacity(doctors.len());
         for _i in 0..doctors.len() {
             adj.push(Vec::with_capacity(doctors.len()));
@@ -51,7 +53,7 @@ impl CyclePacker {
         for p in patients {
             let curr_doc = p.current_doctor.unwrap();
             let pref_doc = p.preferred_doctor;
-            if curr_doc == pref_doc {
+            if curr_doc == pref_doc || !p.wants_to_switch{
                 continue;
             }
 
@@ -73,7 +75,7 @@ impl CyclePacker {
         }
 
         for (u, v, cap) in merged {
-            g.add_edge(u, v, cap, 1);
+            g.add_edge(u, v, cap, -1);
         }
 
         g
@@ -99,18 +101,28 @@ impl CyclePacker {
         self.adj[v].push(back);
     }
 
-    pub fn pack_cycles(&mut self) {
+    pub fn pack_cycles(&mut self) -> CycleStats {
+        let mut stats = CycleStats::new();
         loop {
-            match self.find_positive_cycle() {
+            match self.find_negative_cycle() {
                 Some(cycle) => {
+                    let len = cycle.len();
+                    let bottleneck = cycle.iter()
+                        .map(|&(u, idx)| self.adj[u][idx].capacity)
+                        .min()
+                        .unwrap_or(1);
+                    for _ in 0..bottleneck {
+                        stats.record_cycle(len);
+                    }
                     self.apply_cycle(cycle);
                 }
                 None => break,
             }
         }
+        stats
     }
 
-    fn find_positive_cycle(&mut self) -> Option<Vec<(usize, usize)>> {
+    fn find_negative_cycle(&mut self) -> Option<Vec<(usize, usize)>> {
         let n = self.adj.len();
 
         // Reset scratch arrays (reuse allocations)
@@ -138,7 +150,7 @@ impl CyclePacker {
                 }
                 let v = edge.to;
                 let new_dist = self.dist[u] + edge.cost;
-                if new_dist > self.dist[v] {
+                if new_dist < self.dist[v] {
                     self.dist[v] = new_dist;
                     self.pred_node[v] = u;
                     self.pred_edge[v] = idx;
@@ -148,8 +160,8 @@ impl CyclePacker {
                             cycle_node = v;
                             break 'outer;
                         }
-                        // SLF: push to front if dist[v] > dist of current front
-                        if queue.front().map_or(true, |&f| new_dist > self.dist[f]) {
+                        // SLF: push to front if dist[v] < dist of current front
+                        if queue.front().map_or(true, |&f| new_dist < self.dist[f]) {
                             queue.push_front(v);
                         } else {
                             queue.push_back(v);
@@ -211,7 +223,7 @@ impl CyclePacker {
 
         for (u, list) in self.adj.iter().enumerate() {
             for edge in list {
-                if edge.cost > 0 {
+                if edge.cost < 0 {
                     let used_count = edge.start_capacity - edge.capacity;
 
                     if used_count > 0 {
@@ -231,7 +243,7 @@ impl CyclePacker {
 
         for (u, list) in self.adj.iter().enumerate() {
             for edge in list {
-                if edge.cost > 0 {
+                if edge.cost < 0 {
                     let v = edge.to;
                     let rev_idx = edge.rev;
                     let used = self.adj[v][rev_idx].capacity as i64;
@@ -428,13 +440,15 @@ pub struct PwCyclePacker {
 }
 
 impl PwCyclePacker {
-    pub fn new(patients: &Vec<Patient>, doctors: &Vec<Doctor>) -> Self {
+    pub fn new(state: &AssignmentState) -> Self {
+        let patients = &state.patients;
+        let doctors = &state.doctors;
         let n = doctors.len();
 
         // rank 0 = least important, rank k-1 = most important
         let mut priority_vals: Vec<usize> = patients
             .iter()
-            .filter(|p| !p.is_dummy)
+            .filter(|p| !p.is_dummy && p.wants_to_switch)
             .map(|p| p.priority)
             .collect();
         priority_vals.sort_unstable();
@@ -462,6 +476,7 @@ impl PwCyclePacker {
         let mut patient_fwd_unsorted: Vec<(Option<usize>, usize, usize)> = Vec::new();
 
         for p in patients {
+            if !p.wants_to_switch { continue; }
             let curr_doc = p.current_doctor.unwrap();
             let pref_doc = p.preferred_doctor;
             if curr_doc == pref_doc { continue; }
@@ -599,7 +614,9 @@ impl PwCyclePacker {
         }
     }
 
-    pub fn pack_cycles(&mut self) {
+    pub fn pack_cycles(&mut self) -> CycleStats {
+        let mut stats = CycleStats::new();
+
         // Prune patients whose curr_doc and pref_doc are in different SCCs or a
         // trivial SCC (size 1) — they can never be part of any cycle.
         let (scc_id, scc_size) = pw_compute_sccs(&self.adj, self.n);
@@ -616,7 +633,9 @@ impl PwCyclePacker {
                 // Patient not yet committed — find a cycle via BFS
                 let pref_doc = self.adj[node_u][edge_idx].to;
                 if let Some(path) = self.find_path(pref_doc, node_u) {
+                    let cycle_len = path.len() + 1;
                     self.commit_primary(node_u, edge_idx, path);
+                    stats.record_cycle(cycle_len);
                 }
             } else {
                 // forward.cap = 0 and rev.cap > 0 means this patient was used as
@@ -632,6 +651,7 @@ impl PwCyclePacker {
             }
         }
         self.patient_fwd = patient_fwd;
+        stats
     }
 
     pub fn count_satisfied_real_patients(&self, patients: &[Patient]) -> usize {

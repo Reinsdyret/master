@@ -1,5 +1,5 @@
 use ttc::excact::{CyclePacker, PwCyclePacker, solve_with_dinic_polynomial};
-use ttc::{ttc_algorithm, true_ttc_algorithm, verify_ttc_result, PriorityStrategy, TTCState, parse_data_file, Patient};
+use ttc::{greedy_dfs, true_ttc_algorithm, verify_ttc_result, PriorityStrategy, AssignmentState, parse_data_file, Patient};
 use std::fs::File;
 use std::io::Write;
 use std::collections::HashSet;
@@ -100,32 +100,34 @@ fn main() {
         let dataset = format!("{}p_{}d", num_patients, num_doctors);
 
         // --- CyclePacker (exact, cardinality) ---
-        // print!("  CyclePacker... ");
-        // let _ = std::io::stdout().flush();
-        // let t0 = std::time::Instant::now();
-        // let mut packer = CyclePacker::new(&patients, &doctors);
-        // packer.pack_cycles();
-        // let exact_ms = t0.elapsed().as_millis();
-        // let exact_satisfied = packer.count_satisfied_real_patients(&patients);
-        // println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
-        // results.push(RunResult {
-        //     dataset: dataset.clone(),
-        //     num_patients,
-        //     num_doctors,
-        //     algorithm: "CyclePacker".to_string(),
-        //     patients_satisfied: exact_satisfied,
-        //     patients_wanting_switch,
-        //     time_ms: exact_ms,
-        // });
+        print!("  CyclePacker... ");
+        let _ = std::io::stdout().flush();
+        let t0 = std::time::Instant::now();
+        let packer_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let mut packer = CyclePacker::new(&packer_state);
+        packer.pack_cycles();
+        let exact_ms = t0.elapsed().as_millis();
+        let exact_satisfied = packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", exact_satisfied, exact_ms);
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "CyclePacker".to_string(),
+            patients_satisfied: exact_satisfied,
+            patients_wanting_switch,
+            time_ms: exact_ms,
+        });
 
         // --- CyclePacker (priority-weighted) ---
         print!("  CyclePacker (priority-weighted)... ");
         let _ = std::io::stdout().flush();
         let t0 = std::time::Instant::now();
-        let mut pw_packer = PwCyclePacker::new(&patients, &doctors);
+        let pw_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let mut pw_packer = PwCyclePacker::new(&pw_state);
         pw_packer.pack_cycles();
         let pw_ms = t0.elapsed().as_millis();
-        let pw_satisfied_patients = pw_packer.satisfied_patients(&patients);
+        let pw_satisfied_patients = pw_packer.satisfied_patients(&pw_state.patients);
         let pw_satisfied_priorities: HashSet<usize> =
             pw_satisfied_patients.iter().map(|p| p.priority).collect();
         let pw_count = pw_satisfied_patients.len();
@@ -146,8 +148,8 @@ fn main() {
         let _ = std::io::stdout().flush();
         let original_patients = patients.clone();
         let t1 = std::time::Instant::now();
-        let mut ttc_state = TTCState::new(patients.clone(), doctors.clone());
-        let ttc_result = ttc_algorithm(&mut ttc_state, PriorityStrategy::StrictPriority);
+        let mut ttc_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let ttc_result = greedy_dfs(&mut ttc_state, PriorityStrategy::StrictPriority);
         let ttc_ms = t1.elapsed().as_millis();
         // ttc_result.solution stores the priority values of satisfied patients
         let ttc_satisfied_priorities: &HashSet<usize> = &ttc_result.solution;
@@ -168,7 +170,7 @@ fn main() {
         print!("  TTC (True)... ");
         let _ = std::io::stdout().flush();
         let t2 = std::time::Instant::now();
-        let mut true_ttc_state = TTCState::new(patients.clone(), doctors.clone());
+        let mut true_ttc_state = AssignmentState::new(patients.clone(), doctors.clone());
         let true_ttc_result = true_ttc_algorithm(&mut true_ttc_state);
         let true_ttc_ms = t2.elapsed().as_millis();
         let true_ttc_satisfied_priorities: &HashSet<usize> = &true_ttc_result.solution;

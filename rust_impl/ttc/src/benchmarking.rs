@@ -1,4 +1,4 @@
-use crate::{Doctor, Patient, TTCResultWithStats, TTCState, compare_solutions_lexicographic_priority, parse_data_file};
+use crate::{Doctor, Patient, ResultWithStats, AssignmentState, compare_solutions_lexicographic_priority, parse_data_file};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
@@ -9,7 +9,7 @@ use std::time::Instant;
 
 /// Type alias for TTC algorithm functions
 /// Takes a mutable reference to TTCState and returns results with stats
-pub type AlgorithmFn = fn(&mut TTCState) -> TTCResultWithStats;
+pub type AlgorithmFn = fn(&mut AssignmentState) -> ResultWithStats;
 
 /// Configuration for a TTC algorithm to benchmark
 pub struct AlgorithmConfig {
@@ -217,8 +217,8 @@ impl Benchmarker {
         algo: &AlgorithmConfig,
         patients: Vec<Patient>,
         doctors: Vec<Doctor>,
-    ) -> (TTCResultWithStats, AlgorithmTiming, usize) {
-        let mut state = TTCState::new(patients, doctors);
+    ) -> (ResultWithStats, AlgorithmTiming, usize) {
+        let mut state = AssignmentState::new(patients, doctors);
 
         // Compute initial metrics BEFORE timing (no runtime overhead)
         let initial_unsatisfied = state.count_unsatisfied_patients();

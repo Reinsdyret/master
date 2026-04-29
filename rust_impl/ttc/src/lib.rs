@@ -3,6 +3,7 @@ pub mod scc;
 pub mod ttc_scc;
 pub mod excact;
 pub mod dinic;
+pub mod simulation;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -329,13 +330,13 @@ pub fn parse_data_file(file_path: &str) -> Result<(Vec<Patient>, Vec<Doctor>), S
 }
 
 #[derive(Clone)]
-pub struct TTCState {
+pub struct AssignmentState {
     pub patients: Vec<Patient>,
     pub doctors: Vec<Doctor>,
     pub patients_by_priority: Vec<usize>, // Patient IDs sorted by priority
 }
 
-impl TTCState {
+impl AssignmentState {
     pub fn new(patients: Vec<Patient>, doctors: Vec<Doctor>) -> Self {
         let mut patient_priority_pairs: Vec<(usize, usize)> =
             patients.iter().map(|p| (p.id, p.priority)).collect();
@@ -439,23 +440,21 @@ impl TTCState {
 
 
 /// Backward compatibility wrapper: Unassigned patients first
-pub fn ttc_algorithm_with_pruning(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::UnassignedFirst)
+pub fn ttc_algorithm_with_pruning(state: &mut AssignmentState) -> ResultWithStats {
+    greedy_dfs(state, PriorityStrategy::UnassignedFirst)
 }
 
 /// Backward compatibility wrapper: Strict priority order
-pub fn ttc_algorithm_without_prioritization(state: &mut TTCState) -> TTCResultWithStats {
-    ttc_algorithm(state, PriorityStrategy::StrictPriority)
+pub fn ttc_algorithm_strict_priority(state: &mut AssignmentState) -> ResultWithStats {
+    greedy_dfs(state, PriorityStrategy::StrictPriority)
 }
 
-/// Main TTC algorithm with configurable patient ordering strategy
-pub fn ttc_algorithm(state: &mut TTCState, strategy: PriorityStrategy) -> TTCResultWithStats {
+/// Main Greedy DFS algorithm with configurable patient ordering strategy
+pub fn greedy_dfs(state: &mut AssignmentState, strategy: PriorityStrategy) -> ResultWithStats {
     let mut solution: HashSet<usize> = HashSet::with_capacity(state.patients.len() + state.doctors.len());
     let mut cycles_found = 0;
     let mut total_patients_reassigned = 0;
     let mut cycle_stats = CycleStats::new();
-
-    println!("[TTC] Starting with strategy: {:?}", strategy);
 
     // Get all switching patients (base list, sorted by priority)
     let mut switching_patients: Vec<usize> = state
@@ -546,7 +545,7 @@ pub fn ttc_algorithm(state: &mut TTCState, strategy: PriorityStrategy) -> TTCRes
         }
     }
 
-    TTCResultWithStats {
+    ResultWithStats {
         solution,
         cycles_found,
         patients_reassigned: total_patients_reassigned,
@@ -562,7 +561,7 @@ pub fn ttc_algorithm(state: &mut TTCState, strategy: PriorityStrategy) -> TTCRes
     }
 }
 
-pub fn restricted_ttc_algorithm(initState: &mut TTCState) -> TTCResultWithStats {
+pub fn restricted_ttc_algorithm(initState: &mut AssignmentState) -> ResultWithStats {
     let mut state = initState.clone();
     let mut solution: HashSet<usize> = HashSet::with_capacity(state.patients.len());
 
@@ -612,7 +611,7 @@ pub fn restricted_ttc_algorithm(initState: &mut TTCState) -> TTCResultWithStats 
 
     }
 
-    TTCResultWithStats {
+    ResultWithStats {
         solution,
         cycles_found,
         patients_reassigned: total_patients_reassigned,
@@ -636,7 +635,7 @@ pub fn restricted_ttc_algorithm(initState: &mut TTCState) -> TTCResultWithStats 
 /// Because every active node has outdegree 1, cycles are guaranteed and disjoint.
 /// All cycles in a round are found in O(n) by following chains, then executed simultaneously.
 /// Rounds continue until no active patients remain.
-pub fn true_ttc_algorithm(state: &mut TTCState) -> TTCResultWithStats {
+pub fn true_ttc_algorithm(state: &mut AssignmentState) -> ResultWithStats {
     let mut solution: HashSet<usize> = HashSet::new();
     let mut cycles_found = 0;
     let mut total_reassigned = 0;
@@ -662,7 +661,7 @@ pub fn true_ttc_algorithm(state: &mut TTCState) -> TTCResultWithStats {
         }
     }
 
-    TTCResultWithStats {
+    ResultWithStats {
         solution,
         cycles_found,
         patients_reassigned: total_reassigned,
@@ -687,7 +686,7 @@ pub fn true_ttc_algorithm(state: &mut TTCState) -> TTCResultWithStats {
 /// following chains with a 3-color scheme (unvisited / in-path / done).
 /// Only real (non-dummy) patients are used as chain starting points; dummy
 /// patients can appear mid-chain as capacity-slot participants.
-fn find_all_ttc_cycles(state: &TTCState) -> Vec<Vec<usize>> {
+fn find_all_ttc_cycles(state: &AssignmentState) -> Vec<Vec<usize>> {
     let max_id = state.patients.len();
     // 0 = unvisited, 1 = in current chain, 2 = done (no new cycle reachable)
     let mut color = vec![0u8; max_id + 1];
@@ -739,7 +738,7 @@ fn find_all_ttc_cycles(state: &TTCState) -> Vec<Vec<usize>> {
     cycles
 }
 
-pub fn restricted_dfs(patient_id: usize, state: &mut TTCState) -> Option<Vec<usize>>{
+pub fn restricted_dfs(patient_id: usize, state: &mut AssignmentState) -> Option<Vec<usize>>{
     let mut path = Vec::new();
     let mut visited = HashSet::new();
 
@@ -750,7 +749,7 @@ pub fn restricted_dfs(patient_id: usize, state: &mut TTCState) -> Option<Vec<usi
     }
 }
 
-pub fn actual_restricted_dfs(current_id: usize, goal_id: usize, state: &mut TTCState, path: &mut Vec<usize>, visited: &mut HashSet<usize>) -> bool{
+pub fn actual_restricted_dfs(current_id: usize, goal_id: usize, state: &mut AssignmentState, path: &mut Vec<usize>, visited: &mut HashSet<usize>) -> bool{
     // if patient:
     if let Some(patient) = state.get_patient(current_id) {
         // if equal to goal id: cycle
@@ -830,7 +829,7 @@ impl CycleStats {
     }
 }
 
-pub struct TTCResultWithStats {
+pub struct ResultWithStats {
     pub solution: HashSet<usize>,
     pub cycles_found: usize,
     pub patients_reassigned: usize,
@@ -846,7 +845,7 @@ pub struct TTCResultWithStats {
     pub initial_capacity_used: usize,    // Capacity used at start
 }
 
-impl TTCResultWithStats {
+impl ResultWithStats {
     /// Calculate satisfaction rate: proportion of unhappy patients who got satisfied
     pub fn satisfaction_rate(&self) -> f64 {
         if self.initial_unsatisfied == 0 {
@@ -899,7 +898,7 @@ pub struct TTCResult {
 // Find cycle starting from a patient using DFS with local pruning
 fn find_cycle_from_patient_with_direct_pruning(
     start_patient_id: usize,
-    state: &mut TTCState,
+    state: &mut AssignmentState,
 ) -> Option<Vec<usize>> {
     let mut path = Vec::new();
     let mut path_set = std::collections::HashSet::new();
@@ -929,7 +928,7 @@ fn dfs_for_cycle_with_tracking(
     path: &mut Vec<usize>,
     path_set: &mut std::collections::HashSet<usize>,
     visited: &mut std::collections::HashSet<usize>,
-    state: &mut TTCState,
+    state: &mut AssignmentState,
 ) -> bool {
 
     // println!("DFS in {}, path_len: {}", current_patient_id, path.len());
@@ -1041,7 +1040,7 @@ fn dfs_for_cycle_with_tracking(
     false
 }
 
-fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
+fn execute_cycle(cycle: &[usize], state: &mut AssignmentState) {
     if cycle.len() < 2 {
         return;
     }
@@ -1063,7 +1062,7 @@ fn execute_cycle(cycle: &[usize], state: &mut TTCState) {
 /// Returns true if all checks pass.
 pub fn verify_ttc_result(
     original_patients: &[Patient],
-    final_state: &TTCState,
+    final_state: &AssignmentState,
 ) -> bool {
     let mut valid = true;
 

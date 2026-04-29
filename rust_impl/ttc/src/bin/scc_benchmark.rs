@@ -1,5 +1,5 @@
 use std::env;
-use ttc::{TTCState, parse_data_file};
+use ttc::{AssignmentState, parse_data_file};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -19,7 +19,7 @@ fn main() {
                 doctors.len()
             );
 
-            let state = TTCState::new(patients, doctors);
+            let state = AssignmentState::new(patients, doctors);
 
             // Build patient-to-patient graph
             println!("Building patient-to-patient graph...");
@@ -60,7 +60,7 @@ fn main() {
     }
 }
 
-fn build_patient_graph(state: &TTCState) -> (Vec<Vec<usize>>, usize, usize) {
+fn build_patient_graph(state: &AssignmentState) -> (Vec<Vec<usize>>, usize, usize) {
     // Map from doctor to patients who currently have that doctor
     let mut doctor_to_patients: Vec<Vec<usize>> = vec![Vec::new(); state.doctors.len() + 1];
 
