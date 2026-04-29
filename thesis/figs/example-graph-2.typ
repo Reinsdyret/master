@@ -2,6 +2,7 @@
 
 #figure(
   render("digraph {
+    node[shape=circle]
     nodesep=0.6; // horizontal spacing
     ranksep=0.8; // vertical spacing
     5 -> 2;

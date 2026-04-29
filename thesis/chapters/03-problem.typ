@@ -14,17 +14,18 @@
 
 = Problem Formalization <ch:problem>
 
-In this chapter we try to define the GP allocation problem and variations of it. In addition we go through how to construct a graph given a GP allocation problem and finally how we can reduce the GP allocation problem to the Cycle Cover problem in directed graphs.
+In this chapter we define the GP allocation problem and also some variations of it. In addition we go through how to construct a graph given a GP allocation problem and finally how we can reduce the GP allocation problem to the Cycle Cover problem in directed graphs.
 
-== GP allocation problem
+== The GP allocation problem
 
 === Input
 
-Consider the GP allocation problem as given a list of patients $P$ and a list of doctors $D$. We then have patients $p_1, p_2, dots, p_n$ and doctors $d_1, d_2, dots, d_m$. We also are given the current and preferred doctor assignments as arrays:
+In the GP allocation problem we are given a set of patients $P = {p_1, p_2, dots, p_n}$ and a set of doctors $D = {d_1, d_2, dots, d_m}$. 
+We are also given the current and preferred GP assignments, for each patient:
 - $D_"cur" [i]$ denotes the index of the current doctor assigned to patient $p_i$ (or $bot$ if unassigned)
 - $D_"pref" [i]$ denotes the index of the preferred doctor for patient $p_i$
 
-In addition we are given a priority function $R : P arrow NN$, mapping some positive integer to each patient, the higher the number the higher the priority.
+In addition we are given a priority function $R : P arrow NN$, mapping some positive integer to each patient, with higher numbers indicating a higher priority to help this patient.
 
 === Feasible solution
 A feasible solution for the GP allocation problem is a subset of patients $S subset.eq P$ such that the directed graph
@@ -32,26 +33,25 @@ $
 G_S = (S, E_S), E_S = {(a,b) | a, b in S, D_"pref" ["idx"(a)] = D_"cur" ["idx"(b)]}
 $
 consists of a vertex-disjoint union of directed cycles that cover all vertices in $S$.
-Where $"idx"(x)$ is a function giving the index of a patient $x$.
-So this means our solution $S$ is a set of all patients that can exchange doctor in one or more cycles.
+This means that $S$ is a set of patients that can all get their preferred doctor if we allow for simultanous exchanges following cycles.
 
 === Optimization criterion
-With this feasible solution defined we can start defining variants where we want feasible solution that maximizes some _score_.
-When choosing what patients should be exchanging we might have different qualities that we want in our solutions. 
-We might want a solution that exchanges as many patients as possible, exchanges patients with the highest priority or mix of these.
+Next we can start defining variants of feasible solutions where we want to maximize some _score_.
+Examples of such a scoore could be to find a feasible solution with many patients or something based on priority.
+We might want a solution that exchanges as many patients as possible, exchanges patients with the highest priority or some mix of these.
 
 First we define our general ordering
 #definition("Optimization criterion")[
   An ordering $succ$ over feasible solutions. A solution is optimal if it is maximal under $succ$.
 ]
 
-Then we can build upon this to create our two variants
+Build on this to create our three main variants of scoring functions.
 ==== Lexicographic maximization by priority
 
 #definition("Characteristic vector")[
-  Let patients be ordered by priority: $p^((1)) succ p^((2)) succ dots.c succ p^((n))$ where $p^((1))$ has the highest priority. Given a feasible solution $S subset.eq P$, the *characteristic vector* is:
+  Let patients be ordered by priority: $p_1 >= p_2 >= dots >= p_n$ where $p_1$ has the highest priority. Given a feasible solution $S subset.eq P$, the *characteristic vector* is:
   $
-  chi(S) = (b_1, b_2, dots, b_n) in {0,1}^n, quad b_i = cases(1 & "if" p^((i)) in S, 0 & "otherwise")
+  chi(S) = (b_1, b_2, dots, b_n) in {0,1}^n, quad b_i = cases(1 & "if" p_i in S, 0 & "otherwise")
   $
 ]
 
@@ -59,18 +59,19 @@ Then we can build upon this to create our two variants
   $
   S succ_"lex" S' quad "iff" quad chi(S) "is lexicographically greater than" chi(S')
   $
-  That is, at the first index $i$ where they differ, $chi(S)_i = 1$ and $chi(S')_i = 0$.
+  That is, at the first index $i$ where $S$ and $S'$ differ, $chi(S)_i = 1$ and $chi(S')_i = 0$.
 ]
 
-Intuitively, $chi(S)$ is a binary number whose most significant bit corresponds to the highest-priority patient. The optimal solution is the one that maximises this binary number: always satisfying the highest-priority patient it can, then subject to that the next highest, and so on.
+Intuitively, $chi(S)$ is a binary number whose most significant non-zero bit corresponds to the highest-priority patient that gets helped.
+The optimal solution is then the one that maximises this binary number: always satisfying the highest-priority patient it can, then subject to that the next highest, and so on.
 
 #example("Ordering two solutions lexicographically by priority")[
 
   We use the example graph in @example-graph as the graph to create solutions from.
 
   Given solutions
-  + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing cycle $P_4 arrow P_5 arrow P_4$
-  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_S'$ containing cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
+  + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing the cycle $P_4 arrow P_5 arrow P_4$
+  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_S'$ containing the cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
 
   For simplicity's sake we say that $R(P_i) = i$, so $P_5$ has the highest priority.
 
@@ -82,11 +83,11 @@ Intuitively, $chi(S)$ is a binary number whose most significant bit corresponds 
 ]
 
 So for our first variant we want to find the maximal solution under the $succ_"lex"$ ordering.
-This means always prioritizing those with highest priority.
+This means always prioritizing patients with highest priority.
 
 ==== Maximizing cardinality
 
-Another variant is finding a solution with the largest cardinality, e.g. the solution that contains the most patients.
+Another natural variant is to find a solution with the largest cardinality, e.g. a solution that contains the most patients.
 
 #definition("Ordering by cardinality")[
   $
@@ -94,17 +95,17 @@ Another variant is finding a solution with the largest cardinality, e.g. the sol
   $
 ]
 
-This solution will be the one that exchanges the most patients and therefore makes the most amount of people happy.
+This optimal solution will then be one that exchanges the most patients.
 
 #example("Ordering two solutions by cardinality")[
 
-  Using the same solutions as the previous example:
-  + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing cycle $P_4 arrow P_5 arrow P_4$
-  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_{S'}$ containing cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
+  Using the same solutions as in the previous example:
+  + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing the cycle $P_4 arrow P_5 arrow P_4$
+  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_{S'}$ containing the cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
 
-  Under $succ_"size"$: $|S| = 2$ and $|S'| = 3$, so $S' succ_"size" S$. The absolute maximal solution is ${P_1, P_2, P_3, P_4, P_5}$, the union of both cycles.
+  Under $succ_"size"$: $|S| = 2$ and $|S'| = 3$, so $S' succ_"size" S$. However the solution is ${P_1, P_2, P_3, P_4, P_5}$, the union of both cycles.
 
-  Notice that the same two sets are ordered *oppositely* under the two criteria: $S succ_"lex" S'$ (because $S$ contains the highest-priority patient $P_5$) but $S' succ_"size" S$ (because $S'$ has more patients).
+  Notice that the same two sets are reversibly ordered under the two criteria: $S succ_"lex" S'$ (because $S$ contains the highest-priority patient $P_5$) but $S' succ_"size" S$ (because $S'$ has more patients).
 ]
 
 #include "../figs/example-graph.typ"

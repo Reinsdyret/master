@@ -4,6 +4,35 @@
 
 = Implementation <ch:implementation>
 
+In this chapter we look at each algorithm we have implemented, how we implemented them, why and runtime analysis.
+We have in total implemented 5 algorithms, TTC, Greedy DFS, Exact Cardinality, Exact Priority and a specialized case of Exact Priority.
+For the exact algorithms we also give, or refer to existing, proofs for why they are exact.
+
+== Different graph representations used
+In the algorithms we use different graph representations, so we start by defining the different representations of _The GP allocation problem_.
+
+=== Patient and Doctor graph
+First we have the easiest graph containing both patients and doctors as vertices.
+The edges are directed from a patient to a doctor and from a doctor to a patient. Edges never go $"patient" arrow "patient"$ or $"doctor" arrow "doctor"$.
+An edge $"patient" arrow "doctor"$ symbolizes that the patient has that doctor as its preferred doctor, and $"doctor" arrow "patient"$ symbolises that the doctor currently has that patient as one of his or hers current patients.
+Observe that this graph is bipartite as we have patients on one side and doctors on the other. Now the formal definition of our graph.
+Let $I = {0, ..., |P|-1}$. Then:
+
+$
+G = (V, E), quad V = P union D, quad E = {(p_i, D_"pref"[i]) | i in I} union {(D_"cur"[i], p_i) | i in I}
+$
+
+=== Doctor graph collapsed edges 
+In this weighted graph we condense the problem to only have doctors as nodes and edges between doctors.
+An edge $"doctor a" arrow "doctor b"$ symbolises that there exists a patient that wants to switch from doctor a to doctor b, or that the patient currently has doctor a and has doctor b as preferred.
+We define our graph as:
+
+$
+G = (V, E), quad V = D \
+E = {(D_"cur"[i], D_"pref"[i]) | i in I} \
+w(a, b) = |{i in I | D_"cur"[i] = a and D_"pref"[i] = b}|
+$
+
 
 == Greedy DFS
 

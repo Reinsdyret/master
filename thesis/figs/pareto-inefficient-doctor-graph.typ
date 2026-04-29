@@ -3,6 +3,7 @@
 #figure(
   render("digraph {
     rankdir=LR;
+    node[shape=circle]
     nodesep=0.4; // horizontal spacing
     ranksep=0.8; // vertical spacing
 
