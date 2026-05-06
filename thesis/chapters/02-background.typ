@@ -17,7 +17,7 @@ It might be misleading to say that our patients "own" doctors but this makes mor
 ==== Housing market
 The Housing Market model introduced in Shapley and Scarf @SHAPLEY197423 describes a model with traders (agents) and indivisible goods (objects).
 These goods can be houses, making it a housing market. Each agent already has one house but may want to switch.
-Every agent has a preference list ordering every house in order of p3reference, Shapley and Scarf combine all these preference lists to make a preference matrix @SHAPLEY197423.
+Every agent has a preference list ordering every house in order of preference, Shapley and Scarf combine all these preference lists to make a preference matrix @SHAPLEY197423.
 
 It is in this article from Shapley and Scarf @SHAPLEY197423 that they also introduce the Top Trading Cycles algorithm and describe how it is fitting for models like the Housing Market.
 We also see similarities to the GP allocation problem in that we have agents already owning an object but wanting to switch.
@@ -34,10 +34,23 @@ Now cycles can form as in @kidney-exchange-example we have a cycle of length 3 $
 
 Abraham, Blum and Sandholm @ABRAHAM2007 show that, with unbounded cycle length, a maximum-cardinality and maximum-weight exchange can be found in polynomial time @enwiki:1351916222.
 An issue often arising with unrestricted cycle length is if a donor suddenly refuses to donate, if this donor refuses after their patient has received a kidney then a patient is left without a donor and cannot exchange later.
-The problem is often considered with a restricted cycle length to allow all operations to be executed at the same time. This way no donor can refuse in the middle.
+Because of this the problem is often considered with a restricted cycle length to allow all operations to be executed at the same time. This way no donor can refuse in the middle.
 For each pair in a cycle you need 2 operations, for a cycle of length $k$ you need $2k$ operations at the same time. 
 Finding a maximum-cardinality exchange with cycles of length at most $k$, for any fixed $k >= 3$, is an NP-hard computational problem @ABRAHAM2007 @enwiki:1351916222.
 
+
+=== Many-to-One assignment problems
+==== The College Admissions problem 
+In the College Admissions problem, introduced by Gale and Shapley, describes the problem of assigning applicants among colleges.
+Each college has a certain quote, a maximum number of applicants to admit and each applicant ranks the colleges in order of preference.
+An applicant can skip colleges he or she would never accept under any circumstances @GALES1962.
+
+The problem is then to find a stable assignment meaning that there does not exist a case where there are two applicants $alpha$ and $beta$ who are assigned to colleges $A$ and $B$, respectively, although $beta$ prefers $A$ to $B$ and $A$ prefers $beta$ to $alpha$.
+Gale and Shapley introduce an algorithm called deferred-acceptance (DA) to find the optimal stable assignment and prove that this runs in linear time and finds the optimal stable assignment @GALES1962.
+
+There are close similarities to the College Admissions problem and the GP assignment problem.
+Differences between them are only that in the GP assignment our patients, equivalent to the applicants, only prefer one doctor.
+And that in the GP assignment problem the patients already have existing doctors making the problem more complex.
 
 == Top Trading Cycles
 
