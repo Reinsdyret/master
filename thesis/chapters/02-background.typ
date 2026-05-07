@@ -38,6 +38,10 @@ Because of this the problem is often considered with a restricted cycle length t
 For each pair in a cycle you need 2 operations, for a cycle of length $k$ you need $2k$ operations at the same time. 
 Finding a maximum-cardinality exchange with cycles of length at most $k$, for any fixed $k >= 3$, is an NP-hard computational problem @ABRAHAM2007 @enwiki:1351916222.
 
+The Kidney Exchange problem and the GP allocation problem have much in common.
+In both problems agents already have an object, but want to switch for another.
+We need to find cycles to exchange the objects in such a manner that most amount of people are happy.
+The key difference is that only one donor can be "owned" by one patient while in the GP allocation problem a doctor can be "owned" by multiple patients.
 
 === Many-to-One assignment problems
 ==== The College Admissions problem 
@@ -49,8 +53,8 @@ The problem is then to find a stable assignment meaning that there does not exis
 Gale and Shapley introduce an algorithm called deferred-acceptance (DA) to find the optimal stable assignment and prove that this runs in linear time and finds the optimal stable assignment @GALES1962.
 
 There are close similarities to the College Admissions problem and the GP assignment problem.
-Differences between them are only that in the GP assignment our patients, equivalent to the applicants, only prefer one doctor.
-And that in the GP assignment problem the patients already have existing doctors making the problem more complex.
+Differences between them are that patients, equivalent to the applicants, only prefer one doctor.
+And that the patients already have existing doctors making the problem more complex since applicants do not already have a college and want to switch.
 
 == Top Trading Cycles
 

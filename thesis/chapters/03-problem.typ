@@ -37,7 +37,7 @@ This means that $S$ is a set of patients that can all get their preferred doctor
 
 === Optimization criterion
 Next we can start defining variants of feasible solutions where we want to maximize some _score_.
-Examples of such a scoore could be to find a feasible solution with many patients or something based on priority.
+Examples of such a score could be to find a feasible solution with many patients or something based on priority.
 We might want a solution that exchanges as many patients as possible, exchanges patients with the highest priority or some mix of these.
 
 First we define our general ordering
@@ -113,8 +113,10 @@ This optimal solution will then be one that exchanges the most patients.
 
 ==== Maximizing utility
 
-Finally we can formulate an ordering that is somewhat of a combination of $succ_"lex"$ and $succ_"size"$ which is the total utility of a solution.
-We define the total utility to be sum of priorities.
+Finally we formulate an ordering that is a combination of $succ_"lex"$ and $succ_"size"$.
+We define the total utility to be the sum of the priorities of the patients in $S$.
+
+We recall that $R : P arrow NN$ is the function mapping a patient to a priority.
 
 #definition("Total utility function")[
   $
@@ -128,7 +130,7 @@ We define the total utility to be sum of priorities.
   $
 ]
 
-This means that even though solution $S'$ contains some high priority patients, if $S$ contains enough lower priority patients then $S$ can be more maximal under $succ_"util"$.
+This means that even though solution $S'$ contains some high priority patients, if $S$ contains enough lower priority patients then $S$ can still be a higher ranked solution under $succ_"util"$.
 
 #example("Ordering two solutions by total utility")[
   
@@ -136,11 +138,11 @@ This means that even though solution $S'$ contains some high priority patients, 
   + $S = {1,3,4}$ representing the cycle $P_1 arrow P_3 arrow P_4 arrow P_1$
   + $S' = {5,2}$ representing the cycle $P_5 arrow P_2 arrow P_5$
 
-  Now the total utility is as follows: \
+  This gives the following total utilities: \
   $U(S) = 1 + 3 + 4 = 8$ \
   $U(S') = 2 + 5 = 7$
 
-  So $S succ_"util" S'$, here we see that its the combination of more patients with lesser priority that can make a solution be better under $succ_"util"$ than another with greater priority.
+  It follows that $S succ_"util" S'$. Here we see that the solution with more patients with lower maximum priority has a higher score than another with greater maximum priority.
 ]
 
 #include "../figs/example-graph-2.typ"
