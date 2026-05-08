@@ -86,9 +86,15 @@ If we make the graph where each agent point to their top we get @ttc-graph.
 We have the cycle $B arrow C$ so we execute the trades, remove agents from the graph and create the edges again.
 The last remaining node is $A$ and as $B$ and $C$ are not in the graph, $"Top"(i)$ of $A$ is now $A$.
 #include "../figs/ttc-graph-2.typ"
-We execute this trade and are left with no more agents making TTC terminate.
+We execute this trade and are left with no more agents, making TTC terminate.
 
-Roth proved that TTC is strategy proof, meaning all agents should prefer their true preferences @ROTH1982127. 
+Roth proved that TTC is strategy proof, meaning all agents should prefer their true preferences @ROTH1982127.
+TTC has also satisfies properties of Individual rationality, that an agent is at least as well of by participating, and Pareto efficiency which is that the objects are allocated such that no agent can improve without worsening another agent.
+
+Now using TTC for the GP assignment problem is challenging as patients do not have complete strict preference lists, they only have one preferred doctor, and a doctor can be "owned" by multiple patients.
+This makes the $"Top"(i)$ give out multiple patients, as the doctor that patient $i$ prefers is "owned" by multiple patients. How should we choose between these?
+This is what Huitfeldt et. al has written about and how their implementation satisfies the same properties of the classical TTC. 
+We try to 
 == Cycle cancelling
 
 == Related Work
