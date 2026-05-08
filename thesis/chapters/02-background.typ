@@ -50,14 +50,45 @@ Each college has a certain quote, a maximum number of applicants to admit and ea
 An applicant can skip colleges he or she would never accept under any circumstances @GALES1962.
 
 The problem is then to find a stable assignment meaning that there does not exist a case where there are two applicants $alpha$ and $beta$ who are assigned to colleges $A$ and $B$, respectively, although $beta$ prefers $A$ to $B$ and $A$ prefers $beta$ to $alpha$.
-Gale and Shapley introduce an algorithm called deferred-acceptance (DA) to find the optimal stable assignment and prove that this runs in linear time and finds the optimal stable assignment @GALES1962.
+Gale and Shapley introduce an algorithm called deferred-acceptance (DA) to find the optimal stable assignment and prove that this runs in polynomial time and finds the optimal stable assignment @GALES1962.
 
-There are close similarities to the College Admissions problem and the GP assignment problem.
-Differences between them are that patients, equivalent to the applicants, only prefer one doctor.
-And that the patients already have existing doctors making the problem more complex since applicants do not already have a college and want to switch.
+There are close similarities between the College Admissions problem and the GP assignment problem.
+One difference is that patients, equivalent to the applicants, only prefer one doctor.
+Another difference is that patients already have existing doctors, making the problem different since applicants do not already have a college they want to switch from.
 
 == Top Trading Cycles
 
+Top Trading Cycles (TTC), developed by Gale and published by Shapley and Scarf @SHAPLEY197423, is an algorithm to find a re-allocation of goods without using money.
+As mentioned it was introduced in an article together with the Housing Market problem.
+The algorithm finds a re-allocation of houses to traders, such that all mutually-beneficial exchanges have been realized @enwiki:1344910705.
+For the Housing Market problem the TTC algorithm does as follows @enwiki:1344910705:
++ Ask each agent to indicate his "top" (most preferred) house.
++ Draw an arrow from each agent $i$ to the agent, denoted $"Top"(i)$, who holds the top house of $i$.
++ Find a cycle (guaranteed to exist) and execute the trades in that cycle. Remove all involved agents from the graph.
++ If there are remaining agents, go back to step 1.
+
+Note that a cycle is guaranteed to exist if there are agents still left.
+This is because of the pidgeonhole principle, since each agent has one outgoing edge we have to have a cycle.
+The cycle can also be of length 1 in which case an agent's top house is its own, then we treat it as a normal cycle and remove the agent from the graph.
+For this classical TTC implementation to work we need to remember that agents have a strict preferences.
+Each agent has a complete list of all houses ranked in order of preference.
+Because of this as houses get re-allocated agents are bound to either find a trade cycle with others or end up having their $"Top"(i)$ house as their own.
+
+Consider the example of 3 agents, $A, B "and" C$, each has a house and have a strict preference list.
+Lets go through how TTC would handle this:\
+The preference lists are 
+- $A = [B, C, A]$
+- $B = [C, A, B]$
+- $C = [B, C, A]$
+
+If we make the graph where each agent point to their top we get @ttc-graph.
+#include "../figs/ttc-graph.typ"
+We have the cycle $B arrow C$ so we execute the trades, remove agents from the graph and create the edges again.
+The last remaining node is $A$ and as $B$ and $C$ are not in the graph, $"Top"(i)$ of $A$ is now $A$.
+#include "../figs/ttc-graph-2.typ"
+We execute this trade and are left with no more agents making TTC terminate.
+
+Roth proved that TTC is strategy proof, meaning all agents should prefer their true preferences @ROTH1982127. 
 == Cycle cancelling
 
 == Related Work
