@@ -27,6 +27,8 @@ METRICS = {
     "cycles_found":       "Cycles Found",
     "avg_cycle_length":   "Avg Cycle Length",
     "new_requests":       "New Requests Added",
+    "avg_wait_days":      "Avg Wait Days (Resolved)",
+    "max_wait_days":      "Max Wait Days (Resolved)",
 }
 
 COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
@@ -51,6 +53,8 @@ def load_csv(path):
                 "cycles_found":      int(row["cycles_found"]),
                 "avg_cycle_length":  float(row["avg_cycle_length"]),
                 "max_cycle_length":  int(row["max_cycle_length"]),
+                "avg_wait_days":     float(row.get("avg_wait_days", 0)),
+                "max_wait_days":     int(row.get("max_wait_days", 0)),
             }
     return algorithms, data
 

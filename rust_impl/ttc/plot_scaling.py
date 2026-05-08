@@ -20,28 +20,51 @@ rows = load_csv("benchmark_scaling.csv")
 if os.path.exists("benchmark_scaling_sa.csv"):
     rows += load_csv("benchmark_scaling_sa.csv")
 
-algos   = ["CyclePacker", "TTC_StrictPriority", "SA_Heuristic"]
-labels  = {"CyclePacker": "CyclePacker (exact)", "TTC_StrictPriority": "TTC (StrictPriority)", "SA_Heuristic": "SA Heuristic"}
-colors  = {"CyclePacker": "#e05c5c", "TTC_StrictPriority": "#4a90d9", "SA_Heuristic": "#4caf73"}
-markers = {"CyclePacker": "o", "TTC_StrictPriority": "s", "SA_Heuristic": "^"}
+# Discover all algorithms present in the data
+all_algos = list(dict.fromkeys(r["algorithm"] for r in rows))
 
-# Only keep algos that have data
-algos = [a for a in algos if any(r["algorithm"] == a for r in rows)]
+labels = {
+    "CyclePacker":                "CyclePacker (exact)",
+    "CyclePacker_PriorityWeighted": "CyclePacker (priority-weighted)",
+    "TTC_StrictPriority":         "Greedy DFS (strict priority)",
+    "Huitfeldt_TTC":              "Huitfeldt TTC",
+}
+colors = {
+    "CyclePacker":                "#e05c5c",
+    "CyclePacker_PriorityWeighted": "#e0964a",
+    "TTC_StrictPriority":         "#4a90d9",
+    "Huitfeldt_TTC":              "#4caf73",
+}
+markers = {
+    "CyclePacker":                "o",
+    "CyclePacker_PriorityWeighted": "D",
+    "TTC_StrictPriority":         "s",
+    "Huitfeldt_TTC":              "^",
+}
+
+# Fallback style for any algo not in the dicts above
+_fallback_colors  = ["#9b59b6", "#f1c40f", "#1abc9c", "#e74c3c"]
+_fallback_markers = ["v", "P", "X", "*"]
+for i, algo in enumerate([a for a in all_algos if a not in colors]):
+    colors[algo]  = _fallback_colors[i % len(_fallback_colors)]
+    markers[algo] = _fallback_markers[i % len(_fallback_markers)]
+    labels.setdefault(algo, algo)
 
 def get(algo, key):
-    return [(r["num_patients"], r[key]) for r in rows if r["algorithm"] == algo]
+    pts = [(r["num_patients"], r[key]) for r in rows if r["algorithm"] == algo]
+    return sorted(pts)
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-fig.suptitle("CyclePacker vs TTC vs SA Heuristic — Scaling Comparison", fontsize=13, fontweight="bold")
+fig.suptitle("Algorithm Comparison — Scaling", fontsize=13, fontweight="bold")
 
 # --- Plot 1: Runtime (log-log) ---
 ax = axes[0]
-for algo in algos:
+for algo in all_algos:
     pts = get(algo, "time_ms")
     xs = [p[0] for p in pts]
-    ys = [max(p[1], 1) for p in pts]   # clamp 0ms → 1ms so log scale works
-    ax.plot(xs, ys, marker=markers[algo], color=colors[algo], label=labels[algo],
-            linewidth=2, markersize=7)
+    ys = [max(p[1], 1) for p in pts]  # clamp 0ms → 1ms for log scale
+    ax.plot(xs, ys, marker=markers[algo], color=colors[algo],
+            label=labels[algo], linewidth=2, markersize=7)
 
 ax.set_xscale("log")
 ax.set_yscale("log")
@@ -55,18 +78,19 @@ ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
 
 # --- Plot 2: Satisfaction rate (grouped bars) ---
 ax = axes[1]
-ref_pts = get(algos[0], "satisfaction_rate")
+ref_pts = get(all_algos[0], "satisfaction_rate")
 n_groups = len(ref_pts)
 x = np.arange(n_groups)
-width = 0.8 / len(algos)
+width = 0.8 / len(all_algos)
 
-for i, algo in enumerate(algos):
+for i, algo in enumerate(all_algos):
     pts = get(algo, "satisfaction_rate")
     rates = [p[1] * 100 for p in pts]
-    ax.bar(x + i * width, rates, width, label=labels[algo], color=colors[algo], alpha=0.85)
+    ax.bar(x + i * width, rates, width,
+           label=labels[algo], color=colors[algo], alpha=0.85)
 
 xlabels = [f"{p[0]:,}" for p in ref_pts]
-ax.set_xticks(x + width * (len(algos) - 1) / 2)
+ax.set_xticks(x + width * (len(all_algos) - 1) / 2)
 ax.set_xticklabels(xlabels, rotation=15)
 ax.set_xlabel("Number of patients")
 ax.set_ylabel("Satisfaction rate (%)")

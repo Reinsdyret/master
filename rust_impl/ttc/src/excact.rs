@@ -549,52 +549,6 @@ impl PwCyclePacker {
         Some(path)
     }
 
-    /// Iterative DFS from `start` to `end`, only traversing edges with cap > 0.
-    /// Goes deep along one path immediately — often finds cycles faster than BFS
-    /// on graphs where short cycles exist. Uses pre-allocated scratch fields.
-    fn find_path_dfs(&mut self, start: usize, end: usize) -> Option<Vec<(usize, usize)>> {
-        self.current_gen = self.current_gen.wrapping_add(1);
-        let dfs_gen = self.current_gen;
-
-        self.dfs_stack.clear();
-        self.dfs_stack.push((start, 0));
-        self.visit_gen[start] = dfs_gen;
-
-        while !self.dfs_stack.is_empty() {
-            let top = self.dfs_stack.len() - 1;
-            let (node, idx) = self.dfs_stack[top];
-
-            if node == end {
-                let mut path = Vec::new();
-                let mut curr = end;
-                while curr != start {
-                    let (prev, edge_idx) = self.bfs_parent[curr];
-                    path.push((prev, edge_idx));
-                    curr = prev;
-                }
-                path.reverse();
-                return Some(path);
-            }
-
-            if idx >= self.adj[node].len() {
-                self.dfs_stack.pop();
-                continue;
-            }
-
-            self.dfs_stack[top].1 += 1;
-
-            let edge_to = self.adj[node][idx].to;
-            let edge_cap = self.adj[node][idx].capacity;
-            if edge_cap > 0 && self.visit_gen[edge_to] != dfs_gen {
-                self.visit_gen[edge_to] = dfs_gen;
-                self.bfs_parent[edge_to] = (node, idx);
-                self.dfs_stack.push((edge_to, 0));
-            }
-        }
-
-        None
-    }
-
     /// Commit patient at (primary_node, primary_idx) using the BFS routing path.
     /// Primary arc is consumed (no residual created) — it's removed from the graph.
     /// Routing arcs are consumed and their residuals created; lower-priority
@@ -683,64 +637,4 @@ impl PwCyclePacker {
         }
         result
     }
-}
-
-
-pub fn solve_with_dinic_polynomial(patients: &Vec<Patient>, doctors: &Vec<Doctor>) -> i32 {
-    let n = doctors.len();
-    // 2 nodes per doctor + Super S + Super T
-    let mut dinic = Dinic::new(2 * n + 2);
-    let s = 2 * n;
-    let t = 2 * n + 1;
-
-    // 1. Map Doctors to In/Out nodes
-    for i in 0..n {
-        let node_in = i;
-        let node_out = i + n;
-        // Internal doctor edge
-        dinic.add_edge(node_in, node_out, i32::MAX);
-        // Connect to Super S/T
-        dinic.add_edge(s, node_in, i32::MAX);
-        dinic.add_edge(node_out, t, i32::MAX);
-    }
-
-    let mut edges: Vec<(usize, usize)> =
-            Vec::with_capacity(doctors.len() * doctors.len());
-
-        for p in patients {
-            let curr_doc = p.current_doctor.unwrap();
-            let pref_doc = p.preferred_doctor;
-            if curr_doc == pref_doc {
-                continue;
-            }
-
-            edges.push((curr_doc, pref_doc));
-        }
-
-        edges.sort();
-
-    // 2. Add Patient Request Edges
-    // Use your merged edges logic here
-    let mut merged: Vec<(usize, usize, usize)> =
-            Vec::with_capacity(doctors.len() * doctors.len());
-        for (u, v) in edges {
-            if let Some(last) = merged.last_mut() {
-                if last.0 == u && last.1 == v {
-                    last.2 += 1;
-                    continue;
-                }
-            }
-            merged.push((u, v, 1));
-        }
-    for (u_idx, v_idx, count) in merged {
-        // Patients move from u's Out-node to v's In-node
-        dinic.add_edge(u_idx + n, v_idx, count as i32);
-    }
-
-    // 3. The Circulation Return Edge
-    // This allows flow to circulate back from Sink to Source
-    dinic.add_edge(t, s, i32::MAX);
-
-    // 4. Run Dinic once
-    dinic.max_flow(s, t)
 }

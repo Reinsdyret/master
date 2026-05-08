@@ -3,7 +3,7 @@ use crate::{CycleStats, Doctor, Patient, ResultWithStats, AssignmentState};
 use indicatif::{ProgressBar, ProgressStyle};
 use rand::prelude::*;
 use rand::rngs::StdRng;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 pub enum NewRequestMode {
     SameAsResolved,
@@ -36,6 +36,8 @@ pub struct DayStats {
     pub cycles_found: usize,
     pub avg_cycle_length: f64,
     pub max_cycle_length: usize,
+    pub avg_wait_days: f64,
+    pub max_wait_days: usize,
 }
 
 pub struct SimulationResult {
@@ -49,6 +51,8 @@ pub struct SimulationResult {
     pub avg_waitlist_size: f64,
     pub avg_cycles_per_day: f64,
     pub avg_cycle_length_overall: f64,
+    pub avg_wait_days_overall: f64,
+    pub max_wait_days_overall: usize,
 }
 
 impl SimulationResult {
@@ -78,12 +82,14 @@ impl SimulationResult {
         }
         println!("{}", "-".repeat(75));
         println!(
-            "Total resolved: {}  Avg sat: {:.1}%  Avg waitlist: {:.1}  Avg cycles/day: {:.2}  Avg cycle len: {:.2}",
+            "Total resolved: {}  Avg sat: {:.1}%  Avg waitlist: {:.1}  Avg cycles/day: {:.2}  Avg cycle len: {:.2}  Avg wait: {:.1}d  Max wait: {}d",
             self.total_resolved,
             self.avg_daily_satisfaction_rate * 100.0,
             self.avg_waitlist_size,
             self.avg_cycles_per_day,
             self.avg_cycle_length_overall,
+            self.avg_wait_days_overall,
+            self.max_wait_days_overall,
         );
     }
 }
@@ -183,6 +189,7 @@ fn add_new_requests(state: &mut AssignmentState, count: usize, rng: &mut impl Rn
             p.wants_to_switch = true;
             p.priority = 1;
             p.is_stuck = false;
+            p.wait_days = 0;
         }
     }
 
@@ -270,10 +277,11 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
     pb.set_message(format!("{}", config.algorithm_name));
 
     for day in 0..num_days {
-        // Age waiting patients (priority += 1 per day on waitlist) and reset stuck flags
+        // Age waiting patients (priority += 1, wait_days += 1 per day on waitlist) and reset stuck flags
         for p in &mut state.patients {
             if p.wants_to_switch && !p.is_dummy {
                 p.priority += 1;
+                p.wait_days += 1;
             }
             p.is_stuck = false;
         }
@@ -287,7 +295,25 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
 
         let waitlist_before = state.count_unsatisfied_patients();
 
+        // Snapshot wait_days for all currently waiting patients before algorithm runs
+        let wait_snapshot: HashMap<usize, usize> = state.patients.iter()
+            .filter(|p| !p.is_dummy && p.wants_to_switch)
+            .map(|p| (p.id, p.wait_days))
+            .collect();
+
         let result = (config.algorithm)(&mut state);
+
+        // Compute wait time stats for patients resolved this day
+        let resolved_waits: Vec<usize> = state.patients.iter()
+            .filter(|p| !p.is_dummy && !p.wants_to_switch)
+            .filter_map(|p| wait_snapshot.get(&p.id).copied())
+            .collect();
+        let avg_wait = if resolved_waits.is_empty() {
+            0.0
+        } else {
+            resolved_waits.iter().sum::<usize>() as f64 / resolved_waits.len() as f64
+        };
+        let max_wait = resolved_waits.iter().copied().max().unwrap_or(0);
 
         let new_count = match &config.new_requests_per_day {
             NewRequestMode::SameAsResolved => result.patients_reassigned,
@@ -316,6 +342,8 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
             cycles_found: result.cycles_found,
             avg_cycle_length: result.cycle_stats.avg_cycle_length(),
             max_cycle_length: result.cycle_stats.max_cycle_length(),
+            avg_wait_days: avg_wait,
+            max_wait_days: max_wait,
         });
 
         pb.inc(1);
@@ -348,6 +376,19 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
         cycle_len_sum / cycle_len_count as f64
     };
 
+    let avg_wait_days_overall = {
+        let days_with_data: Vec<f64> = day_stats.iter()
+            .filter(|s| s.patients_resolved > 0)
+            .map(|s| s.avg_wait_days)
+            .collect();
+        if days_with_data.is_empty() {
+            0.0
+        } else {
+            days_with_data.iter().sum::<f64>() / days_with_data.len() as f64
+        }
+    };
+    let max_wait_days_overall = day_stats.iter().map(|s| s.max_wait_days).max().unwrap_or(0);
+
     SimulationResult {
         algorithm_name: config.algorithm_name,
         num_patients,
@@ -359,6 +400,8 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
         avg_waitlist_size,
         avg_cycles_per_day,
         avg_cycle_length_overall,
+        avg_wait_days_overall,
+        max_wait_days_overall,
     }
 }
 

@@ -1,5 +1,5 @@
-use ttc::excact::{CyclePacker, PwCyclePacker, solve_with_dinic_polynomial};
-use ttc::{greedy_dfs, true_ttc_algorithm, verify_ttc_result, PriorityStrategy, AssignmentState, parse_data_file, Patient};
+use ttc::excact::{CyclePacker, PwCyclePacker};
+use ttc::{greedy_dfs, verify_result, PriorityStrategy, AssignmentState, parse_data_file, Patient};
 use std::fs::File;
 use std::io::Write;
 use std::collections::HashSet;
@@ -80,7 +80,7 @@ fn main() {
         "data/test_100_patient_15_doctors_0_unassigned.txt",
         "data/test_1000_patient_30_doctors_0_unassigned.txt",
         "data/test_10000_patient_150_doctors_0_unassigned.txt",
-        "data/test_100000_patient_1500_doctors_0_unassigned.txt",
+        // "data/test_100000_patient_1500_doctors_0_unassigned.txt",
     ];
 
     let mut results: Vec<RunResult> = Vec::new();
@@ -102,8 +102,8 @@ fn main() {
         // --- CyclePacker (exact, cardinality) ---
         print!("  CyclePacker... ");
         let _ = std::io::stdout().flush();
-        let t0 = std::time::Instant::now();
         let packer_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let t0 = std::time::Instant::now();
         let mut packer = CyclePacker::new(&packer_state);
         packer.pack_cycles();
         let exact_ms = t0.elapsed().as_millis();
@@ -122,17 +122,15 @@ fn main() {
         // --- CyclePacker (priority-weighted) ---
         print!("  CyclePacker (priority-weighted)... ");
         let _ = std::io::stdout().flush();
-        let t0 = std::time::Instant::now();
         let pw_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let t0 = std::time::Instant::now();
         let mut pw_packer = PwCyclePacker::new(&pw_state);
         pw_packer.pack_cycles();
         let pw_ms = t0.elapsed().as_millis();
         let pw_satisfied_patients = pw_packer.satisfied_patients(&pw_state.patients);
-        let pw_satisfied_priorities: HashSet<usize> =
-            pw_satisfied_patients.iter().map(|p| p.priority).collect();
         let pw_count = pw_satisfied_patients.len();
         println!("{} satisfied in {}ms", pw_count, pw_ms);
-
+        
         results.push(RunResult {
             dataset: dataset.clone(),
             num_patients,
@@ -143,74 +141,25 @@ fn main() {
             time_ms: pw_ms,
         });
 
-        // --- TTC heuristic (StrictPriority) ---
-        print!("  TTC (StrictPriority)... ");
+        // --- Greedy DFS ---
+        print!("  Greedy DFS... ");
         let _ = std::io::stdout().flush();
-        let original_patients = patients.clone();
+        let mut greedy_state = AssignmentState::new(patients.clone(), doctors.clone());
         let t1 = std::time::Instant::now();
-        let mut ttc_state = AssignmentState::new(patients.clone(), doctors.clone());
-        let ttc_result = greedy_dfs(&mut ttc_state, PriorityStrategy::StrictPriority);
-        let ttc_ms = t1.elapsed().as_millis();
-        // ttc_result.solution stores the priority values of satisfied patients
-        let ttc_satisfied_priorities: &HashSet<usize> = &ttc_result.solution;
-        println!("{} satisfied in {}ms", ttc_result.patients_reassigned, ttc_ms);
-        verify_ttc_result(&original_patients, &ttc_state);
+        let greedy_result = greedy_dfs(&mut greedy_state, PriorityStrategy::StrictPriority);
+        let greedy_ms = t1.elapsed().as_millis();
+        println!("{} satisfied in {}ms", greedy_result.patients_reassigned, greedy_ms);
+        verify_result(&patients, &greedy_state);
 
         results.push(RunResult {
             dataset: dataset.clone(),
             num_patients,
             num_doctors,
-            algorithm: "TTC_StrictPriority".to_string(),
-            patients_satisfied: ttc_result.patients_reassigned,
+            algorithm: "Greedy_DFS".to_string(),
+            patients_satisfied: greedy_result.patients_reassigned,
             patients_wanting_switch,
-            time_ms: ttc_ms,
+            time_ms: greedy_ms,
         });
-
-        // --- True TTC ---
-        print!("  TTC (True)... ");
-        let _ = std::io::stdout().flush();
-        let t2 = std::time::Instant::now();
-        let mut true_ttc_state = AssignmentState::new(patients.clone(), doctors.clone());
-        let true_ttc_result = true_ttc_algorithm(&mut true_ttc_state);
-        let true_ttc_ms = t2.elapsed().as_millis();
-        let true_ttc_satisfied_priorities: &HashSet<usize> = &true_ttc_result.solution;
-        println!("{} satisfied in {}ms", true_ttc_result.patients_reassigned, true_ttc_ms);
-        verify_ttc_result(&original_patients, &true_ttc_state);
-
-        results.push(RunResult {
-            dataset: dataset.clone(),
-            num_patients,
-            num_doctors,
-            algorithm: "TTC_True".to_string(),
-            patients_satisfied: true_ttc_result.patients_reassigned,
-            patients_wanting_switch,
-            time_ms: true_ttc_ms,
-        });
-
-        // --- Lex comparisons ---
-
-        let mut switching: Vec<_> = patients.iter()
-            .filter(|p| !p.is_dummy && p.wants_to_switch)
-            .collect();
-        switching.sort_by(|a, b| b.priority.cmp(&a.priority));
-
-        lex_compare(
-            &pw_satisfied_priorities,
-            ttc_satisfied_priorities,
-            &switching,
-            "PW",
-            "SP",
-            &format!("lex_pw_vs_sp_{}.txt", dataset),
-        );
-
-        lex_compare(
-            ttc_satisfied_priorities,
-            true_ttc_satisfied_priorities,
-            &switching,
-            "SP",
-            "True",
-            &format!("lex_sp_vs_true_{}.txt", dataset),
-        );
     }
     
 
