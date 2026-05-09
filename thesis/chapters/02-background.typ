@@ -57,7 +57,7 @@ One difference is that patients, equivalent to the applicants, only prefer one d
 Another difference is that patients already have existing doctors, making the problem different since applicants do not already have a college they want to switch from.
 
 == Top Trading Cycles
-
+=== Classical TTC
 Top Trading Cycles (TTC), developed by Gale and published by Shapley and Scarf @SHAPLEY197423, is an algorithm to find a re-allocation of goods without using money.
 As mentioned it was introduced in an article together with the Housing Market problem.
 The algorithm finds a re-allocation of houses to traders, such that all mutually-beneficial exchanges have been realized @enwiki:1344910705.
@@ -88,13 +88,17 @@ The last remaining node is $A$ and as $B$ and $C$ are not in the graph, $"Top"(i
 #include "../figs/ttc-graph-2.typ"
 We execute this trade and are left with no more agents, making TTC terminate.
 
-Roth proved that TTC is strategy proof, meaning all agents should prefer their true preferences @ROTH1982127.
+Roth proved that TTC is strategy proof, meaning all agents are motivated to prefer their true preferences @ROTH1982127.
 TTC has also satisfies properties of Individual rationality, that an agent is at least as well of by participating, and Pareto efficiency which is that the objects are allocated such that no agent can improve without worsening another agent.
 
 Now using TTC for the GP assignment problem is challenging as patients do not have complete strict preference lists, they only have one preferred doctor, and a doctor can be "owned" by multiple patients.
 This makes the $"Top"(i)$ give out multiple patients, as the doctor that patient $i$ prefers is "owned" by multiple patients. How should we choose between these?
 This is what Huitfeldt et. al has written about and how their implementation satisfies the same properties of the classical TTC. 
-We try to 
+Later we run the TTC made for the GP assignment problem and compare with our algorithms. First we explain how it runs and how it is different from normal TTC.
+
+=== GP assignment problem TTC
+
+
 == Cycle cancelling
 
 == Related Work
