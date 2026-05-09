@@ -42,10 +42,9 @@ fn find_cycle_h(
 
 fn run_ttc_inner(
     panels_orig: &HashMap<usize, HashSet<usize>>,
-    preferences_orig: &HashMap<usize, Vec<usize>>,
+    mut preferences: HashMap<usize, Vec<usize>>,
     priority_list_input: Vec<usize>,
 ) -> (HashSet<usize>, usize, Vec<usize>) {
-    let mut preferences: HashMap<usize, Vec<usize>> = preferences_orig.clone();
 
     let waiters: HashSet<usize> = preferences.keys().copied().collect();
 
@@ -234,7 +233,6 @@ fn run_ttc_inner(
 
                         pats_assigned.insert(pat_prev);
                         preferences.remove(&pat_prev);
-                        priority_q.retain(|&p| p != pat_prev);
                     }
                 }
             }
@@ -289,7 +287,7 @@ pub fn huitfeldt_ttc(state: &mut AssignmentState) -> ResultWithStats {
     }
 
     let (reassigned, cycles_found, cycle_lengths) =
-        run_ttc_inner(&panels, &preferences, priority_list);
+        run_ttc_inner(&panels, preferences, priority_list);
 
     let solution: HashSet<usize> = reassigned.iter()
         .filter_map(|&id| state.get_patient(id).map(|p| p.priority))
