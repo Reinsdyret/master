@@ -1,4 +1,5 @@
 papers/
-target/
+target/*
+target/release/*
 !target/release/simulation
 Huitfeldt-et-al-replication/
