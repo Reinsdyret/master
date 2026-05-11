@@ -1,3 +1,4 @@
 papers/
 target/
+!target/release/simulation
 Huitfeldt-et-al-replication/
