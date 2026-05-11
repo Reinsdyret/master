@@ -4,12 +4,13 @@ Plot simulation CSV data.
 
 Usage:
     python plot_simulation.py <csv_file> [--from DAY] [--to DAY] [--metric METRIC] [--out FILE]
+    python plot_simulation.py <csv_file> --style candle [--window N] [--metric METRIC]
 
 Examples:
     python plot_simulation.py simulation_20260421_120000.csv
     python plot_simulation.py simulation_20260421_120000.csv --from 10 --to 20
-    python plot_simulation.py simulation_20260421_120000.csv --from 100 --to 360
-    python plot_simulation.py simulation_20260421_120000.csv --metric satisfaction_rate
+    python plot_simulation.py simulation_20260421_120000.csv --metric avg_wait_days --style candle
+    python plot_simulation.py simulation_20260421_120000.csv --metric patients_resolved --style candle --window 14
 """
 
 import argparse
@@ -30,6 +31,10 @@ METRICS = {
     "avg_wait_days":      "Avg Wait Days (Resolved)",
     "max_wait_days":      "Max Wait Days (Resolved)",
 }
+
+# Metrics that make most sense as candlesticks (shown first in help)
+CANDLE_GOOD_METRICS = ["patients_resolved", "avg_wait_days", "waitlist_before",
+                       "waitlist_after", "satisfaction_rate", "cycles_found"]
 
 COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
 
@@ -59,7 +64,53 @@ def load_csv(path):
     return algorithms, data
 
 
-def plot(csv_path, day_from, day_to, metric, out_path):
+def _scale(val, is_rate):
+    return val * 100 if is_rate else val
+
+
+def aggregate_candles(alg_data, days_in_range, window, is_rate):
+    """Bin days into windows and return OHLC dicts."""
+    candles = []
+    i = 0
+    while i < len(days_in_range):
+        chunk = days_in_range[i:i + window]
+        vals = [_scale(alg_data[d], is_rate) for d in chunk if d in alg_data]
+        if vals:
+            candles.append({
+                "x":     (chunk[0] + chunk[-1]) / 2,
+                "open":  vals[0],
+                "close": vals[-1],
+                "high":  max(vals),
+                "low":   min(vals),
+            })
+        i += window
+    return candles
+
+
+def draw_candles(ax, candles, color, label, body_width, offset):
+    """Draw OHLC candlesticks. Body green when close>=open, hollow otherwise."""
+    for c in candles:
+        x = c["x"] + offset
+        o, cl, hi, lo = c["open"], c["close"], c["high"], c["low"]
+        # Wick
+        ax.plot([x, x], [lo, hi], color=color, linewidth=1.2, zorder=2)
+        # Body
+        body_bottom = min(o, cl)
+        body_height = abs(cl - o) or (hi - lo) * 0.01  # tiny floor so body visible
+        rising = cl >= o
+        ax.add_patch(__import__("matplotlib").patches.Rectangle(
+            (x - body_width / 2, body_bottom),
+            body_width, body_height,
+            facecolor=color if rising else "white",
+            edgecolor=color,
+            linewidth=1.2,
+            zorder=3,
+        ))
+    # Invisible line for legend
+    ax.plot([], [], color=color, linewidth=6, alpha=0.7, label=label)
+
+
+def plot(csv_path, day_from, day_to, metric, out_path, style, window):
     try:
         import matplotlib.pyplot as plt
         import matplotlib.ticker as ticker
@@ -68,7 +119,6 @@ def plot(csv_path, day_from, day_to, metric, out_path):
 
     algorithms, data = load_csv(csv_path)
 
-    # Determine day range
     all_days = sorted({d for alg in algorithms for d in data[alg]})
     if not all_days:
         sys.exit("No data found in CSV.")
@@ -90,32 +140,56 @@ def plot(csv_path, day_from, day_to, metric, out_path):
 
     fig, ax = plt.subplots(figsize=(14, 7))
 
-    for i, alg in enumerate(algorithms):
-        color = COLORS[i % len(COLORS)]
-        xs = []
-        ys = []
-        for d in days_in_range:
-            if d in data[alg]:
-                xs.append(d)
-                val = data[alg][d][metric]
-                ys.append(val * 100 if is_rate else val)
-        ax.plot(xs, ys, label=alg, color=color, linewidth=2, marker="o", markersize=3)
+    if style == "candle":
+        n = len(algorithms)
+        # Body width: fraction of window, shrunk per algorithm count
+        body_width = window * 0.55 / max(n, 1)
+        # Spread algorithms symmetrically around candle center
+        offsets = [(i - (n - 1) / 2) * body_width * 1.15 for i in range(n)]
+
+        for i, alg in enumerate(algorithms):
+            color = COLORS[i % len(COLORS)]
+            alg_vals = {d: data[alg][d][metric] for d in days_in_range if d in data[alg]}
+            candles = aggregate_candles(alg_vals, days_in_range, window, is_rate)
+            draw_candles(ax, candles, color, alg, body_width, offsets[i])
+
+        # Auto x-limits with padding
+        xs = [c["x"] for alg in algorithms
+              for c in aggregate_candles(
+                  {d: data[alg][d][metric] for d in days_in_range if d in data[alg]},
+                  days_in_range, window, is_rate)]
+        if xs:
+            pad = window * 0.6
+            ax.set_xlim(min(xs) - pad, max(xs) + pad)
+
+        subtitle = f"Candlestick ({window}-day windows)"
+    else:
+        for i, alg in enumerate(algorithms):
+            color = COLORS[i % len(COLORS)]
+            xs, ys = [], []
+            for d in days_in_range:
+                if d in data[alg]:
+                    xs.append(d)
+                    ys.append(_scale(data[alg][d][metric], is_rate))
+            ax.plot(xs, ys, label=alg, color=color, linewidth=2, marker="o", markersize=3)
+        subtitle = "Line"
 
     ax.set_xlabel("Day", fontsize=13)
     ax.set_ylabel(f"{ylabel}{' (%)' if is_rate else ''}", fontsize=13)
     ax.set_title(
-        f"{ylabel} — Days {day_from}–{day_to}\n{os.path.basename(csv_path)}",
+        f"{ylabel} — Days {day_from}–{day_to}  [{subtitle}]\n{os.path.basename(csv_path)}",
         fontsize=14,
     )
     ax.legend(fontsize=11)
     ax.grid(True, alpha=0.3)
     ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True, nbins=20))
+    ax.autoscale_view()
 
     plt.tight_layout()
 
     if out_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_path = f"simulation_plot_{metric}_{day_from}_{day_to}_{ts}.png"
+        out_path = f"simulation_plot_{metric}_{style}_{day_from}_{day_to}_{ts}.png"
 
     plt.savefig(out_path, dpi=150)
     print(f"Plot saved to: {out_path}")
@@ -131,7 +205,18 @@ def main():
     parser.add_argument(
         "--metric", default="patients_resolved",
         choices=list(METRICS.keys()),
-        help=f"Column to plot (default: patients_resolved). Options: {', '.join(METRICS)}",
+        help=(
+            f"Metric to plot (default: patients_resolved). "
+            f"Best for candle: {', '.join(CANDLE_GOOD_METRICS)}"
+        ),
+    )
+    parser.add_argument(
+        "--style", default="line", choices=["line", "candle"],
+        help="Plot style: 'line' (default) or 'candle' (OHLC candlestick per window)",
+    )
+    parser.add_argument(
+        "--window", type=int, default=7, metavar="N",
+        help="Window size in days for candle aggregation (default: 7)",
     )
     parser.add_argument("--out", default=None, metavar="FILE",
                         help="Output PNG path (default: auto-named with timestamp)")
@@ -141,7 +226,10 @@ def main():
     if not os.path.isfile(args.csv):
         sys.exit(f"File not found: {args.csv}")
 
-    plot(args.csv, args.day_from, args.day_to, args.metric, args.out)
+    if args.style == "candle" and args.window < 2:
+        sys.exit("--window must be >= 2 for candle style")
+
+    plot(args.csv, args.day_from, args.day_to, args.metric, args.out, args.style, args.window)
 
 
 if __name__ == "__main__":

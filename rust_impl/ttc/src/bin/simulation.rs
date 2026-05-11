@@ -17,12 +17,12 @@ fn main() {
 
     for (name, alg) in &algorithms {
         let config = SimulationConfig {
-            num_patients: 100_000,
-            num_doctors: 10,
-            waitlist_fraction: 0.3,
-            num_days: 365,
-            new_requests_per_day: NewRequestMode::Fixed(1000),
-            min_new_requests_fraction: 0.01,
+            num_patients: 5_631_845,
+            num_doctors: 5767,
+            waitlist_fraction: 0.05,
+            num_days: 365 * 3,
+            new_requests_per_day: NewRequestMode::Fixed(13000),
+            min_new_requests_fraction: 0.001,
             algorithm: *alg,
             algorithm_name: name.to_string(),
             seed: 42,
