@@ -94,13 +94,48 @@ TTC has also satisfies properties of Individual rationality, that an agent is at
 Now using TTC for the GP assignment problem is challenging as patients do not have complete strict preference lists, they only have one preferred doctor, and a doctor can be "owned" by multiple patients.
 This makes the $"Top"(i)$ give out multiple patients, as the doctor that patient $i$ prefers is "owned" by multiple patients. How should we choose between these?
 This is what Huitfeldt et. al has written about and how their implementation satisfies the same properties of the classical TTC. 
-Later we run the TTC made for the GP assignment problem and compare with our algorithms. First we explain how it runs and how it is different from normal TTC.
+Later we run the TTC made for the GP assignment problem and compare with our algorithms. First we explain it and how it is different from normal TTC.
 
 === GP assignment problem TTC
+In the paper from Huitfeldt et al. they tackle a more complex dataset as they use real patient and doctor data from Norway.
+In their model they have doctors with available capacity and patients switching to these GPs can be allocated that GP without an exchange.
+This is why in each of the two TTC implementations they first run a waitlist algorithm that goes through all GP with available capacity and assigns the highest priority to that GPs panels until there are no more patients waiting on GPs with available capacity @NBERw32458.
+Following we explain Huitfeldt et al. TTC implementation without regard to capacities to doctors as that is how we tackle the problem.
 
+Now the algorithm is as follows @NBERw32458:
++ Each patient points to their preferred GP, if the preferred GP is not in the graph the patient points to its current GP. Each GP points to the patient in their panel with highest priority.
++ Find a cycle in the graph, remove patients part of that cycle. If a GP has no more patients that are in the graph it is removed from the graph.
++ Repeat step 1 until there are no more patients
+
+Like the classical TTC we are guaranteed to have a cycle because of the pidgeonhole principle, since if a patient does not get their preferred GP they end up pointing to their own GP making a cycle.
 
 == Cycle cancelling
+Cycle cancelling is a technique used in flow and circulation problems to find a minimum cost solution.
+First we explain some of the terms needed for cycle cancelling then we go onto what cycle cancelling is.
 
-== Related Work
+=== Circulation problems
+Let $G = (V,E)$ be a directed graph, we have n vertices and m edges. G must be symmetric, $(v,w) in E$ if and only if $(w,v) in E$.
+The graph $G$ is a circulation network if each edge $(v,w)$ has a capacity $u(v,w)$ and a cost $c(v,w)$.
+We require the cost function to be antisymmetric, $c(v,w) = -c(w,v)$ for all $(v,w) in E$ @GoldbergCirculation.
+An example circulation network we can see in @example-circulation, here the capacities and costs are labeled in order.
+For example the edge $(a,b)$, it has capacity 1 and cost 1 while the edge $(b,a)$ has capacity 1 but cost -1.
 
+#include "../figs/example-circulation.typ";
 
+A circulation is a function f on edges that satisfies the following constraints @GoldbergCirculation:
+$
+f(v,w) <= u(v,w) quad forall (v,w) in E\
+f(v,w) = -f(w,v) quad forall (v,w) in E\
+sum_(v in "Neigh"(w)) f(v,w) = 0 quad forall w in V
+$
+Where $"Neigh"$ is the neighborhood of a vertex. $"Neigh"(v) = {w | (v, w) in E}$.
+The cost of a circulation $f$ is given by the following expression @GoldbergCirculation:
+$
+"cost"(f) = 1/2 sum_((v,w) in E) c(v,w) f(v,w)
+$
+
+With a circulation $f$ and edge $(v,w)$ the residual capacity of $(v,w)$ is $u_f (v,w) = u(v,w) - f(v,w)$.
+An edge (v,w) is a residual edge if $u_f (v,w) > 0$ and an edge that is not residual is saturated.
+A residual cycle is a simple cycle of residual edges.
+The capacity of a cycle is the minimum of the capacities of its edges, note that the capacity on a residual cycle is positive.
+The cost of a cycle is the sum of costs of its edges, a residiual cycle is negative if it has negative cost. @GoldbergCirculation
