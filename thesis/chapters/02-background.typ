@@ -1,3 +1,7 @@
+#import "@preview/ctheorems:1.1.3": *
+#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
+#let proof = thmproof("proof", "Proof")
+
 = Background <ch:background>
 
 Problems like the GP allocation problem have been studied for quite some time with a lot of variations.
@@ -139,3 +143,18 @@ An edge (v,w) is a residual edge if $u_f (v,w) > 0$ and an edge that is not resi
 A residual cycle is a simple cycle of residual edges.
 The capacity of a cycle is the minimum of the capacities of its edges, note that the capacity on a residual cycle is positive.
 The cost of a cycle is the sum of costs of its edges, a residiual cycle is negative if it has negative cost. @GoldbergCirculation
+
+Now a well known and proven theorem following these observations is:
+#theorem("Minimum-cost circulation")[
+  A circulation is minimum-cost if and only if there are no negative residual cycles @GoldbergCirculation.
+] <min-cost-theorem>
+
+=== Algorithm
+Using the minimum-cost circulation theorem we can now formalize the cycle canclling algorithm.
+
+#import "@preview/lovelace:0.3.1": *
+#pseudocode-list[
+  + Start with any flow f, this can be 0
+  + *while* $exists$ negative residual cycle $c$
+    + Cancel $c$: $forall e in c: f(e) := f(e) + "capacity"(c)$
+]

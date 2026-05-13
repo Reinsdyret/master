@@ -1,4 +1,7 @@
 #import "lib.typ": *
+#import "@preview/ctheorems:1.1.3": *
+#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
+#let proof = thmproof("proof", "Proof")
 
 #set text(lang: "en")
 
