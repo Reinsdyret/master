@@ -150,7 +150,7 @@ Now a well known and proven theorem following these observations is:
 ] <min-cost-theorem>
 
 === Algorithm
-Using the minimum-cost circulation theorem we can now formalize the cycle canclling algorithm.
+Using the minimum-cost circulation theorem we can now formalize the cycle cancelling algorithm.
 
 #import "@preview/lovelace:0.3.1": *
 #pseudocode-list[
