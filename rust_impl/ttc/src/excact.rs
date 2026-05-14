@@ -15,15 +15,9 @@ struct Edge {
 
 pub struct CyclePacker {
     adj: Vec<Vec<Edge>>,
-    // Scratch space reused across SPFA calls to avoid repeated allocation
     dist: Vec<i128>,
     pred_node: Vec<usize>,
     pred_edge: Vec<usize>,
-    in_queue: Vec<bool>,
-    enqueue_count: Vec<usize>,
-    // Generation-stamped array for cycle entry detection — no per-call reset
-    walk_visited: Vec<u32>,
-    walk_gen: u32,
 }
 
 impl CyclePacker {
@@ -41,10 +35,6 @@ impl CyclePacker {
             dist: vec![0i128; n],
             pred_node: vec![n; n],
             pred_edge: vec![0; n],
-            in_queue: vec![false; n],
-            enqueue_count: vec![0; n],
-            walk_visited: vec![0u32; n],
-            walk_gen: 0,
         };
 
         let mut edges: Vec<(usize, usize)> =
@@ -125,49 +115,36 @@ impl CyclePacker {
     fn find_negative_cycle(&mut self) -> Option<Vec<(usize, usize)>> {
         let n = self.adj.len();
 
-        // Reset scratch arrays (reuse allocations)
+        // Initialize: all distances 0, no predecessors set
         self.dist.iter_mut().for_each(|x| *x = 0);
         self.pred_node.iter_mut().for_each(|x| *x = n);
         self.pred_edge.iter_mut().for_each(|x| *x = 0);
-        self.in_queue.iter_mut().for_each(|x| *x = false);
-        self.enqueue_count.iter_mut().for_each(|x| *x = 0);
 
-        // Seed all nodes
-        let mut queue: VecDeque<usize> = (0..n).collect();
-        for v in 0..n {
-            self.in_queue[v] = true;
-            self.enqueue_count[v] = 1;
+        // Relax all edges n-1 times
+        for _ in 0..n - 1 {
+            for u in 0..n {
+                for (idx, edge) in self.adj[u].iter().enumerate() {
+                    if edge.capacity == 0 { continue; }
+                    let new_dist = self.dist[u] + edge.cost;
+                    if new_dist < self.dist[edge.to] {
+                        self.dist[edge.to] = new_dist;
+                        self.pred_node[edge.to] = u;
+                        self.pred_edge[edge.to] = idx;
+                    }
+                }
+            }
         }
 
+        // Check: nth relaxation — any edge that still improves means a negative cycle exists
         let mut cycle_node = n;
-
-        'outer: while let Some(u) = queue.pop_front() {
-            self.in_queue[u] = false;
-
+        'outer: for u in 0..n {
             for (idx, edge) in self.adj[u].iter().enumerate() {
-                if edge.capacity == 0 {
-                    continue;
-                }
-                let v = edge.to;
-                let new_dist = self.dist[u] + edge.cost;
-                if new_dist < self.dist[v] {
-                    self.dist[v] = new_dist;
-                    self.pred_node[v] = u;
-                    self.pred_edge[v] = idx;
-                    if !self.in_queue[v] {
-                        self.enqueue_count[v] += 1;
-                        if self.enqueue_count[v] >= n {
-                            cycle_node = v;
-                            break 'outer;
-                        }
-                        // SLF: push to front if dist[v] < dist of current front
-                        if queue.front().map_or(true, |&f| new_dist < self.dist[f]) {
-                            queue.push_front(v);
-                        } else {
-                            queue.push_back(v);
-                        }
-                        self.in_queue[v] = true;
-                    }
+                if edge.capacity == 0 { continue; }
+                if self.dist[u] + edge.cost < self.dist[edge.to] {
+                    self.pred_node[edge.to] = u;
+                    self.pred_edge[edge.to] = idx;
+                    cycle_node = edge.to;
+                    break 'outer;
                 }
             }
         }
@@ -176,20 +153,10 @@ impl CyclePacker {
             return None;
         }
 
-        // Walk back through predecessors until we revisit a node — that's the true cycle entry.
-        // Uses a generation stamp so no reset is needed.
-        self.walk_gen = self.walk_gen.wrapping_add(1);
-        let stamp = self.walk_gen;
+        // Walk back n steps to land inside the cycle, then collect it
         let mut v = cycle_node;
-        loop {
-            if self.walk_visited[v] == stamp {
-                break;
-            }
-            self.walk_visited[v] = stamp;
-            v = self.pred_node[v];
-        }
+        for _ in 0..n { v = self.pred_node[v]; }
 
-        // Collect the cycle
         let cycle_start = v;
         let mut cycle_edges = Vec::new();
         loop {
@@ -197,9 +164,7 @@ impl CyclePacker {
             let idx = self.pred_edge[v];
             cycle_edges.push((u, idx));
             v = u;
-            if v == cycle_start {
-                break;
-            }
+            if v == cycle_start { break; }
         }
 
         Some(cycle_edges)

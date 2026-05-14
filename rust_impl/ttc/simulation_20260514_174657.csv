@@ -1,0 +1,6 @@
+algorithm,day,waitlist_before,patients_resolved,new_requests,waitlist_after,satisfaction_rate,cycles_found,avg_cycle_length,max_cycle_length,avg_wait_days,max_wait_days
+Huitfeldt TTC,1,5,0,13000,50,0.000000,0,0.0000,0,0.0000,0
+Huitfeldt TTC,2,50,3,13000,50,0.060000,1,3.0000,3,1.0000,1
+Huitfeldt TTC,3,50,5,13000,50,0.100000,1,5.0000,5,2.0000,3
+Huitfeldt TTC,4,50,2,13000,50,0.040000,1,2.0000,2,2.0000,3
+Huitfeldt TTC,5,50,2,13000,50,0.040000,1,2.0000,2,2.5000,4
