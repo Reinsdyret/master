@@ -130,9 +130,9 @@ A circulation is a function f on edges that satisfies the following constraints 
 $
 f(v,w) <= u(v,w) quad forall (v,w) in E\
 f(v,w) = -f(w,v) quad forall (v,w) in E\
-sum_(v in "Neigh"(w)) f(v,w) = 0 quad forall w in V
+sum_(v in "pred"(w)) f(v,w) = 0 quad forall w in V
 $
-Where $"Neigh"$ is the neighborhood of a vertex. $"Neigh"(v) = {w | (v, w) in E}$.
+Where $"pred"(w) = {v | (v,w) in E}$ denotes the predecessors of $w$.
 The cost of a circulation $f$ is given by the following expression @GoldbergCirculation:
 $
 "cost"(f) = 1/2 sum_((v,w) in E) c(v,w) f(v,w)
@@ -142,19 +142,30 @@ With a circulation $f$ and edge $(v,w)$ the residual capacity of $(v,w)$ is $u_f
 An edge (v,w) is a residual edge if $u_f (v,w) > 0$ and an edge that is not residual is saturated.
 A residual cycle is a simple cycle of residual edges.
 The capacity of a cycle is the minimum of the capacities of its edges, note that the capacity on a residual cycle is positive.
-The cost of a cycle is the sum of costs of its edges, a residiual cycle is negative if it has negative cost. @GoldbergCirculation
+The cost of a cycle is the sum of costs of its edges, a residual cycle is negative if it has negative cost. @GoldbergCirculation
 
-Now a well known and proven theorem following these observations is:
+A well known and proven theorem following these observations is:
 #theorem("Minimum-cost circulation")[
   A circulation is minimum-cost if and only if there are no negative residual cycles @GoldbergCirculation.
 ] <min-cost-theorem>
 
 === Algorithm
 Using the minimum-cost circulation theorem we can now formalize the cycle cancelling algorithm.
+Note that we say the starting circulation can be 0 on all edges, sometimes a circulation problem has lower bounds that make this an invalid starting circulation.
+For cases with lower bounds on edges, a starting circulation can be computed using any max-flow algorithm. 
 
 #import "@preview/lovelace:0.3.1": *
 #pseudocode-list[
-  + Start with any flow f, this can be 0
+  + Start with any feasible circulation f, this can be 0
   + *while* $exists$ negative residual cycle $c$
     + Cancel $c$: $forall e in c: f(e) := f(e) + "capacity"(c)$
 ]
+
+=== Runtime
+Finding the negative residual cycles can be done with Bellman-Ford in $O(n m)$ time @enwiki:bellman-ford.
+At each negative residual cycle that is cancelled the total cost of the circulation decreases by at least 1.
+The cost is bounded below by $-m C U$ where $C$ is the max cost and $U$ is the max capacity of any edge.
+It follows that the number of iterations is bounded by $O(m C U)$ and then the runtime is $O(n m^2 C U)$.
+Note that this runtime is pseudo-polynomial since it depends largely on the size of $C$ and $U$.
+Goldberg and Tarjan proved that a variant of the cycle cancelling algorithm called Minimum Mean Cycle Cancelling has a stronly polynomial bound on its runtime @GoldbergCirculation.
+But, we will later show how for our problem we still have a polynomial algorithms using the classical Cycle Cancelling algorithm.

@@ -19,18 +19,30 @@ Observe that this graph is bipartite as we have patients on one side and doctors
 Let $I = {0, ..., |P|-1}$. Then:
 
 $
-G = (V, E), quad V = P union D, quad E = {(p_i, D_"pref"[i]) | i in I} union {(D_"cur"[i], p_i) | i in I}
+G = (V, E), quad V = P union D\
+E = {(p_i, D_"pref"[i]) | i in I} union {(D_"cur"[i], p_i) | i in I}
 $
 
 === Doctor graph collapsed edges 
 In this weighted graph we condense the problem to only have doctors as nodes and edges between doctors.
 An edge $"doctor a" arrow "doctor b"$ symbolises that there exists a patient that wants to switch from doctor a to doctor b, or that the patient currently has doctor a and has doctor b as preferred.
+The weight of an edge indicates the number of patients wanting that switch.
 We define our graph as:
 
 $
 G = (V, E), quad V = D \
-E = {(D_"cur"[i], D_"pref"[i]) | i in I} \
+E = {(a,b) | exists i in I " s.t. " D_"cur"[i] = a and D_"pref"[i] = b} \
 w(a, b) = |{i in I | D_"cur"[i] = a and D_"pref"[i] = b}|
+$
+
+=== Doctor graph priority weighted
+This weighted graph is much like the Doctor graph collapsed edges, but while that graph representation focuses on number of patients wanting a switch this graph focuses on the priority of each patient.
+Instead of collapsing all preferences that are equal here we make each preference into an edge and weight it with the priority of that patient.
+
+$
+G = (V, E), quad V = D\
+E = { (D_"cur"[i], D_"pref"[i], i) | i in I }\
+w(a,b,i) = R(P_i)
 $
 
 
@@ -75,7 +87,7 @@ In @pareto-inefficient-graph each patient $p x$ has priority $x$. The DFS begins
 Had the DFS chosen $p 1$ at $d 2$ instead, it would have found the longer cycle $p 4 arrow d 2 arrow p 1 arrow d 3 arrow p 3 arrow d 1 arrow p 4$, satisfying three patients. The greedy choice at $d 2$ was locally motivated by priority but globally suboptimal. This motivates the exact algorithms in the following sections.
 
 
-
+/*
 == Exact algorithm for maximizing total switches
 #text(fill: red)[*NB: HER OG NESTE ER DET MYE AI, NOE JEG VIL HØRE DERES MENING OM. NOE AV DETTE SYNES JEG ER SKREVET BRA, ANDRE LITT USIKKER. INKLUDERT KILDENE ER IKKE RIKTIG*]
 
@@ -240,3 +252,4 @@ The algorithm processes the remaining patients from highest to lowest priority. 
 == Metaheuristics
 
 
+*/

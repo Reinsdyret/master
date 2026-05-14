@@ -149,11 +149,11 @@ This means that even though solution $S'$ contains some high priority patients, 
 
 
 === Priority function
-The priority function has quite a large effect on the switches we end up taking. As the priority of a patient decides if that patient will be in the solution or not for most of the algorithms, except for the exact algorithm maximizing cardinality $succ_"size"$.
-This is why its important to discuss what effects the function can have on solutions when we are maximizing the ordering $succ_"util"$.
+The priority function has quite a large effect on the final solution. The priority chosen will largely decide whether that patient will be in the final solution or not.
+This is why its important to discuss what effects the function can have on solutions when we are maximizing the ordering $succ_"util"$ or $succ_"lex"$.
 
 If we make the priority function exponential such that $R(a) = 2^a$ then using the ordering $succ_"util"$ becomes equal to $succ_"lex"$.
-While this ordering is in terms maybe the most fair it might not always be the best for the collective good, since a high priority patient might block a lot of lower priority patients from switching.
+While this ordering is in terms maybe the most fair, since we never let a patient with lesser priority switch before one with greater, it might not always be the best for the collective good, since a high priority patient might block a lot of lower priority patients from switching.
 This way we might want a priority function like $R(a) = "Days patient" a "has been waiting for a switch"$.
 This way if we have the choice between patient $P_i$ who has waited for 30 days $R(P_i) = 30$ and 4 patients who have waited 40 days in total an algorithm maximizing $succ_"util"$ will choose the 4 patients.
 
