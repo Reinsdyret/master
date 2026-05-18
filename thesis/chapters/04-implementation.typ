@@ -5,11 +5,11 @@
 = Implementation <ch:implementation>
 
 In this chapter we look at each algorithm we have implemented, how we implemented them, why and runtime analysis.
-We have in total implemented 5 algorithms, TTC, Greedy DFS, Exact Cardinality, Exact Priority and a specialized case of Exact Priority.
-For the exact algorithms we also give, or refer to existing, proofs for why they are exact.
+We have in total implemented 4 algorithms, Greedy DFS, Cycle Cancelling for Cardinality $succ_"size"$, Cycle Cancelling for Utility $succ_"util"$ and Cycle Cancelling for Lexicographic Priority $succ_"lex"$.
+For the cycle cancelling algorithms we also give, or refer to existing, proofs for why they are exact.
 
 == Different graph representations used
-In the algorithms we use different graph representations, so we start by defining the different representations of _The GP allocation problem_.
+In the algorithms we use different graph representations, so we start by defining the different graph representations of _The GP allocation problem_.
 
 === Patient and Doctor graph
 First we have the easiest graph containing both patients and doctors as vertices.
@@ -26,13 +26,16 @@ $
 === Doctor graph collapsed edges 
 In this weighted graph we condense the problem to only have doctors as nodes and edges between doctors.
 An edge $"doctor a" arrow "doctor b"$ symbolises that there exists a patient that wants to switch from doctor a to doctor b, or that the patient currently has doctor a and has doctor b as preferred.
-The weight of an edge indicates the number of patients wanting that switch.
+The capacity of an edge indicates the number of patients wanting that switch, while the cost is -1.
 We define our graph as:
 
 $
 G = (V, E), quad V = D \
-E = {(a,b) | exists i in I " s.t. " D_"cur"[i] = a and D_"pref"[i] = b} \
-w(a, b) = |{i in I | D_"cur"[i] = a and D_"pref"[i] = b}|
+E = {(a,b), (b,a) | exists i in I " s.t. " D_"cur"[i] = a and D_"pref"[i] = b} \
+u(a, b) = |{i in I | D_"cur"[i] = a and D_"pref"[i] = b}| \
+u(b, a) = 0 \
+c(a, b) = -1 \
+c(b, a) = 1
 $
 
 === Doctor graph priority weighted
@@ -42,7 +45,8 @@ Instead of collapsing all preferences that are equal here we make each preferenc
 $
 G = (V, E), quad V = D\
 E = { (D_"cur"[i], D_"pref"[i], i) | i in I }\
-w(a,b,i) = R(P_i)
+u(a, b, i) = 1 \
+c(a, b, i) = - R(P_i)
 $
 
 

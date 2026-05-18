@@ -31,5 +31,5 @@
     d3 -> p3;
     
   }"),
-  caption: [ Example graph G where algorithm would choose suboptimal solution. p$x$ means patient $x$ and has priority $x$.]
+  caption: [ Example graph G where Greedy DFS would choose suboptimal solution. p$x$ means patient $x$ and has priority $x$.]
 ) <pareto-inefficient-graph>

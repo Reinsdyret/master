@@ -161,6 +161,13 @@ For cases with lower bounds on edges, a starting circulation can be computed usi
     + Cancel $c$: $forall e in c: f(e) := f(e) + "capacity"(c)$
 ]
 
+Recall that due to the antisymmetry rule of a circulation $f(v,w) = -f(w,v)$ must hold for all edges. When the algorithm cancels a cycle by augmenting flow by $"capacity"(c)$ along each edge in the cycle, it implicitly augments $-"capacity"(c)$ along the corresponding reverse edges.
+For example, when flow is pushed by $"capacity"(c)$ on an edge $(v,w)$ the flow on its reverse is updated to $f(w,v) = f(w,v) - "capacity"(c)$. 
+If we now look at the residual capacity of $(w,v)$, $u_f (w,v) = u(w,v) - f(w,v)$.
+Since $f(w,v)$ decreases when $f(v,w)$ increases, pushing flow along an edge increases the residual capacity of its reverse edge. 
+This allows the algorithm to later push flow on the reverse edge to "undo" earlier pushes on certain edges.
+
+
 === Runtime
 Finding the negative residual cycles can be done with Bellman-Ford in $O(n m)$ time @enwiki:bellman-ford.
 At each negative residual cycle that is cancelled the total cost of the circulation decreases by at least 1.
