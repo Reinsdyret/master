@@ -70,12 +70,12 @@ The optimal solution is then the one that maximises this binary number: always s
   We use the example graph in @example-graph as the graph to create solutions from.
 
   Given solutions
-  + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing the cycle $P_4 arrow P_5 arrow P_4$
-  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_S'$ containing the cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
+  + $S = {p_4, p_5}$ represents the subgraph $G_S$ containing the cycle $p_4 arrow p_5 arrow p_4$
+  + $S' = {p_1, p_2, p_3}$ represents the subgraph $G_S'$ containing the cycle $p_1 arrow p_2 arrow p_3 arrow p_1$
 
-  For simplicity's sake we say that $R(P_i) = i$, so $P_5$ has the highest priority.
+  For simplicity's sake we say that $R(p_i) = i$, so $p_5$ has the highest priority.
 
-  Ordering all five patients by priority gives $p^((1)) = P_5, p^((2)) = P_4, dots, p^((5)) = P_1$. Then:
+  Ordering all five patients by priority gives $p^((1)) = p_5, p^((2)) = p_4, dots, p^((5)) = p_1$. Then:
   $
   chi(S) = (1, 1, 0, 0, 0) quad chi(S') = (0, 0, 1, 1, 1)
   $
@@ -100,12 +100,12 @@ This optimal solution will then be one that exchanges the most patients.
 #example("Ordering two solutions by cardinality")[
 
   Using the same solutions as in the previous example:
-  + $S = {P_4, P_5}$ represents the subgraph $G_S$ containing the cycle $P_4 arrow P_5 arrow P_4$
-  + $S' = {P_1, P_2, P_3}$ represents the subgraph $G_{S'}$ containing the cycle $P_1 arrow P_2 arrow P_3 arrow P_1$
+  + $S = {p_4, p_5}$ represents the subgraph $G_S$ containing the cycle $p_4 arrow p_5 arrow p_4$
+  + $S' = {p_1, p_2, p_3}$ represents the subgraph $G_{S'}$ containing the cycle $p_1 arrow p_2 arrow p_3 arrow p_1$
 
-  Under $succ_"size"$: $|S| = 2$ and $|S'| = 3$, so $S' succ_"size" S$. However the solution is ${P_1, P_2, P_3, P_4, P_5}$, the union of both cycles.
+  Under $succ_"size"$: $|S| = 2$ and $|S'| = 3$, so $S' succ_"size" S$. However the solution is ${p_1, p_2, p_3, p_4, p_5}$, the union of both cycles.
 
-  Notice that the same two sets are reversibly ordered under the two criteria: $S succ_"lex" S'$ (because $S$ contains the highest-priority patient $P_5$) but $S' succ_"size" S$ (because $S'$ has more patients).
+  Notice that the same two sets are reversibly ordered under the two criteria: $S succ_"lex" S'$ (because $S$ contains the highest-priority patient $p_5$) but $S' succ_"size" S$ (because $S'$ has more patients).
 ]
 
 #include "../figs/example-graph.typ"
@@ -135,8 +135,8 @@ This means that even though solution $S'$ contains some high priority patients, 
 #example("Ordering two solutions by total utility")[
   
   We use the following solutions from @example-graph-2:
-  + $S = {1,3,4}$ representing the cycle $P_1 arrow P_3 arrow P_4 arrow P_1$
-  + $S' = {5,2}$ representing the cycle $P_5 arrow P_2 arrow P_5$
+  + $S = {1,3,4}$ representing the cycle $p_1 arrow p_3 arrow p_4 arrow p_1$
+  + $S' = {5,2}$ representing the cycle $p_5 arrow p_2 arrow p_5$
 
   This gives the following total utilities: \
   $U(S) = 1 + 3 + 4 = 8$ \
@@ -153,9 +153,10 @@ The priority function has quite a large effect on the final solution. The priori
 This is why its important to discuss what effects the function can have on solutions when we are maximizing the ordering $succ_"util"$ or $succ_"lex"$.
 
 If we make the priority function exponential such that $R(a) = 2^a$ then using the ordering $succ_"util"$ becomes equal to $succ_"lex"$.
+This is because if we have for patient $a$ priority of $2^a$ then even if we sum all 
 While this ordering is in terms maybe the most fair, since we never let a patient with lesser priority switch before one with greater, it might not always be the best for the collective good, since a high priority patient might block a lot of lower priority patients from switching.
 This way we might want a priority function like $R(a) = "Days patient" a "has been waiting for a switch"$.
-This way if we have the choice between patient $P_i$ who has waited for 30 days $R(P_i) = 30$ and 4 patients who have waited 40 days in total an algorithm maximizing $succ_"util"$ will choose the 4 patients.
+This way if we have the choice between patient $p_i$ who has waited for 30 days $R(p_i) = 30$ and 4 patients who have waited 40 days in total an algorithm maximizing $succ_"util"$ will choose the 4 patients.
 
 We can adjust the priority function to prioritize higher priority by making it exponential but still under the 2^a. When we use days waited we can make $R(a) = 1.1 ^ ("Days patient a has been waiting")$
 Adjusting this closer to 2 makes higher priority patients more prioritized and vice versa for lowering it.
