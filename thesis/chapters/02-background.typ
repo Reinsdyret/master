@@ -1,6 +1,17 @@
 #import "@preview/ctheorems:1.1.3": *
+#show: thmrules.with(qed-symbol: $square$)
 #let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
+#let corollary = thmplain(
+  "corollary",
+  "Corollary",
+  base: "theorem",
+  titlefmt: strong
+)
+#let definition = thmbox("definition", "Definition", inset: (x: 1.2em, top: 1em))
+
+#let example = thmplain("example", "Example").with(numbering: none)
 #let proof = thmproof("proof", "Proof")
+
 
 = Background <ch:background>
 
@@ -116,8 +127,39 @@ Like the classical TTC we are guaranteed to have a cycle because of the pidgeonh
 == Cycle cancelling
 Cycle cancelling is a technique used in flow and circulation problems to find a minimum cost solution.
 First we explain some of the terms needed for cycle cancelling then we go onto what cycle cancelling is.
+We use definitions from Ahuja, Magnantti and Orlin @ahuja1993.
 
-=== Circulation problems
+=== Minimum cost maximum circulation problem
+/* NEW VERSION WITHOUT SYMMETRY AND MULTIGRAPH */
+Let $G = (V, A)$ be a directed multigraph, with $n$ vertices and $m$ arcs. Each arc is a triple $(v, w, i)$, where $v$ is its tail, $w$ is its head and $i$ is its index.
+The pair $(v, w)$ specifies the endpoints of the arc, and the index $i$ distinguishes arcs that share the same endpoints, so $G$ may contain parallel arcs.
+
+The multigraph $G$ is a circulation network if each arc $(v, w, i)$ has a capacity $u(v, w, i) >= 0$ and a cost $c(v, w, i) in ZZ$.
+For a vertex $w in V$, let $"in"(w) = {(v, w, i) in A}$ denote the set of arcs whose head is $w$, and $"out"(w) = {(w, v, i) in A}$ the set of arcs whose tail is $w$.
+
+#definition("Circulation")[
+  A circulation is a function $f$ assigning a value $f(v, w i)$ to each arc, subject to the following constraints:
+  $
+  0 <= f(v, w, i) <= u(v, w, i) quad quad forall (v,w,i) in A
+  $
+  $
+  sum_((u,w,i) in "in"(w)) f(u,w,i) = sum_((w,v,j) in "out"(w)) f(w, v, j) quad quad forall w in A
+  $
+]
+
+The cost of a circulation f is given by
+$
+"cost"(f) = sum_((v,w,i) in A) c(v,w,i) f(v,w,i)
+$
+
+
+#definition("Minimum cost maximum circulation problem")[
+  The mininum cost maximum circulation problem is to take in some circulation network $G$ and find the circulation that has the maximum circulation while minimum cost.
+]
+
+=== 
+
+/*
 Let $G = (V,E)$ be a directed graph, we have n vertices and m edges. G must be symmetric, $(v,w) in E$ if and only if $(w,v) in E$.
 The graph $G$ is a circulation network if each edge $(v,w)$ has a capacity $u(v,w)$ and a cost $c(v,w)$.
 We require the cost function to be antisymmetric, $c(v,w) = -c(w,v)$ for all $(v,w) in E$ @GoldbergCirculation.
@@ -148,6 +190,7 @@ A well known and proven theorem following these observations is:
 #theorem("Minimum-cost circulation")[
   A circulation is minimum-cost if and only if there are no negative residual cycles @GoldbergCirculation.
 ] <min-cost-theorem>
+*/
 
 === Algorithm
 Using the minimum-cost circulation theorem we can now formalize the cycle cancelling algorithm.
