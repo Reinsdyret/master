@@ -138,7 +138,7 @@ The multigraph $G$ is a circulation network if each arc $(v, w, i)$ has a capaci
 For a vertex $w in V$, let $"in"(w) = {(v, w, i) in A}$ denote the set of arcs whose head is $w$, and $"out"(w) = {(w, v, i) in A}$ the set of arcs whose tail is $w$.
 
 #definition("Circulation")[
-  A circulation is a function $f$ assigning a value $f(v, w i)$ to each arc, subject to the following constraints:
+  A circulation is a function $f$ assigning a value $f(v, w,i)$ to each arc, subject to the following constraints:
   $
   0 <= f(v, w, i) <= u(v, w, i) quad quad forall (v,w,i) in A
   $
@@ -147,17 +147,33 @@ For a vertex $w in V$, let $"in"(w) = {(v, w, i) in A}$ denote the set of arcs w
   $
 ]
 
-The cost of a circulation f is given by
+The cost of a circulation f is given by:
 $
 "cost"(f) = sum_((v,w,i) in A) c(v,w,i) f(v,w,i)
 $
+
+We measure a circulation based on the sum of flow on all edges:
+$
+sum_((v,w,i) in A) f(v,w,i)
+$
+If the sum of flows in a circulation is greater than any other circulation on the same circulation network, that circulation is maximal.
 
 
 #definition("Minimum cost maximum circulation problem")[
   The mininum cost maximum circulation problem is to take in some circulation network $G$ and find the circulation that has the maximum circulation while minimum cost.
 ]
 
-=== 
+=== Residual graph 
+The residual graph represents what is left of the circulation network after a circulation and what arcs have left over capacity. 
+We define the residual graph of a given graph $G$ and circulation $f$ as follows:
+- Replace each arc $(i,j) in G$ by two arcs $(i,j)$ and $(j,i)$.
+- The arc $(i,j)$ has cost $c(i,j)$ and residual capacity $u_f (i,j) = u(i,j) - f(i,j)$
+- The arc $(j,i)$ has cost $-c(i,j)$ and residual capacity $u_f (j,i) =  f(i,j)$
+
+Using these definitions we have the theorem from Ahuja et al. @ahuja1993:
+#theorem("Negative Cycle Optimality Theorem")[
+  A feasible solution $x^*$ of the minimum cost circulation problem is an optimal solution if and only if the residual network $G(x^*)$ contains no negative cost directed cycle.
+]
 
 /*
 Let $G = (V,E)$ be a directed graph, we have n vertices and m edges. G must be symmetric, $(v,w) in E$ if and only if $(w,v) in E$.
