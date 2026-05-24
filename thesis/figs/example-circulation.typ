@@ -4,7 +4,6 @@
   render("digraph {
     node[shape=circle];
     edge [labeldistance=3.0];
-    splines=curved;
     forcelabels=true;
 
     // force rank order
@@ -14,14 +13,11 @@
     d [pos=\"4,0!\"];
 
     
-    a -> b [headlabel=<1,1>];
-    b -> a [headlabel=<1,-1>];
-    c -> a [headlabel=<1,1>];
-    a -> c [headlabel=<1,-1>];
-    b -> d [headlabel=<1,1>];
-    d -> b [headlabel=<1,-1>];
-    d -> c [headlabel=<1,1>];
-    c -> d [headlabel=<1,-1>];
+    a -> b [headlabel=<-1,1>];
+    c -> a [headlabel=<-1,1>];
+    c -> b [headlabel=<-1,1>];
+    b -> d [headlabel=<-1,1>];
+    d -> c [headlabel=<-1,1>];
     
   }", engine: "neato"),
   caption: [An example circulation network.]
