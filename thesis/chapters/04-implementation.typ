@@ -3,6 +3,13 @@
 #let proof = thmproof("proof", "Proof")
 
 = Implementation <ch:implementation>
+#text(fill: red)[
+  TODO:
+   - Endre intro slik at util og size er samme algoritme bare forskjellig $R$.
+   - Skrive om cycle cancelling algoritmene
+   - Bevise hvordan util og size algoritmen er polynom fordi cost er polynom 
+   - bevise hvordan lex er polynom siden vi fjerner en pasient hver gang
+]
 
 In this chapter we look at each algorithm we have implemented, how we implemented them, why and runtime analysis.
 We have in total implemented 4 algorithms, Greedy DFS, Cycle Cancelling for Cardinality $succ_"size"$, Cycle Cancelling for Utility $succ_"util"$ and Cycle Cancelling for Lexicographic Priority $succ_"lex"$.
@@ -60,7 +67,8 @@ $G = (V, E), quad V = P union D, quad E = {(p_i, D_"pref"[i]) | i in I} union {(
 
 Each patient $p_i$ has an outgoing edge to their preferred doctor, and each doctor has outgoing edges to all of its currently registered patients. A directed cycle in $G$ necessarily alternates between patient and doctor nodes and corresponds to a valid exchange: each patient in the cycle moves to their preferred doctor, and each doctor loses exactly one patient while gaining one.
 
-The algorithm processes patients in decreasing priority order. For each patient, a DFS attempts to find a cycle through that patient; when the DFS reaches a doctor node with multiple candidate patients, it always explores the highest-priority one first.
+The algorithm processes patients in decreasing priority order. For each patient, a DFS attempts to find a cycle through that patient.
+When the DFS reaches a doctor node with multiple candidate patients, it always explores the highest-priority one first.
 
 #import "@preview/lovelace:0.3.1": *
 
@@ -157,7 +165,9 @@ The outer loop finds and augments positive cycles until none remain:
   + *return* $f$
 ]
 
-Positive cycles are detected using a variant of Bellman–Ford (SPFA). All nodes are seeded with distance $0$, simulating a virtual super-source at zero cost so every cycle is reachable. Edges are relaxed greedily in the maximising direction; a node relaxed $|D|$ or more times must lie on a positive cycle.
+Positive cycles are detected using a variant of Bellman–Ford (SPFA).
+All nodes are seeded with distance $0$, simulating a virtual super-source at zero cost so every cycle is reachable.
+Edges are relaxed greedily in the maximising direction, a node relaxed $|D|$ or more times must lie on a positive cycle.
 
 #pseudocode-list[
   + *for each* $v in D$ *do* $"dist"[v] <- 0$; $"pred"[v] <- bot$; enqueue $v$ *end*

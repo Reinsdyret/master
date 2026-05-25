@@ -15,72 +15,98 @@
 
 = Background <ch:background>
 
-Problems like the GP allocation problem have been studied for quite some time with a lot of variations.
+Problems like the GP allocation problem have been studied for quite some time with a number of variations.
 In addition there are different perspectives on how to solve these problems.
-While in economics they focus on the fairness of an assignment, trying to make a stable and strategy proof assignment.
-In this chapter we describe similar problems for the GP allocation problem, describe the Top Trading Cycles algorithm (TTC) and Huitfeldt et.al implementation of TTC for the GP allocation problem.
+For instance in economics the focus is often on the fairness of an assignment, trying to optain a stable and strategy proof assignment.
+In this chapter we describe similar problems to the GP allocation problem, describe the Top Trading Cycles algorithm (TTC) and the use of this by Huitfeldt et al for the GP allocation problem @NBERw32458.
 Finally we describe cycle cancelling, an optimization technique that our exact algorithms are based on.
 
 == Related problems
-There are variations of assignment problems.
-Usually in assignment problems we mention agents and objects and agents want objects, in the GP allocation problem the patients would be agents and doctors would be objects.
-The typical assignment problems are One-to-One assignment problems, meaning one agent gets one object and an object can only be "owned" by one agent.
-In addition we also have Many-to-One assignment problems, like the GP allocation problem, one agent has one object but one object can be "owned" by more than one agent.
+There are many different variations of assignment problems.
+In a typical setting there are agents and objects where the agents want to obtain particular objects.
+In the GP allocation problem the patients are the agents and GPs are the objects.
+The typical assignment problems are one-to-one meaning that one agent is assigned to at most one object and an object can only be "owned" by one agent.
+In addition we also have many-to-one assignment problems, like the GP allocation problem where one agent can only be assigned to one object but one object can be "owned" by more than one agent.
+The terminology that a patient "owns" a GP means that the patient has that GP as his or hers current GP.
 It might be misleading to say that our patients "own" doctors but this makes more sense in other problems that we will describe, owning a doctor in our case means having that doctor as a current doctor.
 
-=== One-to-One assignment problems
-==== Housing market
+=== One-to-one assignment problems
+Recall that in a one-to-one assignment problem each agent is assigned to at most one object and each object can be "owned" by at most one agent.
+We look at two such problems, the Housing Marked and the Kidney Exchange.
+Both differ from the GP allocation problem since a GP can be owned by many patients at once, but can be solved using the same algorithms.
+==== Housing Market
 The Housing Market model introduced in Shapley and Scarf @SHAPLEY197423 describes a model with traders (agents) and indivisible goods (objects).
 These goods can be houses, making it a housing market. Each agent already has one house but may want to switch.
 Every agent has a preference list ordering every house in order of preference, Shapley and Scarf combine all these preference lists to make a preference matrix @SHAPLEY197423.
 
 It is in this article from Shapley and Scarf @SHAPLEY197423 that they also introduce the Top Trading Cycles algorithm and describe how it is fitting for models like the Housing Market.
 We also see similarities to the GP allocation problem in that we have agents already owning an object but wanting to switch.
-Two differences is the One-to-One since a doctor can have multiple patients compared to that one house can only be owned by one agent, and that in the Housing market each agent has a complete preference list while in the GP assignment problem each agent has only one preferred doctor.
+However two differences are that a GP can have multiple patients while a house can only be owned by one agent, and also that in the Housing market each agent has a complete preference list of objects while in the GP assignment problem each agent has only one preferred GP.
 
 ==== Kidney exchange
 The Kidney Exchange problem describes an issue when trying to find compatible kidney donors.
-It describes the case where we have pairs of patients and donors, but the patient is incompatible with the donors kidney. 
-We then need to find some way to swap around the donors to compatible patients. Either with pairwise swapping or with larger cycles.
-If we visualize the problem as a directed graph, each vertex is a patient and donor pair. An edge from Pair A to Pair B means that Donor A is compatible with Patient B.
-Now cycles can form as in @kidney-exchange-example we have a cycle of length 3 $A arrow B arrow C$.
+It describes the case where we have pairs of patients and donors, but the patient is incompatible with its donor's kidney. 
+We then need to find some way to swap around the donors to compatible patients. Either with pairwise swapping or through longer cycles.
+If we visualize the problem as a directed graph, each vertex is a patient and donor pair. An edge from pair A to pair B means that donor A is compatible with patient B.
+Now cycles can form as in @kidney-exchange-example where we have a cycle of length three $A arrow B arrow C$. This means that the donor in pair A can be matched with the patient in pair B and so on, assuring that each patient in the cycle is assigned a compatible donor.
 
 #include "../figs/kidney-exchange-example.typ"
 
-Abraham, Blum and Sandholm @ABRAHAM2007 show that, with unbounded cycle length, a maximum-cardinality and maximum-weight exchange can be found in polynomial time @enwiki:1351916222.
-An issue often arising with unrestricted cycle length is if a donor suddenly refuses to donate, if this donor refuses after their patient has received a kidney then a patient is left without a donor and cannot exchange later.
+Abraham, Blum and Sandholm @ABRAHAM2007 show that, with unbounded cycle length, a maximum-weight exchange can be found in polynomial time @enwiki:1351916222.
+An issue often arising with unrestricted cycle length is if a donor suddenly refuses to donate. If this happens after their patient has received a kidney then a patient is left without a donor and cannot exchange later.
 Because of this the problem is often considered with a restricted cycle length to allow all operations to be executed at the same time. This way no donor can refuse in the middle.
 For each pair in a cycle you need 2 operations, for a cycle of length $k$ you need $2k$ operations at the same time. 
+It is for this reason that the Kidney Exchange problem often is considered with a max cycle length $k$, as the number of operating rooms in a state/city is limited.
 Finding a maximum-cardinality exchange with cycles of length at most $k$, for any fixed $k >= 3$, is an NP-hard computational problem @ABRAHAM2007 @enwiki:1351916222.
 
 The Kidney Exchange problem and the GP allocation problem have much in common.
 In both problems agents already have an object, but want to switch for another.
-We need to find cycles to exchange the objects in such a manner that most amount of people are happy.
+We need to find cycles to exchange the objects in such a manner that as many patients as possible are satisfied.
 The key difference is that only one donor can be "owned" by one patient while in the GP allocation problem a doctor can be "owned" by multiple patients.
 
-=== Many-to-One assignment problems
+=== Many-to-one assignment problems
+In a many-to-one assignment problem each agent is still assigned to at most one object, but an object can be "owned" by more than one agent.
+This is the same structure as the GP allocation problem, where a GP can have many patients. We look at one such problem, the College Admissions problem.
 ==== The College Admissions problem 
-In the College Admissions problem, introduced by Gale and Shapley, describes the problem of assigning applicants among colleges.
-Each college has a certain quote, a maximum number of applicants to admit and each applicant ranks the colleges in order of preference.
-An applicant can skip colleges he or she would never accept under any circumstances @GALES1962.
+The College Admissions problem, introduced by Gale and Shapley @GALES1962, describes the problem of assigning applicants to colleges.
+Each college has a certain quota, i.e. a maximum number of applicants that can be admitted and each applicant ranks the colleges in order of preference.
+An applicant does not have to rank every college and can skip colleges he or she does not want to attend @GALES1962.
 
-The problem is then to find a stable assignment meaning that there does not exist a case where there are two applicants $alpha$ and $beta$ who are assigned to colleges $A$ and $B$, respectively, although $beta$ prefers $A$ to $B$ and $A$ prefers $beta$ to $alpha$.
-Gale and Shapley introduce an algorithm called deferred-acceptance (DA) to find the optimal stable assignment and prove that this runs in polynomial time and finds the optimal stable assignment @GALES1962.
+The problem is then to find a stable assignment, meaning that there does not exist a case where there are two applicants $alpha$ and $beta$ who are assigned to colleges $A$ and $B$, although $beta$ prefers $A$ to $B$ and $A$ prefers $beta$ to $alpha$.
+Such a pair would break the assignment, since both would rather be
+matched to each other.
 
-There are close similarities between the College Admissions problem and the GP assignment problem.
-One difference is that patients, equivalent to the applicants, only prefer one doctor.
-Another difference is that patients already have existing doctors, making the problem different since applicants do not already have a college they want to switch from.
+There can be many stable assignments for the same preferences, so there is not one single best assignment.
+Among all stable assignments there is one that is best for every applicant at the same time, and one that is best for every college at the same time.
+Gale and Shapley @GALES1962 introduce an algorithm called deferred-acceptance that finds a stable assignment in polynomial time @GALES1962.
+The algorithm has one side propose and the other side accept or reject.
+The side that proposes ends up with the assignment that is best for them and worst for the other side.
+
+There are some similarities between the College Admissions problem and the GP assignment problem.
+Like how applicants prefer some colleges while patients prefer a GP.
+One key difference is that patients, only prefer one GP.
+Another difference is that patients already have existing GPs, while applicants do not already have a college they want to switch from.
 
 == Top Trading Cycles
+The Top Trading Cycles, or TTC, is an algorithm that finds cycles of agents that can
+all trade their objects at the same time. We look at it in two forms. First we
+explain the classical TTC, which works on the Housing Market problem. This is the
+original version and we explain it to show where the method comes from. Then we
+explain the version made by Huitfeldt et al. for the GP allocation problem. It is
+this version that inspired our work, and it is the one we later compare our
+algorithms against.
+
 === Classical TTC
-Top Trading Cycles (TTC), developed by Gale and published by Shapley and Scarf @SHAPLEY197423, is an algorithm to find a re-allocation of goods without using money.
+The Top Trading Cycles algorithm (TTC), developed by Gale and published by Shapley and Scarf @SHAPLEY197423, is an algorithm to find a re-allocation of objects, or goods, without using money.
 As mentioned it was introduced in an article together with the Housing Market problem.
 The algorithm finds a re-allocation of houses to traders, such that all mutually-beneficial exchanges have been realized @enwiki:1344910705.
-For the Housing Market problem the TTC algorithm does as follows @enwiki:1344910705:
-+ Ask each agent to indicate his "top" (most preferred) house.
-+ Draw an arrow from each agent $i$ to the agent, denoted $"Top"(i)$, who holds the top house of $i$.
-+ Find a cycle (guaranteed to exist) and execute the trades in that cycle. Remove all involved agents from the graph.
-+ If there are remaining agents, go back to step 1.
+
+TTC works on a directed graph, for the following implementation, on the Housing Market problem, each agent is a node and edges point from agents to other agents.
+The algorithm then does the following @enwiki:1344910705:
++ Query each agent for its "top" (most preferred) house.
++ Insert a directed edge from each agent $i$ to the agent, denoted $"Top"(i)$, that holds the most desired house of $i$.
++ Find a cycle (which is guaranteed to exist) and execute the trades in that cycle. Next, remove all involved agents from the graph.
++ If there are remaining agents, repeat from step 1.
 
 Note that a cycle is guaranteed to exist if there are agents still left.
 This is because of the pidgeonhole principle, since each agent has one outgoing edge we have to have a cycle.

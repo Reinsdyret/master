@@ -152,11 +152,31 @@ This means that even though solution $S'$ contains some high priority patients, 
 The priority function has quite a large effect on the final solution. The priority chosen will largely decide whether that patient will be in the final solution or not.
 This is why its important to discuss what effects the function can have on solutions when we are maximizing the ordering $succ_"util"$ or $succ_"lex"$.
 
-If we make the priority function exponential such that $R(a) = 2^a$ then using the ordering $succ_"util"$ becomes equal to $succ_"lex"$.
-This is because if we have for patient $a$ priority of $2^a$ then even if we sum all 
-While this ordering is in terms maybe the most fair, since we never let a patient with lesser priority switch before one with greater, it might not always be the best for the collective good, since a high priority patient might block a lot of lower priority patients from switching.
-This way we might want a priority function like $R(a) = "Days patient" a "has been waiting for a switch"$.
-This way if we have the choice between patient $p_i$ who has waited for 30 days $R(p_i) = 30$ and 4 patients who have waited 40 days in total an algorithm maximizing $succ_"util"$ will choose the 4 patients.
+If we make the priority function exponential such that $R(a) = 2^a$, then using the ordering $succ_"util"$ becomes the same as $succ_"lex"$.
+This is because $2^a$ is larger than the sum of all lower priorities below it.
+If patient $a$ has priority $2^a$, then no group of patients with lower priority can have a total priority that reaches $2^a$, since their priorities sum to at most $2^a - 1$.
+So a solution maximizing $succ_"util"$ will always pick the higher priority patient first, which is exactly what $succ_"lex"$ does.
 
-We can adjust the priority function to prioritize higher priority by making it exponential but still under the 2^a. When we use days waited we can make $R(a) = 1.1 ^ ("Days patient a has been waiting")$
-Adjusting this closer to 2 makes higher priority patients more prioritized and vice versa for lowering it.
+While this ordering is in a sense the most fair, since we never let a patient with lower priority switch before one with greater, it might not always be the best for the collective good, since a high priority patient might block several lower priority patients from switching.
+One solution to this could be a priority function where $R(a)$ depends on how long patient $a$ has been waiting for a switch.
+Then if we have the choice between patient $p_i$ who has waited 30 days, $R(p_i) = 30$, and four patients who have waited 40 days in total, an algorithm maximizing $succ_"util"$ will choose the four patients.
+
+We can also use a priority function that sits between these two extremes. Instead
+of a fixed base we use a base $k$ with $1 <= k <= 2$ and set
+$
+  R(a) = k^("days patient" a "has been waiting").
+$
+The base $k$ controls how much higher priority patients are favored. At $k = 1$
+every patient gets priority $1$, no matter how long they have waited. The total
+utility $U(S)$ is then just the number of patients in $S$, so maximizing
+$succ_"util"$ becomes the same as maximizing $succ_"size"$. At $k = 2$ the
+priorities grow fast enough that a higher priority patient is worth more than any
+group of lower priority patients below them, so $succ_"util"$ becomes the same as
+$succ_"lex"$, as shown above. A base between the two gives a mix, and we can tune
+it depending on how much we want to favor patients who have waited longer.
+
+So the cardinality and lexicographic orderings are not separate cases but the two endpoints of the utility ordering.
+This is why our exact algorithm for $succ_"util"$ also solves $succ_"size"$, by giving it the priority function with $k = 1$.
+The lexicographic case at $k = 2$ is different in practice.
+The priorities $2^a$ grow very large, and the runtime of cycle cancelling depends on the size of the costs, so running the utility algorithm with $k = 2$ would be slow.
+For this reason we treat strict lexicographic priority as its own case with its own algorithm, which we describe in the next chapter. 
