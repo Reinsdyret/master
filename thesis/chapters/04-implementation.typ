@@ -5,24 +5,23 @@
 = Implementation <ch:implementation>
 #text(fill: red)[
   TODO:
-   - Endre intro slik at util og size er samme algoritme bare forskjellig $R$.
    - Skrive om cycle cancelling algoritmene
    - Bevise hvordan util og size algoritmen er polynom fordi cost er polynom 
    - bevise hvordan lex er polynom siden vi fjerner en pasient hver gang
 ]
 
 In this chapter we look at each algorithm we have implemented, how we implemented them, why and runtime analysis.
-We have in total implemented 4 algorithms, Greedy DFS, Cycle Cancelling for Cardinality $succ_"size"$, Cycle Cancelling for Utility $succ_"util"$ and Cycle Cancelling for Lexicographic Priority $succ_"lex"$.
-For the cycle cancelling algorithms we also give, or refer to existing, proofs for why they are exact.
+We have in total implemented four algorithms, Greedy DFS, Cycle cancelling for cardinality, utility and for strict priority.
+For the cycle cancelling algorithms we also give, or refer to existing, proofs for why they are exact and why they run in polynomial time.
 
 == Different graph representations used
 In the algorithms we use different graph representations, so we start by defining the different graph representations of _The GP allocation problem_.
 
-=== Patient and Doctor graph
-First we have the easiest graph containing both patients and doctors as vertices.
-The edges are directed from a patient to a doctor and from a doctor to a patient. Edges never go $"patient" arrow "patient"$ or $"doctor" arrow "doctor"$.
-An edge $"patient" arrow "doctor"$ symbolizes that the patient has that doctor as its preferred doctor, and $"doctor" arrow "patient"$ symbolises that the doctor currently has that patient as one of his or hers current patients.
-Observe that this graph is bipartite as we have patients on one side and doctors on the other. Now the formal definition of our graph.
+=== Patient and GP graph <patient-and-gp-graph>
+First we have the easiest graph containing both patients and GPs as vertices.
+The edges are directed from a patient to a GP and from a GP to a patient. Edges never go $"patient" arrow "patient"$ or $"GP" arrow "GP"$.
+An edge $"patient" arrow "GP"$ symbolizes that the patient has that GP as its preferred GP, and $"GP" arrow "patient"$ symbolises that the GP currently has that patient as one of his or hers current patients.
+Observe that this graph is bipartite as we have patients on one side and GPs on the other. Now the formal definition of our graph.
 Let $I = {0, ..., |P|-1}$. Then:
 
 $
@@ -30,23 +29,21 @@ G = (V, E), quad V = P union D\
 E = {(p_i, D_"pref"[i]) | i in I} union {(D_"cur"[i], p_i) | i in I}
 $
 
-=== Doctor graph collapsed edges 
-In this weighted graph we condense the problem to only have doctors as nodes and edges between doctors.
-An edge $"doctor a" arrow "doctor b"$ symbolises that there exists a patient that wants to switch from doctor a to doctor b, or that the patient currently has doctor a and has doctor b as preferred.
+=== GP graph collapsed edges <gp-graph-collapsed-edges>
+In this weighted graph we condense the problem to only have GPs as nodes and edges between GPs.
+An edge $"GP a" arrow "GP b"$ symbolises that there exists a patient that wants to switch from GP a to GP b, or that the patient currently has GP a and has GP b as preferred.
 The capacity of an edge indicates the number of patients wanting that switch, while the cost is -1.
 We define our graph as:
 
 $
 G = (V, E), quad V = D \
-E = {(a,b), (b,a) | exists i in I " s.t. " D_"cur"[i] = a and D_"pref"[i] = b} \
+E = {(a,b) | exists i in I " s.t. " D_"cur"[i] = a and D_"pref"[i] = b} \
 u(a, b) = |{i in I | D_"cur"[i] = a and D_"pref"[i] = b}| \
-u(b, a) = 0 \
 c(a, b) = -1 \
-c(b, a) = 1
 $
 
-=== Doctor graph priority weighted
-This weighted graph is much like the Doctor graph collapsed edges, but while that graph representation focuses on number of patients wanting a switch this graph focuses on the priority of each patient.
+=== GP graph priority weighted <gp-graph-priority-weighted>
+This weighted graph is much like the GP graph collapsed edges, but while that graph representation focuses on number of patients wanting a switch this graph focuses on the priority of each patient.
 Instead of collapsing all preferences that are equal here we make each preference into an edge and weight it with the priority of that patient.
 
 $
@@ -56,19 +53,82 @@ u(a, b, i) = 1 \
 c(a, b, i) = - R(P_i)
 $
 
-
 == Greedy DFS
 
-We first consider a greedy approach inspired by the Top Trading Cycles implementation of Huitfeld et al. Their algorithm preserves TTC properties at each round by restricting each doctor node to a single outgoing edge. We relaxed this constraint, allowing each doctor to maintain outgoing edges to all of its current patients simultaneously, and resolved ties by patient priority.
+We first consider a greedy approach inspired by the Top Trading Cycles
+implementation of Huitfeldt et al. Their algorithm preserves TTC properties at
+each round by restricting each GP node to a single outgoing edge @NBERw32458. We
+relax this constraint, allowing each GP to keep outgoing edges to all of its
+current patients at the same time, and resolve ties by patient priority.
 
-We are given the lists of patients and doctors $P, D$, the assignment arrays $D_"cur", D_"pref"$, and a priority function $R : P arrow NN$, where a higher number means higher priority. We model the problem as a bipartite directed graph over patients and doctors. Let $I = {0, ..., |P|-1}$. Then:
+This algorithm runs on the Patient and GP graph defined in @patient-and-gp-graph.
+Recall that this graph has both patients and GPs as vertices, with an edge
+$p_i arrow D_"pref"[i]$ from each patient to their preferred GP, and an edge
+$D_"cur"[i] arrow p_i$ from each GP to every patient it currently has. A directed
+cycle in this graph alternates between patient and GP nodes and corresponds to a
+valid exchange. Each patient in the cycle moves to their preferred GP, and each GP
+loses one patient and gains one.
+
+We are also given the priority function $R : P arrow NN$, where a higher number
+means higher priority. The algorithm processes patients in decreasing priority
+order. For each patient it runs a depth first search that tries to find a cycle
+through that patient. When the search reaches a GP node with several current
+patients, it explores the highest priority patient first.
+
+#import "@preview/lovelace:0.3.1": *
+
+#pseudocode-list(booktabs: true, title: smallcaps[GreedyDFS($G$, $R$)])[
+  + $"resolved" = [ ]$
+  + $"sorted" = $ patients sorted by $R$ in decreasing order
+  + *for each* $p in "sorted"$ *do*
+    + $"cycle" = "dfsFindCycle"(G, R, p)$
+    + *if* $"cycle" != "none"$ *then*
+      + *for each* $q in "cycle"$ *do*
+        + $"resolved"."push"(q)$
+      + *end*
+    + *end*
+  + *end*
+  + *return* $"resolved"$
+]
+
+The depth first search $"dfsFindCycle"(G, R, p)$ starts at patient $p$ and follows
+edges through the graph. At a patient node it follows the one edge to that
+patient's preferred GP. At a GP node it has several edges to choose from, one to
+each current patient, and it tries them in decreasing priority order. The search
+returns a cycle if it reaches $p$ again, and returns nothing if it cannot. When a
+cycle is found, every patient in it is added to the resolved set and is not
+considered again.
+
+The greedy rule makes sure high priority patients are preferred when forming
+cycles, but it does not guarantee a globally optimal solution. The following
+example shows how the greedy choice can be locally motivated but globally
+suboptimal.
+
+#include "../figs/pareto-inefficient.typ"
+
+In @pareto-inefficient-graph each patient $p_x$ has priority $x$. The search begins
+at $p_4$, the highest priority patient, and follows the edge to $d_2$. At $d_2$ it
+chooses $p_2$ over $p_1$ since $R(p_2) > R(p_1)$. The resulting cycle
+$p_4 arrow d_2 arrow p_2 arrow d_1 arrow p_4$ is committed, which leaves $p_1$ and
+$p_3$ unsatisfied with no further cycles remaining.
+
+Had the search chosen $p_1$ at $d_2$ instead, it would have found the longer cycle
+$p_4 arrow d_2 arrow p_1 arrow d_3 arrow p_3 arrow d_1 arrow p_4$, which satisfies
+three patients. The greedy choice at $d_2$ was locally motivated by priority but
+globally suboptimal. This motivates the exact algorithms in the following sections.
+
+/*== Greedy DFS
+
+We first consider a greedy approach inspired by the Top Trading Cycles implementation of Huitfeld et al. Their algorithm preserves TTC properties at each round by restricting each GP node to a single outgoing edge @NBERw32458. We relax this constraint, allowing each GP to maintain outgoing edges to all of its current patients simultaneously, and resolved ties by patient priority.
+
+We are given the lists of patients and GPs $P, D$, the assignment arrays $D_"cur", D_"pref"$, and a priority function $R : P arrow NN$, where a higher number means higher priority. We model the problem as a bipartite directed graph over patients and GPs. Let $I = {0, ..., |P|-1}$. Then:
 
 $G = (V, E), quad V = P union D, quad E = {(p_i, D_"pref"[i]) | i in I} union {(D_"cur"[i], p_i) | i in I}$
 
-Each patient $p_i$ has an outgoing edge to their preferred doctor, and each doctor has outgoing edges to all of its currently registered patients. A directed cycle in $G$ necessarily alternates between patient and doctor nodes and corresponds to a valid exchange: each patient in the cycle moves to their preferred doctor, and each doctor loses exactly one patient while gaining one.
+Each patient $p_i$ has an outgoing edge to their preferred GP, and each GP has outgoing edges to all of its currently registered patients. A directed cycle in $G$ necessarily alternates between patient and GP nodes and corresponds to a valid exchange: each patient in the cycle moves to their preferred GP, and each GP loses exactly one patient while gaining one.
 
 The algorithm processes patients in decreasing priority order. For each patient, a DFS attempts to find a cycle through that patient.
-When the DFS reaches a doctor node with multiple candidate patients, it always explores the highest-priority one first.
+When the DFS reaches a GP node with multiple candidate patients, it always explores the highest-priority one first.
 
 #import "@preview/lovelace:0.3.1": *
 
@@ -98,6 +158,20 @@ In @pareto-inefficient-graph each patient $p x$ has priority $x$. The DFS begins
 
 Had the DFS chosen $p 1$ at $d 2$ instead, it would have found the longer cycle $p 4 arrow d 2 arrow p 1 arrow d 3 arrow p 3 arrow d 1 arrow p 4$, satisfying three patients. The greedy choice at $d 2$ was locally motivated by priority but globally suboptimal. This motivates the exact algorithms in the following sections.
 
+*/
+== Cycle cancelling for cardinality 
+This is the algorithm that finds the solution maximal under $succ_"size"$.
+In this algorithm we use the GP graph with collapsed edges representation defined in @gp-graph-collapsed-edges.
+This way each edge $(v,w)$ represents patients wanting to switch from GP $v$ to $w$, the cost is $-1$ and the capacity is the number of patients wanting that switch.
+We then want to find a circulation $f$ with minmial cost, we use cycle cancelling to do this. Note that since the cost is $-1$, each patient included in the solution leads to lower cost. Thus the minimum cost solution is maximal under $succ_"size"$.
+
+#pseudocode-list(booktabs: true, title: smallcaps[Cycle Cancelling Cardinality($G$)])[
+  + $"resolved" = []$
+  + $f = "zero circulation"$
+  + $f_"optimal" = "Cycle Cancelling"(G,f)$
+  + *for* $(v,w,i) in G(f_"optimal")$ *do*
+    + 
+]
 
 /*
 == Exact algorithm for maximizing total switches
@@ -107,7 +181,7 @@ This algorithm applies the classical cycle canceling technique from network flow
 
 === Graph structure
 
-Rather than working with the bipartite patient-doctor graph, we compress to a weighted directed graph over doctors only. Patients who want the same switch are interchangeable: all that matters is how many can be routed. We therefore aggregate them into edge weights:
+Rather than working with the bipartite patient-GP graph, we compress to a weighted directed graph over GPs only. Patients who want the same switch are interchangeable: all that matters is how many can be routed. We therefore aggregate them into edge weights:
 
 $
 G = (V, E), quad V = D \
@@ -115,20 +189,20 @@ E = {(D_"cur"[i], D_"pref"[i]) | i in [|P|]} \
 w(a, b) = |{i in [|P|] | D_"cur"[i] = a and D_"pref"[i] = b}|
 $
 
-A cycle $d_1 arrow d_2 arrow dots.c arrow d_k arrow d_1$ carrying $f$ units of flow corresponds to $f$ patients rotating around the cycle: each moves from their current doctor to the next in the cycle. This compression reduces the graph from $O(|P| + |D|)$ nodes to $O(|D|)$ nodes, which is significant when many patients share the same switch request.
+A cycle $d_1 arrow d_2 arrow dots.c arrow d_k arrow d_1$ carrying $f$ units of flow corresponds to $f$ patients rotating around the cycle: each moves from their current GP to the next in the cycle. This compression reduces the graph from $O(|P| + |D|)$ nodes to $O(|D|)$ nodes, which is significant when many patients share the same switch request.
 
-Applying this transformation to @pareto-inefficient-graph gives the doctor graph in @pareto-inefficient-doctor-graph, where we can still identify the short cycle $d 1 arrow d 2$ and the longer cycle $d 1 arrow d 2 arrow d 3$.
+Applying this transformation to @pareto-inefficient-graph gives the GP graph in @pareto-inefficient-GP-graph, where we can still identify the short cycle $d 1 arrow d 2$ and the longer cycle $d 1 arrow d 2 arrow d 3$.
 
-#include "../figs/pareto-inefficient-doctor-graph.typ"
+#include "../figs/pareto-inefficient-GP-graph.typ"
 
 === Algorithm
 
 We want to find, for each edge $e in E$, a non-negative integer $f(e)$ representing how many of the $w(e)$ patients on that edge actually switch. Two conditions make such an assignment a valid set of simultaneous exchanges:
 
 - *Capacity:* $0 <= f(e) <= w(e)$ for all $e in E$
-- *Flow conservation:* for every doctor $d in D$: $display(sum_((v,d) in E)) f(v,d) = display(sum_((d,v) in E)) f(d,v)$
+- *Flow conservation:* for every GP $d in D$: $display(sum_((v,d) in E)) f(v,d) = display(sum_((d,v) in E)) f(d,v)$
 
-Flow conservation is exactly what forces the assignment to decompose into cycles: every doctor who loses a patient must gain one. The problem is therefore:
+Flow conservation is exactly what forces the assignment to decompose into cycles: every GP who loses a patient must gain one. The problem is therefore:
 
 #block(
   stroke: 0.5pt,
@@ -188,7 +262,7 @@ Edges are relaxed greedily in the maximising direction, a node relaxed $|D|$ or 
 ]
 
 #theorem("Optimality of MaxSwitchCirculation")[
-  The algorithm returns a flow $f$ achieving the maximum possible value $display(sum_(e in E)) f(e)$, equal to the maximum number of patients that can simultaneously switch to their preferred doctor.
+  The algorithm returns a flow $f$ achieving the maximum possible value $display(sum_(e in E)) f(e)$, equal to the maximum number of patients that can simultaneously switch to their preferred GP.
 ]
 
 #proof[
@@ -211,9 +285,9 @@ This algorithm finds the lexicographically maximal feasible solution under $succ
 
 The algorithm applies this observation iteratively: process patients from highest to lowest priority and commit each patient to a cycle as soon as one is found.
 
-We use the same doctor graph as before: doctors are nodes, and each patient $p$ with current doctor $u$ and preferred doctor $v$ is a directed arc $a_p = u arrow v$ with capacity $1$. Each arc also has a corresponding *backward arc* $overline(a_p) = v arrow u$ with initial capacity $0$.
+We use the same GP graph as before: GPs are nodes, and each patient $p$ with current GP $u$ and preferred GP $v$ is a directed arc $a_p = u arrow v$ with capacity $1$. Each arc also has a corresponding *backward arc* $overline(a_p) = v arrow u$ with initial capacity $0$.
 
-*Pruning.* Before processing, we compute the strongly connected components (SCCs) of the graph. Any patient whose current and preferred doctor lie in different SCCs, or in a trivial SCC of size $1$, can never be part of any directed cycle and is immediately discarded. This avoids unnecessary BFS calls and keeps the residual graph clean throughout execution.
+*Pruning.* Before processing, we compute the strongly connected components (SCCs) of the graph. Any patient whose current and preferred GP lie in different SCCs, or in a trivial SCC of size $1$, can never be part of any directed cycle and is immediately discarded. This avoids unnecessary BFS calls and keeps the residual graph clean throughout execution.
 
 The algorithm processes the remaining patients from highest to lowest priority. For each patient $p$ (arc $u arrow v$), exactly one of two cases applies:
 
