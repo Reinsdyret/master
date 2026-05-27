@@ -9,7 +9,7 @@ struct Edge {
     to: usize,
     start_capacity: usize,
     capacity: usize, // Number of times we can use this edge
-    cost: i128,      // positive for original, negative for residual
+    cost: i128,      // negative for original, positive for residual
     rev: usize,      // Index in adj[to]
 }
 
