@@ -168,8 +168,8 @@ We then want to find a circulation $f$ with minmial cost, we use cycle cancellin
 #pseudocode-list(booktabs: true, title: smallcaps[Cycle Cancelling Cardinality($G$)])[
   + $"resolved" = []$
   + $f = "zero circulation"$
-  + $f_"optimal" = "Cycle Cancelling"(G,f)$
-  + *for* $(v,w,i) in G(f_"optimal")$ *do*
+  + $f^* = "Cycle Cancelling"(G,f)$
+  + *for* $(v,w,i) in G(f^*)$ *do*
     + 
 ]
 
