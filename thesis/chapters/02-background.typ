@@ -1,6 +1,9 @@
 #import "@preview/ctheorems:1.1.3": *
 #show: thmrules.with(qed-symbol: $square$)
-#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
+#let theorem = thmbox("theorem", "Theorem", 
+  base: "heading", 
+  base_level: 2,
+  fill: rgb("#eeffee"))
 #let corollary = thmplain(
   "corollary",
   "Corollary",
@@ -150,26 +153,26 @@ Now the algorithm is as follows @NBERw32458:
 
 Like the classical TTC we are guaranteed to have a cycle because of the pidgeonhole principle, since if a patient does not get their preferred GP they end up pointing to their own GP making a cycle.
 
-== Cycle cancelling
+== Cycle cancelling <cycle-cancelling>
 Cycle cancelling is a technique used in flow and circulation problems to find a minimum cost solution.
 First we explain some of the terms needed for cycle cancelling then we go onto what cycle cancelling is.
 We use definitions from Ahuja, Magnantti and Orlin @ahuja1993.
 
 === The minimum cost circulation problem
 
-Let $G = (V, A)$ be a directed multigraph with $n$ vertices and $m$ arcs. Each arc
+Let $G = (V, A)$ be a directed multigraph with $n$ vertices and $m$ edges. Each edge
 is a triple $(v, w, i)$ where $v$ is the tail, $w$ is the head and $i$ is an index.
-The pair $(v, w)$ gives the endpoints of the arc. The index $i$ separates arcs that
-have the same endpoints, so $G$ can have parallel arcs. This means an arc is
+The pair $(v, w)$ gives the endpoints of the edge. The index $i$ separates edges that
+have the same endpoints, so $G$ can have parallel edges. This means an edge is
 identified by the full triple and not just by its endpoints.
 
-The multigraph $G$ is a circulation network if each arc $(v, w, i)$ has a capacity
+The multigraph $G$ is a circulation network if each edge $(v, w, i)$ has a capacity
 $u(v, w, i) >= 0$ and a cost $c(v, w, i) in ZZ$. For a vertex $w in V$ we let
-$"in"(w) = {(v, w, i) in A}$ be the arcs whose head is $w$, and
-$"out"(w) = {(w, v, i) in A}$ the arcs whose tail is $w$.
+$"in"(w) = {(v, w, i) in A}$ be the edges whose head is $w$, and
+$"out"(w) = {(w, v, i) in A}$ the edges whose tail is $w$.
 
 #definition("Circulation")[
-  A circulation is a function $f$ that assigns a value $f(v, w, i)$ to each arc and
+  A circulation is a function $f$ that assigns a value $f(v, w, i)$ to each edge and
   satisfies the capacity constraints
   $
     0 <= f(v, w, i) <= u(v, w, i) quad quad forall (v, w, i) in A
@@ -193,18 +196,18 @@ $
   a circulation $f$ with minimum cost.
 ]
 
-In our problem each arc is a possible patient switch, and we want a circulation
+In our problem each edge is a possible patient switch, and we want a circulation
 that does as many switches as possible. We get this by setting the cost of every
-arc to $-1$. Then $"cost"(f) = - sum_((v,w,i) in A) f(v,w,i)$, which is the negative
+edge to $-1$. Then $"cost"(f) = - sum_((v,w,i) in A) f(v,w,i)$, which is the negative
 of the total flow. So a circulation with minimum cost is the same as a circulation
 with the most flow. We do not treat the amount of flow as a separate goal. It is
 already part of the cost, and the problem stays a normal minimum cost circulation
 problem.
 
 An example circulation network is shown in @example-circulation. For simplicity
-this example is not a multigraph. Each arc is labeled "x,y", meaning the arc has
-cost $x$ and capacity $y$, and as explained above every arc has cost $-1$. The
-network has three feasible circulations: no flow on any arc, the cycle
+this example is not a multigraph. Each edge is labeled "x,y", meaning the edge has
+cost $x$ and capacity $y$, and as explained above every edge has cost $-1$. The
+network has three feasible circulations: no flow on any edge, the cycle
 $d arrow c arrow b arrow d$, and the cycle $a arrow b arrow d arrow c arrow a$.
 Their costs are $0$, $-3$ and $-4$. The longer cycle is the optimal circulation
 since it has the most flow and the lowest cost.
@@ -215,27 +218,27 @@ since it has the most flow and the lowest cost.
 
 The residual network shows what capacity is left after a circulation, and what
 flow can be undone. Given a circulation network $G$ and a circulation $f$, we build
-the residual network $G(f)$ arc by arc. Each arc $(v, w, i) in A$ gives two
-residual arcs.
+the residual network $G(f)$ edge by edge. Each edge $(v, w, i) in A$ gives two
+residual edges.
 
-- A forward arc $(v, w, i)$ with cost $c(v, w, i)$ and residual capacity
+- A forward edge $(v, w, i)$ with cost $c(v, w, i)$ and residual capacity
   $u_f (v, w, i) = u(v, w, i) - f(v, w, i)$.
-- A backward arc $(w, v, i)$ with cost $-c(v, w, i)$ and residual capacity
+- A backward edge $(w, v, i)$ with cost $-c(v, w, i)$ and residual capacity
   $u_f (w, v, i) = f(v, w, i)$.
 
-A residual arc is in $G(f)$ only if its residual capacity is greater than $0$. An
-arc with residual capacity $0$ is saturated. We build the residual arcs from each
-arc $(v, w, i)$ and not from the pair $(v, w)$, so the index $i$ is kept on both
-residual arcs. This means $G(f)$ is also a directed multigraph and every residual
-arc is still uniquely identified.
+A residual edge is in $G(f)$ only if its residual capacity is greater than $0$. An
+edge with residual capacity $0$ is saturated. We build the residual edges from each
+edge $(v, w, i)$ and not from the pair $(v, w)$, so the index $i$ is kept on both
+residual edges. This means $G(f)$ is also a directed multigraph and every residual
+edge is still uniquely identified.
 
-A forward arc has the same cost as its original arc, and pushing flow on it
-increases $f$ on that arc. A backward arc has the negated cost, and pushing flow on
-it decreases $f$ on the original arc. So a backward arc undoes earlier flow. A
-backward arc is only in $G(f)$ up to the flow on its original arc, so we can only
+A forward edge has the same cost as its original edge, and pushing flow on it
+increases $f$ on that edge. A backward edge has the negated cost, and pushing flow on
+it decreases $f$ on the original edge. So a backward edge undoes earlier flow. A
+backward edge is only in $G(f)$ up to the flow on its original edge, so we can only
 undo flow when there is flow to undo.
 
-A negative cost cycle in $G(f)$ is a directed cycle of residual arcs where the
+A negative cost cycle in $G(f)$ is a directed cycle of residual edges where the
 costs sum to a negative number. The following theorem from Ahuja, Magnanti and
 Orlin @ahuja1993 tells us when a circulation is optimal.
 
@@ -243,13 +246,13 @@ Orlin @ahuja1993 tells us when a circulation is optimal.
   A feasible circulation $f^*$ is an optimal solution of the minimum cost
   circulation problem if and only if the residual network $G(f^*)$ contains no
   negative cost directed cycle.
-]
+]<negative-cycle-optimality-theorem> 
 
 Note that the theorem does not say every circulation with flow is suboptimal. If we
-push flow around a cycle of cost $-1$ arcs we do create backward arcs of cost $+1$,
+push flow around a cycle of cost $-1$ edges we do create backward edges of cost $+1$,
 but these form a positive cost cycle and not a negative one. A negative cost cycle
-is instead an improvement we can still make. It can use forward arcs where we add
-more switches, and backward arcs that reroute flow we already committed. When there
+is instead an improvement we can still make. It can use forward edges where we add
+more switches, and backward edges that reroute flow we already committed. When there
 is no such cycle left, there is no improvement left, and $f$ is optimal.
 
 === Algorithm
@@ -260,9 +263,9 @@ and while the residual network has a negative cost cycle we cancel that cycle. T
 theorem tells us that when there are no negative cost cycles left, the circulation
 is optimal.
 
-Note that the starting circulation can be $0$ on all arcs. Sometimes a circulation
+Note that the starting circulation can be $0$ on all edges. Sometimes a circulation
 problem has lower bounds that make this an invalid starting circulation. For cases
-with lower bounds on arcs, a starting circulation can be computed using any
+with lower bounds on edges, a starting circulation can be computed using any
 max-flow algorithm. In our problem all lower bounds are $0$, so the zero
 circulation is always feasible and we can use it as the start.
 
@@ -274,30 +277,30 @@ circulation is always feasible and we can use it as the start.
 ]
 
 When we cancel a cycle we push flow equal to $"capacity"(c)$ along each residual
-arc in the cycle. Here $"capacity"(c)$ is the smallest residual capacity of any arc
-in $c$. Recall that the residual network has two kinds of arcs. A forward arc
-$(v, w, i)$ comes from an arc with leftover capacity, and a backward arc
-$(w, v, i)$ comes from an arc that already has flow on it.
+edge in the cycle. Here $"capacity"(c)$ is the smallest residual capacity of any edge
+in $c$. Recall that the residual network has two kinds of edges. A forward edge
+$(v, w, i)$ comes from an edge with leftover capacity, and a backward edge
+$(w, v, i)$ comes from an edge that already has flow on it.
 
-How we push flow depends on the type of arc. When the cycle uses a forward arc
-$(v, w, i)$ we increase the flow $f(v, w, i)$ on that arc. When the cycle uses a
-backward arc $(w, v, i)$ we decrease the flow $f(v, w, i)$ on the original arc.
-This is how the algorithm can undo earlier flow. A backward arc is in the residual
-network only up to the flow on its original arc, so we can only undo flow that is
+How we push flow depends on the type of edge. When the cycle uses a forward edge
+$(v, w, i)$ we increase the flow $f(v, w, i)$ on that edge. When the cycle uses a
+backward edge $(w, v, i)$ we decrease the flow $f(v, w, i)$ on the original edge.
+This is how the algorithm can undo earlier flow. A backward edge is in the residual
+network only up to the flow on its original edge, so we can only undo flow that is
 actually there.
 
-After we cancel a cycle the residual network changes. An arc that we pushed flow
-on has less leftover capacity, and its forward arc can become saturated. At the
-same time its backward arc gets more residual capacity, since there is now more
+After we cancel a cycle the residual network changes. An edge that we pushed flow
+on has less leftover capacity, and its forward edge can become saturated. At the
+same time its backward edge gets more residual capacity, since there is now more
 flow that can be undone. This is why a later cycle can push flow back on a backward
-arc and undo a push we made before.
+edge and undo a push we made before.
 
 === Runtime
 
 Finding the negative residual cycles can be done with Bellman-Ford in $O(n m)$ time
 @enwiki:bellman-ford. At each negative residual cycle that is cancelled the total
 cost of the circulation decreases by at least $1$. The cost is bounded below by
-$-m C U$ where $C$ is the max cost and $U$ is the max capacity of any arc. It
+$-m C U$ where $C$ is the max cost and $U$ is the max capacity of any edge. It
 follows that the number of iterations is bounded by $O(m C U)$, and then the
 runtime is $O(n m^2 C U)$. Note that this runtime is pseudo-polynomial since it
 depends largely on the size of $C$ and $U$.
