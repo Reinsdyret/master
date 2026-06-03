@@ -448,7 +448,7 @@ pub fn ttc_algorithm_with_pruning(state: &mut AssignmentState) -> ResultWithStat
 }
 
 /// Backward compatibility wrapper: Strict priority order
-pub fn ttc_algorithm_strict_priority(state: &mut AssignmentState) -> ResultWithStats {
+pub fn run_greedy_dfs_strict_prio(state: &mut AssignmentState) -> ResultWithStats {
     greedy_dfs(state, PriorityStrategy::StrictPriority)
 }
 

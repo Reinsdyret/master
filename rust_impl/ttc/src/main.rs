@@ -1,4 +1,4 @@
-use ttc::excact::{CyclePacker, PwCyclePacker};
+use ttc::excact::{CardCyclePacker, PwCyclePacker, UtilCyclePacker, util_exp_weight};
 use ttc::{greedy_dfs, verify_result, PriorityStrategy, AssignmentState, parse_data_file, Patient};
 use std::fs::File;
 use std::io::Write;
@@ -104,7 +104,7 @@ fn main() {
         let _ = std::io::stdout().flush();
         let packer_state = AssignmentState::new(patients.clone(), doctors.clone());
         let t0 = std::time::Instant::now();
-        let mut packer = CyclePacker::new(&packer_state);
+        let mut packer = CardCyclePacker::new(&packer_state);
         packer.pack_cycles();
         let exact_ms = t0.elapsed().as_millis();
         let exact_satisfied = packer.count_satisfied_real_patients(&patients);
@@ -139,6 +139,86 @@ fn main() {
             patients_satisfied: pw_count,
             patients_wanting_switch,
             time_ms: pw_ms,
+        });
+
+        // --- UtilCyclePacker linear ---
+        print!("  UtilCyclePacker (linear prio)... ");
+        let _ = std::io::stdout().flush();
+        let util_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let t0 = std::time::Instant::now();
+        let mut util_packer = UtilCyclePacker::new(&util_state, |p| p.priority as i128);
+        util_packer.pack_cycles();
+        let util_ms = t0.elapsed().as_millis();
+        let util_satisfied = util_packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", util_satisfied, util_ms);
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "UtilCyclePacker_Linear".to_string(),
+            patients_satisfied: util_satisfied,
+            patients_wanting_switch,
+            time_ms: util_ms,
+        });
+
+        // --- UtilCyclePacker exp 1.1 ---
+        print!("  UtilCyclePacker (1.1^prio)... ");
+        let _ = std::io::stdout().flush();
+        let util_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let t0 = std::time::Instant::now();
+        let mut util_packer = UtilCyclePacker::new(&util_state, |p| util_exp_weight(1.1, p.priority));
+        util_packer.pack_cycles();
+        let util_ms = t0.elapsed().as_millis();
+        let util_satisfied = util_packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", util_satisfied, util_ms);
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "UtilCyclePacker_Exp1_1".to_string(),
+            patients_satisfied: util_satisfied,
+            patients_wanting_switch,
+            time_ms: util_ms,
+        });
+
+        // --- UtilCyclePacker exp 1.5 ---
+        print!("  UtilCyclePacker (1.5^prio)... ");
+        let _ = std::io::stdout().flush();
+        let util_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let t0 = std::time::Instant::now();
+        let mut util_packer = UtilCyclePacker::new(&util_state, |p| util_exp_weight(1.5, p.priority));
+        util_packer.pack_cycles();
+        let util_ms = t0.elapsed().as_millis();
+        let util_satisfied = util_packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", util_satisfied, util_ms);
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "UtilCyclePacker_Exp1_5".to_string(),
+            patients_satisfied: util_satisfied,
+            patients_wanting_switch,
+            time_ms: util_ms,
+        });
+
+        // --- UtilCyclePacker exp 1.9 ---
+        print!("  UtilCyclePacker (1.9^prio)... ");
+        let _ = std::io::stdout().flush();
+        let util_state = AssignmentState::new(patients.clone(), doctors.clone());
+        let t0 = std::time::Instant::now();
+        let mut util_packer = UtilCyclePacker::new(&util_state, |p| util_exp_weight(1.9, p.priority));
+        util_packer.pack_cycles();
+        let util_ms = t0.elapsed().as_millis();
+        let util_satisfied = util_packer.count_satisfied_real_patients(&patients);
+        println!("{} satisfied in {}ms", util_satisfied, util_ms);
+        results.push(RunResult {
+            dataset: dataset.clone(),
+            num_patients,
+            num_doctors,
+            algorithm: "UtilCyclePacker_Exp1_9".to_string(),
+            patients_satisfied: util_satisfied,
+            patients_wanting_switch,
+            time_ms: util_ms,
         });
 
         // --- Greedy DFS ---

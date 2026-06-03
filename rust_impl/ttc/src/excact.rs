@@ -13,14 +13,14 @@ struct Edge {
     rev: usize,      // Index in adj[to]
 }
 
-pub struct CyclePacker {
+pub struct CardCyclePacker {
     adj: Vec<Vec<Edge>>,
     dist: Vec<i128>,
     pred_node: Vec<usize>,
     pred_edge: Vec<usize>,
 }
 
-impl CyclePacker {
+impl CardCyclePacker {
     pub fn new(state: &AssignmentState) -> Self {
         let patients = &state.patients;
         let doctors = &state.doctors;
@@ -303,92 +303,217 @@ impl CyclePacker {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Priority-weighted CyclePacker — BFS priority-order algorithm
-//
-// Processes patients from most important (highest rank) to least important.
-// For each patient, either finds a new cycle via BFS or locks in a prior
-// routing commitment. Primary arcs and their residuals are frozen immediately,
-// preventing lower-priority BFS from undoing high-priority assignments.
-// ─────────────────────────────────────────────────────────────────────────────
+/// Scale applied before rounding base^prio to an integer, so low-priority
+/// weights stay distinct (e.g. 1.1^2 vs 1.1^3 don't both collapse to 1).
+pub const UTIL_SCALE: f64 = 1_000_000.0;
+/// Headroom factor for summing many edge weights in Bellman-Ford without
+/// overflowing i128 (covers graphs up to ~10k nodes).
+const UTIL_SUM_MARGIN: f64 = 10_000.0;
 
-/// Kosaraju's SCC (iterative). Returns (scc_id[node], scc_size[scc_id]).
-/// Only forward edges with capacity > 0 are considered.
-fn pw_compute_sccs(adj: &[Vec<PwEdge>], n: usize) -> (Vec<usize>, Vec<usize>) {
-    // Pass 1: iterative DFS on forward graph, collect finish order
-    let mut visited = vec![false; n];
-    let mut finish_order = Vec::with_capacity(n);
-    for start in 0..n {
-        if visited[start] { continue; }
-        let mut stack: Vec<(usize, usize)> = vec![(start, 0)];
-        visited[start] = true;
-        while let Some((u, idx)) = stack.last_mut() {
-            let u = *u;
-            let mut pushed = false;
-            while *idx < adj[u].len() {
-                let edge = &adj[u][*idx];
-                *idx += 1;
-                if edge.forward && edge.capacity > 0 && !visited[edge.to] {
-                    visited[edge.to] = true;
-                    stack.push((edge.to, 0));
-                    pushed = true;
-                    break;
-                }
-            }
-            if !pushed {
-                finish_order.push(u);
-                stack.pop();
-            }
-        }
-    }
-
-    // Build reverse graph (only forward edges reversed)
-    let mut radj: Vec<Vec<usize>> = vec![Vec::new(); n];
-    for u in 0..n {
-        for edge in &adj[u] {
-            if edge.forward && edge.capacity > 0 {
-                radj[edge.to].push(u);
-            }
-        }
-    }
-
-    // Pass 2: DFS on reverse graph in reverse finish order
-    let mut scc_id = vec![0usize; n];
-    let mut scc_size: Vec<usize> = Vec::new();
-    visited.fill(false);
-    for &start in finish_order.iter().rev() {
-        if visited[start] { continue; }
-        let current_scc = scc_size.len();
-        let mut count = 0usize;
-        let mut stack = vec![start];
-        visited[start] = true;
-        scc_id[start] = current_scc;
-        while let Some(u) = stack.pop() {
-            count += 1;
-            for &v in &radj[u] {
-                if !visited[v] {
-                    visited[v] = true;
-                    scc_id[v] = current_scc;
-                    stack.push(v);
-                }
-            }
-        }
-        scc_size.push(count);
-    }
-
-    (scc_id, scc_size)
+/// Largest exponent `k` for which `round(base^k * UTIL_SCALE)` stays safely
+/// within i128 even after summing a long path of edges. Slow bases (1.1) get
+/// a large cap (~682); fast bases (1.9) hit the integer ceiling first (~101).
+pub fn util_exp_cap(base: f64) -> usize {
+    let max_weight = (i128::MAX as f64) / UTIL_SUM_MARGIN;
+    (max_weight / UTIL_SCALE).log(base).floor() as usize
 }
+
+/// Scaled, exponent-capped utility weight for `base^prio`. Capping the exponent
+/// (not the weight) is required because base^prio overflows f64 to +inf for
+/// large prio, so we must clamp before exponentiating.
+pub fn util_exp_weight(base: f64, prio: usize) -> i128 {
+    let k = prio.min(util_exp_cap(base));
+    (base.powi(k as i32) * UTIL_SCALE).round() as i128
+}
+
+#[derive(Clone, Debug)]
+struct UtilEdge {
+    to: usize,
+    start_capacity: usize,
+    capacity: usize,
+    cost: i128,
+    rev: usize,
+}
+
+pub struct UtilCyclePacker {
+    adj: Vec<Vec<UtilEdge>>,
+    dist: Vec<i128>,
+    pred_node: Vec<usize>,
+    pred_edge: Vec<usize>,
+}
+
+impl UtilCyclePacker {
+    pub fn new(state: &AssignmentState, prio: impl Fn(&Patient) -> i128) -> Self {
+        let patients = &state.patients;
+        let doctors = &state.doctors;
+        let n = doctors.len();
+        let mut g = Self {
+            adj: (0..n).map(|_| Vec::new()).collect(),
+            dist: vec![0; n],
+            pred_node: vec![n; n],
+            pred_edge: vec![0; n],
+        };
+
+        for p in patients {
+            let curr_doc = p.current_doctor.unwrap();
+            let pref_doc = p.preferred_doctor;
+            if curr_doc == pref_doc || !p.wants_to_switch {
+                continue;
+            }
+            g.add_edge(curr_doc, pref_doc, 1, -prio(p));
+        }
+
+        g
+    }
+
+    fn add_edge(&mut self, u: usize, v: usize, capacity: usize, cost: i128) {
+        let fwd = UtilEdge { to: v, start_capacity: capacity, capacity, rev: self.adj[v].len(), cost };
+        let back = UtilEdge { to: u, start_capacity: 0, capacity: 0, rev: self.adj[u].len(), cost: -cost };
+        self.adj[u].push(fwd);
+        self.adj[v].push(back);
+    }
+
+    pub fn pack_cycles(&mut self) -> CycleStats {
+        let mut stats = CycleStats::new();
+        loop {
+            match self.find_negative_cycle() {
+                Some(cycle) => {
+                    let len = cycle.len();
+                    let bottleneck = cycle.iter()
+                        .map(|&(u, idx)| self.adj[u][idx].capacity)
+                        .min()
+                        .unwrap_or(1);
+                    for _ in 0..bottleneck {
+                        stats.record_cycle(len);
+                    }
+                    self.apply_cycle(cycle);
+                }
+                None => break,
+            }
+        }
+        stats
+    }
+
+    fn find_negative_cycle(&mut self) -> Option<Vec<(usize, usize)>> {
+        let n = self.adj.len();
+        self.dist.iter_mut().for_each(|x| *x = 0);
+        self.pred_node.iter_mut().for_each(|x| *x = n);
+        self.pred_edge.iter_mut().for_each(|x| *x = 0);
+
+        for _ in 0..n - 1 {
+            for u in 0..n {
+                for (idx, edge) in self.adj[u].iter().enumerate() {
+                    if edge.capacity == 0 { continue; }
+                    let new_dist = self.dist[u] + edge.cost;
+                    if new_dist < self.dist[edge.to] {
+                        self.dist[edge.to] = new_dist;
+                        self.pred_node[edge.to] = u;
+                        self.pred_edge[edge.to] = idx;
+                    }
+                }
+            }
+        }
+
+        let mut cycle_node = n;
+        'outer: for u in 0..n {
+            for (idx, edge) in self.adj[u].iter().enumerate() {
+                if edge.capacity == 0 { continue; }
+                if self.dist[u] + edge.cost < self.dist[edge.to] {
+                    self.pred_node[edge.to] = u;
+                    self.pred_edge[edge.to] = idx;
+                    cycle_node = edge.to;
+                    break 'outer;
+                }
+            }
+        }
+
+        if cycle_node == n {
+            return None;
+        }
+
+        let mut v = cycle_node;
+        for _ in 0..n { v = self.pred_node[v]; }
+
+        let cycle_start = v;
+        let mut cycle_edges = Vec::new();
+        loop {
+            let u = self.pred_node[v];
+            let idx = self.pred_edge[v];
+            cycle_edges.push((u, idx));
+            v = u;
+            if v == cycle_start { break; }
+        }
+
+        Some(cycle_edges)
+    }
+
+    fn apply_cycle(&mut self, cycle: Vec<(usize, usize)>) {
+        let bottleneck = cycle.iter()
+            .map(|&(u, idx)| self.adj[u][idx].capacity)
+            .min()
+            .unwrap_or(1);
+
+        for (u, idx) in cycle {
+            let v = self.adj[u][idx].to;
+            let rev_idx = self.adj[u][idx].rev;
+            self.adj[u][idx].capacity -= bottleneck;
+            self.adj[v][rev_idx].capacity += bottleneck;
+        }
+    }
+
+    pub fn get_solution_edges(&self) -> Vec<(usize, usize, usize)> {
+        let mut results = Vec::new();
+        for (u, list) in self.adj.iter().enumerate() {
+            for edge in list {
+                if edge.cost < 0 {
+                    let used_count = edge.start_capacity - edge.capacity;
+                    if used_count > 0 {
+                        results.push((u, edge.to, used_count));
+                    }
+                }
+            }
+        }
+        results
+    }
+
+    pub fn count_satisfied_real_patients(&self, patients: &[Patient]) -> usize {
+        self.satisfied_patients(patients).len()
+    }
+
+    pub fn satisfied_patients<'a>(&self, patients: &'a [Patient]) -> Vec<&'a Patient> {
+        let mut edge_quota: HashMap<(usize, usize), usize> = HashMap::new();
+        for (u, v, count) in self.get_solution_edges() {
+            *edge_quota.entry((u, v)).or_insert(0) += count;
+        }
+
+        let mut result = Vec::new();
+        for p in patients {
+            if p.is_dummy { continue; }
+            let curr = match p.current_doctor {
+                Some(d) => d,
+                None => continue,
+            };
+            if curr == p.preferred_doctor { continue; }
+            if let Some(quota) = edge_quota.get_mut(&(curr, p.preferred_doctor)) {
+                if *quota > 0 {
+                    *quota -= 1;
+                    result.push(p);
+                }
+            }
+        }
+        result
+    }
+}
+
 
 #[derive(Clone, Debug)]
 struct PwEdge {
     to: usize,
     capacity: usize,
-    forward: bool,
     rev: usize,
 }
 
 pub struct PwCyclePacker {
-    n: usize,
     adj: Vec<Vec<PwEdge>>,
     /// (curr_doc, edge_idx_in_adj_curr_doc) per patient,
     /// sorted rank-descending (most important first), dummies last.
@@ -400,7 +525,6 @@ pub struct PwCyclePacker {
     visit_gen: Vec<u32>,             // visit_gen[v] == current_gen iff v was visited
     bfs_parent: Vec<(usize, usize)>, // (prev_node, edge_idx), valid iff visit_gen[v]==current_gen
     bfs_queue: VecDeque<usize>,      // BFS queue
-    dfs_stack: Vec<(usize, usize)>,  // DFS stack: (node, next_edge_idx_to_try)
     current_gen: u32,
 }
 
@@ -426,14 +550,12 @@ impl PwCyclePacker {
             .collect();
 
         let mut g = Self {
-            n,
             adj: (0..n).map(|_| Vec::new()).collect(),
             patient_fwd: Vec::new(),
             solution_edges: Vec::new(),
             visit_gen: vec![0u32; n],
             bfs_parent: vec![(0, 0); n],
             bfs_queue: VecDeque::new(),
-            dfs_stack: Vec::new(),
             current_gen: 0,
         };
 
@@ -475,8 +597,8 @@ impl PwCyclePacker {
     fn add_edge(&mut self, u: usize, v: usize) {
         let rev_in_v = self.adj[v].len();
         let fwd_in_u = self.adj[u].len();
-        self.adj[u].push(PwEdge { to: v, capacity: 1, forward: true,  rev: rev_in_v });
-        self.adj[v].push(PwEdge { to: u, capacity: 0, forward: false, rev: fwd_in_u });
+        self.adj[u].push(PwEdge { to: v, capacity: 1, rev: rev_in_v });
+        self.adj[v].push(PwEdge { to: u, capacity: 0, rev: fwd_in_u });
     }
 
     /// BFS from `start` to `end`, only traversing edges with cap > 0 and !frozen.
@@ -536,20 +658,10 @@ impl PwCyclePacker {
     pub fn pack_cycles(&mut self) -> CycleStats {
         let mut stats = CycleStats::new();
 
-        // Prune patients whose curr_doc and pref_doc are in different SCCs or a
-        // trivial SCC (size 1) — they can never be part of any cycle.
-        let (scc_id, scc_size) = pw_compute_sccs(&self.adj, self.n);
-        let mut patient_fwd = std::mem::take(&mut self.patient_fwd);
-        patient_fwd.retain(|&(node_u, edge_idx)| {
-            let pref_doc = self.adj[node_u][edge_idx].to;
-            let sid = scc_id[node_u];
-            sid == scc_id[pref_doc] && scc_size[sid] > 1
-        });
-
+        let patient_fwd = std::mem::take(&mut self.patient_fwd);
         for &(node_u, edge_idx) in &patient_fwd {
             let fwd_cap = self.adj[node_u][edge_idx].capacity;
             if fwd_cap > 0 {
-                // Patient not yet committed — find a cycle via BFS
                 let pref_doc = self.adj[node_u][edge_idx].to;
                 if let Some(path) = self.find_path(pref_doc, node_u) {
                     let cycle_len = path.len() + 1;
@@ -557,9 +669,6 @@ impl PwCyclePacker {
                     stats.record_cycle(cycle_len);
                 }
             } else {
-                // forward.cap = 0 and rev.cap > 0 means this patient was used as
-                // routing in a prior cycle — solidify by removing the residual so
-                // lower-priority patients can no longer undo this commitment.
                 let pref_doc = self.adj[node_u][edge_idx].to;
                 let rev_idx = self.adj[node_u][edge_idx].rev;
                 let rev = &mut self.adj[pref_doc][rev_idx];

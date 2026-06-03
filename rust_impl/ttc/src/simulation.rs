@@ -1,4 +1,4 @@
-use crate::excact::{CyclePacker, PwCyclePacker};
+use crate::excact::{CardCyclePacker, PwCyclePacker, UtilCyclePacker, util_exp_weight};
 use crate::{CycleStats, Doctor, Patient, ResultWithStats, AssignmentState};
 use indicatif::{ProgressBar, ProgressStyle};
 use rand::prelude::*;
@@ -187,7 +187,7 @@ fn add_new_requests(state: &mut AssignmentState, count: usize, rng: &mut impl Rn
         if let Some(p) = state.get_patient_mut(patient_id) {
             p.preferred_doctor = new_pref;
             p.wants_to_switch = true;
-            p.priority = 1;
+            p.priority = 0;
             p.is_stuck = false;
             p.wait_days = 0;
         }
@@ -212,11 +212,11 @@ pub fn init_state(config: &SimulationConfig, rng: &mut impl Rng) -> AssignmentSt
     }
     slots.shuffle(rng);
 
-    // Create patients: priority = id, initially assigned to their slot
+    // Create patients: priority starts at 0, incremented each day they wait
     let mut patients: Vec<Patient> = Vec::with_capacity(n);
     for id in 1..=n {
         let current_doctor = slots[id - 1];
-        patients.push(Patient::new(id, false, id, current_doctor, Some(current_doctor)));
+        patients.push(Patient::new(id, false, 0, current_doctor, Some(current_doctor)));
     }
 
     // Create doctors: index 0 is dummy placeholder, real doctors at 1..=num_docs
@@ -448,7 +448,7 @@ pub fn run_exact_cardinality(state: &mut AssignmentState) -> ResultWithStats {
     let total_capacity = state.get_total_capacity();
     let initial_capacity_used = state.get_capacity_used();
 
-    let mut packer = CyclePacker::new(state);
+    let mut packer = CardCyclePacker::new(state);
 
     let cycle_stats = packer.pack_cycles();
 
@@ -466,6 +466,50 @@ pub fn run_exact_cardinality(state: &mut AssignmentState) -> ResultWithStats {
     result.cycles_found = cycle_stats.total_cycles();
     result.cycle_stats = cycle_stats;
     result
+}
+
+fn run_util_with_prio(
+    state: &mut AssignmentState,
+    prio: impl Fn(&Patient) -> i128,
+) -> ResultWithStats {
+    let initial_unsatisfied = state.count_unsatisfied_patients();
+    let initial_unassigned = state.count_unassigned_patients();
+    let total_capacity = state.get_total_capacity();
+    let initial_capacity_used = state.get_capacity_used();
+
+    let mut packer = UtilCyclePacker::new(state, prio);
+    let cycle_stats = packer.pack_cycles();
+
+    let satisfied_ids: Vec<usize> = packer
+        .satisfied_patients(&state.patients)
+        .iter()
+        .map(|p| p.id)
+        .collect();
+
+    let mut result = build_result_from_satisfied(
+        state, satisfied_ids,
+        initial_unsatisfied, initial_unassigned,
+        total_capacity, initial_capacity_used,
+    );
+    result.cycles_found = cycle_stats.total_cycles();
+    result.cycle_stats = cycle_stats;
+    result
+}
+
+pub fn run_util_linear(state: &mut AssignmentState) -> ResultWithStats {
+    run_util_with_prio(state, |p| p.priority as i128)
+}
+
+pub fn run_util_exp_1_1(state: &mut AssignmentState) -> ResultWithStats {
+    run_util_with_prio(state, |p| util_exp_weight(1.1, p.priority))
+}
+
+pub fn run_util_exp_1_5(state: &mut AssignmentState) -> ResultWithStats {
+    run_util_with_prio(state, |p| util_exp_weight(1.5, p.priority))
+}
+
+pub fn run_util_exp_1_9(state: &mut AssignmentState) -> ResultWithStats {
+    run_util_with_prio(state, |p| util_exp_weight(1.9, p.priority))
 }
 
 /// Exact priority-weighted matching via PwCyclePacker. Lexicographically optimal by priority.

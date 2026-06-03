@@ -1,28 +1,32 @@
 use chrono::Local;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use ttc::simulation::{NewRequestMode, SimulationConfig, SimulationResult, run_exact_cardinality, run_exact_priority, run_simulation};
-use ttc::{AssignmentState, ResultWithStats, ttc_algorithm_strict_priority};
+use ttc::simulation::{NewRequestMode, SimulationConfig, SimulationResult, run_exact_cardinality, run_exact_priority, run_util_linear, run_util_exp_1_1, run_util_exp_1_5, run_util_exp_1_9, run_simulation};
+use ttc::{AssignmentState, ResultWithStats, run_greedy_dfs_strict_prio};
 use ttc::huitfeldt::huitfeldt_ttc;
 
 fn main() {
     let algorithms: Vec<(&str, fn(&mut AssignmentState) -> ResultWithStats)> = vec![
-        ("Greedy DFS",        ttc_algorithm_strict_priority),
-        ("Huitfeldt TTC",     huitfeldt_ttc),
+        // ("Greedy DFS",        run_greedy_dfs_strict_prio),
+        // ("Huitfeldt TTC",     huitfeldt_ttc),
         ("Exact Cardinality", run_exact_cardinality),
         ("Exact Priority",    run_exact_priority),
+        ("Util Linear",       run_util_linear),
+        ("Util Exp 1.1",      run_util_exp_1_1),
+        ("Util Exp 1.5",      run_util_exp_1_5),
+        ("Util Exp 1.9",      run_util_exp_1_9),
     ];
 
     let mut results: Vec<SimulationResult> = Vec::new();
 
     for (name, alg) in &algorithms {
         let config = SimulationConfig {
-            num_patients: 5_631_845,
-            num_doctors: 5767,
-            waitlist_fraction: 0.05,
-            num_days: 365 * 3,
-            new_requests_per_day: NewRequestMode::Fixed(13000),
-            min_new_requests_fraction: 0.001,
+            num_patients: 50_000,
+            num_doctors: 100,
+            waitlist_fraction: 0.1,
+            num_days: 365 * 10,
+            new_requests_per_day: NewRequestMode::Fixed(150),
+            min_new_requests_fraction: 0.0,
             algorithm: *alg,
             algorithm_name: name.to_string(),
             seed: 42,
