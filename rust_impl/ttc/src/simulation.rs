@@ -40,6 +40,23 @@ pub struct DayStats {
     pub max_wait_days: usize,
 }
 
+/// Wait-time threshold (days) above which a wait is counted as "starved".
+pub const STARVATION_THRESHOLD_DAYS: usize = 90;
+
+/// Summary of a set of wait times, derived from a histogram so any percentile
+/// is exact and cheap to compute.
+#[derive(Clone, Debug, Default)]
+pub struct WaitSummary {
+    pub count: usize,
+    pub avg: f64,
+    pub std: f64,
+    pub max: usize,
+    pub p50: usize,
+    pub p90: usize,
+    pub p95: usize,
+    pub p99: usize,
+}
+
 pub struct SimulationResult {
     pub algorithm_name: String,
     pub num_patients: usize,
@@ -51,11 +68,103 @@ pub struct SimulationResult {
     pub avg_waitlist_size: f64,
     pub avg_cycles_per_day: f64,
     pub avg_cycle_length_overall: f64,
-    pub avg_wait_days_overall: f64,
-    pub max_wait_days_overall: usize,
+
+    // --- Waitlist health over the run ---
+    pub min_waitlist_size: usize,
+    pub max_waitlist_size: usize,
+    pub final_waitlist_size: usize,
+
+    // --- Wait-time stats ---
+    /// Completed waits: one entry per resolved request, wait = days from request to resolution.
+    pub resolved_wait: WaitSummary,
+    /// Censored waits: patients still on the waitlist at run end (never resolved get the full run length).
+    pub outstanding_wait: WaitSummary,
+    /// Combined max over resolved + outstanding (the headline "longest anyone ever waited").
+    pub overall_max_wait: usize,
+    /// Combined mean over resolved + outstanding waits.
+    pub overall_avg_wait: f64,
+    pub starvation_threshold_days: usize,
+    pub starved_resolved: usize,
+    pub starved_outstanding: usize,
+
+    /// Raw histograms (index = wait days, value = count). Persisted so any
+    /// further statistic can be recomputed from a finished run without re-running.
+    pub wait_hist_resolved: Vec<u64>,
+    pub wait_hist_outstanding: Vec<u64>,
+}
+
+fn hist_add(hist: &mut Vec<u64>, wait: usize) {
+    if wait >= hist.len() {
+        hist.resize(wait + 1, 0);
+    }
+    hist[wait] += 1;
+}
+
+fn hist_total(h: &[u64]) -> u64 {
+    h.iter().sum()
+}
+
+fn hist_sum(h: &[u64]) -> u128 {
+    h.iter().enumerate().map(|(w, &c)| w as u128 * c as u128).sum()
+}
+
+fn hist_sumsq(h: &[u64]) -> u128 {
+    h.iter().enumerate().map(|(w, &c)| (w as u128) * (w as u128) * c as u128).sum()
+}
+
+fn hist_max(h: &[u64]) -> usize {
+    for w in (0..h.len()).rev() {
+        if h[w] > 0 {
+            return w;
+        }
+    }
+    0
+}
+
+/// Smallest wait `w` such that at least `pct`% of the mass is <= `w`.
+fn hist_percentile(h: &[u64], pct: f64) -> usize {
+    let total = hist_total(h);
+    if total == 0 {
+        return 0;
+    }
+    let target = (pct / 100.0 * total as f64).ceil().max(1.0) as u64;
+    let mut cum = 0u64;
+    for (w, &c) in h.iter().enumerate() {
+        cum += c;
+        if cum >= target {
+            return w;
+        }
+    }
+    hist_max(h)
+}
+
+fn hist_count_above(h: &[u64], threshold: usize) -> u64 {
+    h.iter().enumerate().filter(|(w, _)| *w > threshold).map(|(_, &c)| c).sum()
+}
+
+fn wait_summary_from_hist(h: &[u64]) -> WaitSummary {
+    let total = hist_total(h);
+    if total == 0 {
+        return WaitSummary::default();
+    }
+    let n = total as f64;
+    let avg = hist_sum(h) as f64 / n;
+    let var = (hist_sumsq(h) as f64 / n) - avg * avg;
+    WaitSummary {
+        count: total as usize,
+        avg,
+        std: if var > 0.0 { var.sqrt() } else { 0.0 },
+        max: hist_max(h),
+        p50: hist_percentile(h, 50.0),
+        p90: hist_percentile(h, 90.0),
+        p95: hist_percentile(h, 95.0),
+        p99: hist_percentile(h, 99.0),
+    }
 }
 
 impl SimulationResult {
+    /// Per-algorithm summary. Per-day rows are not printed here (they flood the
+    /// console for long runs); they are written to the day CSV instead.
     pub fn print_table(&self) {
         println!("\n=== {} ===", self.algorithm_name);
         println!(
@@ -63,33 +172,41 @@ impl SimulationResult {
             self.num_patients, self.num_doctors, self.num_days
         );
         println!(
-            "{:>4}  {:>10}  {:>9}  {:>8}  {:>10}  {:>7}  {:>7}  {:>8}",
-            "Day", "WaitBefore", "Resolved", "NewReq", "WaitAfter", "Sat%", "Cycles", "AvgCyc"
-        );
-        println!("{}", "-".repeat(75));
-        for s in &self.day_stats {
-            println!(
-                "{:>4}  {:>10}  {:>9}  {:>8}  {:>10}  {:>6.1}%  {:>7}  {:>8.2}",
-                s.day + 1,
-                s.waitlist_size_before,
-                s.patients_resolved,
-                s.new_requests_added,
-                s.waitlist_size_after,
-                s.satisfaction_rate * 100.0,
-                s.cycles_found,
-                s.avg_cycle_length,
-            );
-        }
-        println!("{}", "-".repeat(75));
-        println!(
-            "Total resolved: {}  Avg sat: {:.1}%  Avg waitlist: {:.1}  Avg cycles/day: {:.2}  Avg cycle len: {:.2}  Avg wait: {:.1}d  Max wait: {}d",
+            "Throughput : total resolved {}  avg sat {:.1}%  avg cycles/day {:.2}  avg cycle len {:.2}",
             self.total_resolved,
             self.avg_daily_satisfaction_rate * 100.0,
-            self.avg_waitlist_size,
             self.avg_cycles_per_day,
             self.avg_cycle_length_overall,
-            self.avg_wait_days_overall,
-            self.max_wait_days_overall,
+        );
+        println!(
+            "Waitlist   : avg {:.1}  min {}  max {}  final {}",
+            self.avg_waitlist_size,
+            self.min_waitlist_size,
+            self.max_waitlist_size,
+            self.final_waitlist_size,
+        );
+        let r = &self.resolved_wait;
+        println!(
+            "Wait (resolved, n={}): avg {:.1}d  std {:.1}  p50 {}  p90 {}  p95 {}  p99 {}  max {}d",
+            r.count, r.avg, r.std, r.p50, r.p90, r.p95, r.p99, r.max,
+        );
+        let o = &self.outstanding_wait;
+        println!(
+            "Wait (outstanding, n={}): avg {:.1}d  p50 {}  p90 {}  p95 {}  p99 {}  max {}d",
+            o.count, o.avg, o.p50, o.p90, o.p95, o.p99, o.max,
+        );
+        println!(
+            "Wait (overall)        : avg {:.1}d  max {}d",
+            self.overall_avg_wait, self.overall_max_wait,
+        );
+        let res_pct = if r.count > 0 {
+            self.starved_resolved as f64 / r.count as f64 * 100.0
+        } else {
+            0.0
+        };
+        println!(
+            "Starved (>{}d): {} resolved ({:.1}%)  {} outstanding",
+            self.starvation_threshold_days, self.starved_resolved, res_pct, self.starved_outstanding,
         );
     }
 }
@@ -267,6 +384,10 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
 
     let mut day_stats: Vec<DayStats> = Vec::with_capacity(num_days);
 
+    // Running histogram of completed (resolved) wait times across the whole run,
+    // indexed by wait days. Built incrementally as patients resolve each day.
+    let mut wait_hist_resolved: Vec<u64> = Vec::new();
+
     let pb = ProgressBar::new(num_days as u64);
     pb.set_style(
         ProgressStyle::default_bar()
@@ -314,6 +435,13 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
             resolved_waits.iter().sum::<usize>() as f64 / resolved_waits.len() as f64
         };
         let max_wait = resolved_waits.iter().copied().max().unwrap_or(0);
+
+        // Fold this day's completed waits into the run-wide histogram. This is
+        // the "running max/avg updated every time someone is resolved" — every
+        // resolved patient contributes its wait at the moment of resolution.
+        for &w in &resolved_waits {
+            hist_add(&mut wait_hist_resolved, w);
+        }
 
         let new_count = match &config.new_requests_per_day {
             NewRequestMode::SameAsResolved => result.patients_reassigned,
@@ -376,18 +504,34 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
         cycle_len_sum / cycle_len_count as f64
     };
 
-    let avg_wait_days_overall = {
-        let days_with_data: Vec<f64> = day_stats.iter()
-            .filter(|s| s.patients_resolved > 0)
-            .map(|s| s.avg_wait_days)
-            .collect();
-        if days_with_data.is_empty() {
-            0.0
-        } else {
-            days_with_data.iter().sum::<f64>() / days_with_data.len() as f64
+    // Censored waits: patients still on the waitlist after the final day. A
+    // patient who was never resolved has had wait_days incremented every day it
+    // waited, so its value reflects the full outstanding wait (up to num_days).
+    let mut wait_hist_outstanding: Vec<u64> = Vec::new();
+    for p in &state.patients {
+        if !p.is_dummy && p.wants_to_switch {
+            hist_add(&mut wait_hist_outstanding, p.wait_days);
         }
+    }
+
+    let resolved_wait = wait_summary_from_hist(&wait_hist_resolved);
+    let outstanding_wait = wait_summary_from_hist(&wait_hist_outstanding);
+
+    // Combined (resolved + outstanding) headline figures.
+    let overall_count = hist_total(&wait_hist_resolved) + hist_total(&wait_hist_outstanding);
+    let overall_avg_wait = if overall_count == 0 {
+        0.0
+    } else {
+        (hist_sum(&wait_hist_resolved) + hist_sum(&wait_hist_outstanding)) as f64 / overall_count as f64
     };
-    let max_wait_days_overall = day_stats.iter().map(|s| s.max_wait_days).max().unwrap_or(0);
+    let overall_max_wait = resolved_wait.max.max(outstanding_wait.max);
+
+    let starved_resolved = hist_count_above(&wait_hist_resolved, STARVATION_THRESHOLD_DAYS) as usize;
+    let starved_outstanding = hist_count_above(&wait_hist_outstanding, STARVATION_THRESHOLD_DAYS) as usize;
+
+    let min_waitlist_size = day_stats.iter().map(|s| s.waitlist_size_before).min().unwrap_or(0);
+    let max_waitlist_size = day_stats.iter().map(|s| s.waitlist_size_before).max().unwrap_or(0);
+    let final_waitlist_size = day_stats.last().map(|s| s.waitlist_size_after).unwrap_or(0);
 
     SimulationResult {
         algorithm_name: config.algorithm_name,
@@ -400,8 +544,18 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
         avg_waitlist_size,
         avg_cycles_per_day,
         avg_cycle_length_overall,
-        avg_wait_days_overall,
-        max_wait_days_overall,
+        min_waitlist_size,
+        max_waitlist_size,
+        final_waitlist_size,
+        resolved_wait,
+        outstanding_wait,
+        overall_max_wait,
+        overall_avg_wait,
+        starvation_threshold_days: STARVATION_THRESHOLD_DAYS,
+        starved_resolved,
+        starved_outstanding,
+        wait_hist_resolved,
+        wait_hist_outstanding,
     }
 }
 

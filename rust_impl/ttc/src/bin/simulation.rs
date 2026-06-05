@@ -5,6 +5,17 @@ use ttc::simulation::{NewRequestMode, SimulationConfig, SimulationResult, run_ex
 use ttc::{AssignmentState, ResultWithStats, run_greedy_dfs_strict_prio};
 use ttc::huitfeldt::huitfeldt_ttc;
 
+const DAY_HEADER: &str = "algorithm,day,waitlist_before,patients_resolved,new_requests,waitlist_after,satisfaction_rate,cycles_found,avg_cycle_length,max_cycle_length,avg_wait_days,max_wait_days";
+
+const SUMMARY_HEADER: &str = "algorithm,num_patients,num_doctors,num_days,total_resolved,avg_daily_satisfaction_rate,\
+avg_waitlist_size,min_waitlist_size,max_waitlist_size,final_waitlist_size,\
+avg_cycles_per_day,avg_cycle_length_overall,\
+resolved_count,resolved_avg_wait,resolved_std_wait,resolved_p50,resolved_p90,resolved_p95,resolved_p99,resolved_max,\
+outstanding_count,outstanding_avg_wait,outstanding_p50,outstanding_p90,outstanding_p95,outstanding_p99,outstanding_max,\
+overall_avg_wait,overall_max_wait,starvation_threshold_days,starved_resolved,starved_outstanding";
+
+const HIST_HEADER: &str = "algorithm,kind,wait_days,count";
+
 fn main() {
     let algorithms: Vec<(&str, fn(&mut AssignmentState) -> ResultWithStats)> = vec![
         // ("Greedy DFS",        run_greedy_dfs_strict_prio),
@@ -17,15 +28,35 @@ fn main() {
         ("Util Exp 1.9",      run_util_exp_1_9),
     ];
 
+    // Open all three output files up front and write headers, so each algorithm's
+    // results can be flushed to disk the moment it finishes. A crash partway
+    // through the run then keeps every algorithm that already completed.
+    let timestamp = Local::now().format("%Y%m%d_%H%M%S").to_string();
+    let day_path = format!("simulation_{}.csv", timestamp);
+    let summary_path = format!("simulation_summary_{}.csv", timestamp);
+    let hist_path = format!("simulation_wait_hist_{}.csv", timestamp);
+
+    let mut day_w = BufWriter::new(File::create(&day_path).expect("failed to create day CSV"));
+    let mut summary_w = BufWriter::new(File::create(&summary_path).expect("failed to create summary CSV"));
+    let mut hist_w = BufWriter::new(File::create(&hist_path).expect("failed to create histogram CSV"));
+    writeln!(day_w, "{}", DAY_HEADER).unwrap();
+    writeln!(summary_w, "{}", SUMMARY_HEADER).unwrap();
+    writeln!(hist_w, "{}", HIST_HEADER).unwrap();
+    day_w.flush().unwrap();
+    summary_w.flush().unwrap();
+    hist_w.flush().unwrap();
+
+    println!("Writing incrementally to:\n  {}\n  {}\n  {}\n", day_path, summary_path, hist_path);
+
     let mut results: Vec<SimulationResult> = Vec::new();
 
     for (name, alg) in &algorithms {
         let config = SimulationConfig {
-            num_patients: 50_000,
-            num_doctors: 100,
-            waitlist_fraction: 0.1,
+            num_patients: 100_000,
+            num_doctors: 101,
+            waitlist_fraction: 0.2,
             num_days: 365 * 10,
-            new_requests_per_day: NewRequestMode::Fixed(150),
+            new_requests_per_day: NewRequestMode::Fixed(356),
             min_new_requests_fraction: 0.0,
             algorithm: *alg,
             algorithm_name: name.to_string(),
@@ -34,47 +65,117 @@ fn main() {
 
         let result = run_simulation(config);
         result.print_table();
+
+        // Flush this algorithm's rows to all three files immediately.
+        write_day_rows(&mut day_w, &result);
+        write_summary_row(&mut summary_w, &result);
+        write_hist_rows(&mut hist_w, &result);
+        day_w.flush().unwrap();
+        summary_w.flush().unwrap();
+        hist_w.flush().unwrap();
+
         results.push(result);
     }
 
-    let csv_path = save_csv(&results);
-    println!("\nData saved to: {}", csv_path);
+    print_comparison(&results);
+
+    println!("\nPer-day data : {}", day_path);
+    println!("Summary      : {}", summary_path);
+    println!("Wait hist    : {}", hist_path);
 }
 
-fn save_csv(results: &[SimulationResult]) -> String {
-    let timestamp = Local::now().format("%Y%m%d_%H%M%S");
-    let filename = format!("simulation_{}.csv", timestamp);
+/// Side-by-side comparison of the key metrics across all algorithms, so the
+/// trade-offs are visible without scrolling through per-algorithm summaries.
+fn print_comparison(results: &[SimulationResult]) {
+    println!("\n=== Algorithm comparison ===");
+    println!(
+        "{:<18}  {:>9}  {:>6}  {:>9}  {:>9}  {:>9}  {:>9}  {:>11}",
+        "Algorithm", "Resolved", "Sat%", "AvgWait", "P90Wait", "P99Wait", "MaxWait", "Outstanding"
+    );
+    println!("{}", "-".repeat(94));
+    for r in results {
+        println!(
+            "{:<18}  {:>9}  {:>5.1}%  {:>8.1}d  {:>8}d  {:>8}d  {:>8}d  {:>11}",
+            r.algorithm_name,
+            r.total_resolved,
+            r.avg_daily_satisfaction_rate * 100.0,
+            r.resolved_wait.avg,
+            r.resolved_wait.p90,
+            r.resolved_wait.p99,
+            r.overall_max_wait,
+            r.outstanding_wait.count,
+        );
+    }
+    println!("{}", "-".repeat(94));
+}
 
-    let file = File::create(&filename).expect("failed to create CSV");
-    let mut w = BufWriter::new(file);
+fn write_day_rows<W: Write>(w: &mut W, r: &SimulationResult) {
+    for s in &r.day_stats {
+        writeln!(
+            w,
+            "{},{},{},{},{},{},{:.6},{},{:.4},{},{:.4},{}",
+            r.algorithm_name,
+            s.day + 1,
+            s.waitlist_size_before,
+            s.patients_resolved,
+            s.new_requests_added,
+            s.waitlist_size_after,
+            s.satisfaction_rate,
+            s.cycles_found,
+            s.avg_cycle_length,
+            s.max_cycle_length,
+            s.avg_wait_days,
+            s.max_wait_days,
+        )
+        .unwrap();
+    }
+}
 
+fn write_summary_row<W: Write>(w: &mut W, r: &SimulationResult) {
+    let rw = &r.resolved_wait;
+    let ow = &r.outstanding_wait;
     writeln!(
         w,
-        "algorithm,day,waitlist_before,patients_resolved,new_requests,waitlist_after,satisfaction_rate,cycles_found,avg_cycle_length,max_cycle_length,avg_wait_days,max_wait_days"
+        "{},{},{},{},{},{:.6},{:.4},{},{},{},{:.4},{:.4},\
+{},{:.4},{:.4},{},{},{},{},{},\
+{},{:.4},{},{},{},{},{},\
+{:.4},{},{},{},{}",
+        r.algorithm_name,
+        r.num_patients,
+        r.num_doctors,
+        r.num_days,
+        r.total_resolved,
+        r.avg_daily_satisfaction_rate,
+        r.avg_waitlist_size,
+        r.min_waitlist_size,
+        r.max_waitlist_size,
+        r.final_waitlist_size,
+        r.avg_cycles_per_day,
+        r.avg_cycle_length_overall,
+        rw.count, rw.avg, rw.std, rw.p50, rw.p90, rw.p95, rw.p99, rw.max,
+        ow.count, ow.avg, ow.p50, ow.p90, ow.p95, ow.p99, ow.max,
+        r.overall_avg_wait,
+        r.overall_max_wait,
+        r.starvation_threshold_days,
+        r.starved_resolved,
+        r.starved_outstanding,
     )
     .unwrap();
+}
 
-    for r in results {
-        for s in &r.day_stats {
-            writeln!(
-                w,
-                "{},{},{},{},{},{},{:.6},{},{:.4},{},{:.4},{}",
-                r.algorithm_name,
-                s.day + 1,
-                s.waitlist_size_before,
-                s.patients_resolved,
-                s.new_requests_added,
-                s.waitlist_size_after,
-                s.satisfaction_rate,
-                s.cycles_found,
-                s.avg_cycle_length,
-                s.max_cycle_length,
-                s.avg_wait_days,
-                s.max_wait_days,
-            )
-            .unwrap();
+/// Full wait-time distributions in long format (one row per wait-day bucket).
+/// Persisting the raw histograms means any further statistic — arbitrary
+/// percentiles, alternative starvation thresholds, full CDFs — can be
+/// recomputed from a finished run without re-running the simulation.
+fn write_hist_rows<W: Write>(w: &mut W, r: &SimulationResult) {
+    for (wait, &count) in r.wait_hist_resolved.iter().enumerate() {
+        if count > 0 {
+            writeln!(w, "{},resolved,{},{}", r.algorithm_name, wait, count).unwrap();
         }
     }
-
-    filename
+    for (wait, &count) in r.wait_hist_outstanding.iter().enumerate() {
+        if count > 0 {
+            writeln!(w, "{},outstanding,{},{}", r.algorithm_name, wait, count).unwrap();
+        }
+    }
 }

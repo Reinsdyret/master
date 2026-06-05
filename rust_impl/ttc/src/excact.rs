@@ -318,11 +318,16 @@ pub fn util_exp_cap(base: f64) -> usize {
     (max_weight / UTIL_SCALE).log(base).floor() as usize
 }
 
-/// Scaled, exponent-capped utility weight for `base^prio`. Capping the exponent
-/// (not the weight) is required because base^prio overflows f64 to +inf for
-/// large prio, so we must clamp before exponentiating.
+/// Days are divided by this before exponentiating, shrinking the effective
+/// exponent range so `base^prio` stays within f64/i128 without slamming into
+/// the cap. Tradeoff: priorities collapse into buckets of `DAYS_DIVISOR` days.
+pub const DAYS_DIVISOR: usize = 10;
+
+/// Scaled, exponent-capped utility weight for `base^(prio/DAYS_DIVISOR)`.
+/// Capping the exponent (not the weight) is still required as a safety net
+/// because base^k overflows f64 to +inf for large k.
 pub fn util_exp_weight(base: f64, prio: usize) -> i128 {
-    let k = prio.min(util_exp_cap(base));
+    let k = (prio / DAYS_DIVISOR).min(util_exp_cap(base));
     (base.powi(k as i32) * UTIL_SCALE).round() as i128
 }
 
