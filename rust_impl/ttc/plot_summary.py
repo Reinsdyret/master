@@ -22,7 +22,13 @@ import os
 import sys
 from datetime import datetime
 
-COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
+# 12 distinct colors (matplotlib tab10 + 2 darks) so all 10 algorithms get a
+# unique color without the palette wrapping around.
+COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
+          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#637939"]
+
+# Auto-named plots go here; an explicit --out is still honored verbatim.
+PLOTS_DIR = "plots"
 
 # label, is_percent (value stored as 0..1 -> shown as %)
 METRICS = {
@@ -47,6 +53,9 @@ METRICS = {
     "overall_max_wait":          ("Overall max wait (d)", False),
     "starved_resolved":          ("Starved resolved", False),
     "starved_outstanding":       ("Starved outstanding", False),
+    "total_solve_ms":            ("Total solve time (ms)", False),
+    "avg_solve_ms":              ("Avg solve time/day (ms)", False),
+    "max_solve_ms":              ("Max solve time/day (ms)", False),
 }
 
 DEFAULT_METRICS = [
@@ -143,7 +152,8 @@ def plot(rows, metrics, out_path, csv_path):
 
     if out_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_path = f"summary_bars_{ts}.png"
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        out_path = os.path.join(PLOTS_DIR, f"summary_bars_{ts}.png")
     plt.savefig(out_path, dpi=150)
     print(f"\nPlot saved to: {out_path}")
 

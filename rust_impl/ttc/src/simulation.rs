@@ -4,6 +4,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use rand::prelude::*;
 use rand::rngs::StdRng;
 use std::collections::{HashMap, HashSet};
+use std::time::Instant;
 
 pub enum NewRequestMode {
     SameAsResolved,
@@ -24,6 +25,12 @@ pub struct SimulationConfig {
     pub algorithm: fn(&mut AssignmentState) -> ResultWithStats,
     pub algorithm_name: String,
     pub seed: u64,
+    /// Number of districts to split doctors (and thus patients) across.
+    /// 1 = no district structure (uniform random preferences, original behavior).
+    pub num_districts: usize,
+    /// Probability a switch request targets a doctor in a different district.
+    /// Small by default; most switches stay within the patient's own district.
+    pub cross_district_prob: f64,
 }
 
 pub struct DayStats {
@@ -38,6 +45,13 @@ pub struct DayStats {
     pub max_cycle_length: usize,
     pub avg_wait_days: f64,
     pub max_wait_days: usize,
+    /// Of new_requests_added this day, how many target another district.
+    pub cross_requests_added: usize,
+    /// Of patients_resolved this day, how many had a cross-district request.
+    pub cross_resolved: usize,
+    /// Wall-clock time of the algorithm call this day, in milliseconds. Measures
+    /// only the solver, not the per-day bookkeeping around it.
+    pub solve_ms: f64,
 }
 
 /// Wait-time threshold (days) above which a wait is counted as "starved".
@@ -55,6 +69,30 @@ pub struct WaitSummary {
     pub p90: usize,
     pub p95: usize,
     pub p99: usize,
+}
+
+/// Generated structure of one district (finding 1: district metadata).
+/// patient_count == total capacity of the district's doctors, since capacities
+/// sum to num_patients and every slot is filled at init.
+#[derive(Clone, Debug)]
+pub struct DistrictStat {
+    pub district_id: usize,
+    pub doctor_count: usize,
+    pub patient_count: usize,
+}
+
+/// Cross-district vs within-district request outcomes (finding 2).
+/// A request is "cross" if its preferred doctor is in a different district than
+/// the patient's current doctor. Resolved/outstanding waits are split so the
+/// realization rate and wait penalty of cross-district requests are measurable.
+#[derive(Clone, Debug, Default)]
+pub struct CrossDistrictStats {
+    pub cross_added: usize,
+    pub within_added: usize,
+    pub resolved_cross: WaitSummary,
+    pub resolved_within: WaitSummary,
+    pub outstanding_cross: WaitSummary,
+    pub outstanding_within: WaitSummary,
 }
 
 pub struct SimulationResult {
@@ -91,6 +129,19 @@ pub struct SimulationResult {
     /// further statistic can be recomputed from a finished run without re-running.
     pub wait_hist_resolved: Vec<u64>,
     pub wait_hist_outstanding: Vec<u64>,
+
+    // --- Algorithm runtime (solver wall-clock across the run) ---
+    pub total_solve_ms: f64,
+    pub avg_solve_ms: f64,
+    pub max_solve_ms: f64,
+
+    // --- District metadata + cross-district outcomes ---
+    pub num_districts: usize,
+    pub cross_district_prob: f64,
+    /// Per-district structure (finding 1).
+    pub district_stats: Vec<DistrictStat>,
+    /// Cross- vs within-district request outcomes (finding 2).
+    pub cross_district: CrossDistrictStats,
 }
 
 fn hist_add(hist: &mut Vec<u64>, wait: usize) {
@@ -211,6 +262,111 @@ impl SimulationResult {
     }
 }
 
+/// Doctor->district assignment for the simulation, with a reverse index.
+/// District ids are 0-indexed. Doctor id 0 (the dummy) maps to usize::MAX.
+pub struct Districts {
+    /// District id for each doctor_id (index 0 = dummy = usize::MAX).
+    pub by_doctor: Vec<usize>,
+    /// Doctor ids belonging to each district.
+    pub by_district: Vec<Vec<usize>>,
+}
+
+/// Split doctors across `num_districts` with non-even, random sizes. Each district
+/// gets at least one doctor (so each district also gets at least one patient, since
+/// every doctor has capacity >= 1). num_districts is clamped to [1, num_doctors].
+fn assign_districts(num_doctors: usize, num_districts: usize, rng: &mut impl Rng) -> Districts {
+    let num_districts = num_districts.clamp(1, num_doctors.max(1));
+
+    // Random weight per district -> non-even doctor counts.
+    let mut weights = vec![0.0_f64; num_districts];
+    for w in &mut weights {
+        *w = rng.gen_range(0.5..1.5);
+    }
+    let total: f64 = weights.iter().sum();
+
+    let mut counts = vec![0_usize; num_districts];
+    for d in 0..num_districts {
+        let raw = ((weights[d] / total) * num_doctors as f64).round() as usize;
+        counts[d] = raw.max(1);
+    }
+
+    // Adjust so counts sum to exactly num_doctors, never dropping a district below 1.
+    let mut sum: usize = counts.iter().sum();
+    while sum < num_doctors {
+        counts[rng.gen_range(0..num_districts)] += 1;
+        sum += 1;
+    }
+    while sum > num_doctors {
+        let i = rng.gen_range(0..num_districts);
+        if counts[i] > 1 {
+            counts[i] -= 1;
+            sum -= 1;
+        }
+    }
+
+    // Shuffle doctor ids before assigning so district membership doesn't correlate
+    // with capacity (capacities are generated in doctor-id order).
+    let mut doctor_ids: Vec<usize> = (1..=num_doctors).collect();
+    doctor_ids.shuffle(rng);
+
+    let mut by_doctor = vec![usize::MAX; num_doctors + 1];
+    let mut by_district = vec![Vec::new(); num_districts];
+    let mut idx = 0;
+    for (d, &count) in counts.iter().enumerate() {
+        for _ in 0..count {
+            let doc = doctor_ids[idx];
+            idx += 1;
+            by_doctor[doc] = d;
+            by_district[d].push(doc);
+        }
+    }
+
+    Districts { by_doctor, by_district }
+}
+
+/// Pick a new preferred doctor for a patient currently at `current_doctor`.
+/// With probability `cross_prob` the target is in a different district (uniform over
+/// all out-of-district doctors); otherwise it stays within the patient's own district.
+/// Always returns a doctor != current_doctor.
+fn pick_preferred(
+    current_doctor: usize,
+    districts: &Districts,
+    cross_prob: f64,
+    num_doctors: usize,
+    rng: &mut impl Rng,
+) -> usize {
+    let home = districts.by_doctor[current_doctor];
+    let multi_district = districts.by_district.len() > 1;
+
+    if multi_district && rng.gen_bool(cross_prob) {
+        // Cross-district: uniform over all doctors not in the home district.
+        return loop {
+            let cand = rng.gen_range(1..=num_doctors);
+            if districts.by_doctor[cand] != home {
+                break cand;
+            }
+        };
+    }
+
+    let docs = &districts.by_district[home];
+    if docs.len() <= 1 {
+        // Lone doctor in the district: can't switch within it, so cross out.
+        return loop {
+            let cand = rng.gen_range(1..=num_doctors);
+            if cand != current_doctor {
+                break cand;
+            }
+        };
+    }
+
+    loop {
+        let cand = docs[rng.gen_range(0..docs.len())];
+        if cand != current_doctor {
+            break cand;
+        }
+    }
+}
+
 /// Generate non-uniform capacities for num_doctors that sum exactly to num_patients.
 fn generate_doctor_capacities(
     num_doctors: usize,
@@ -275,7 +431,14 @@ fn rebuild_all_doctor_state(state: &mut AssignmentState) {
 }
 
 /// Pick count satisfied patients and make them submit new switch requests.
-fn add_new_requests(state: &mut AssignmentState, count: usize, rng: &mut impl Rng) {
+/// Returns (cross_district_added, within_district_added).
+fn add_new_requests(
+    state: &mut AssignmentState,
+    count: usize,
+    districts: &Districts,
+    cross_prob: f64,
+    rng: &mut impl Rng,
+) -> (usize, usize) {
     let num_doctors = state.doctors.len() - 1; // doctors[0] is dummy, real are 1..=num_doctors
 
     let mut candidates: Vec<usize> = Vec::new();
@@ -288,18 +451,17 @@ fn add_new_requests(state: &mut AssignmentState, count: usize, rng: &mut impl Rn
     candidates.shuffle(rng);
     candidates.truncate(count);
 
+    let mut cross_added = 0;
     for &patient_id in &candidates {
         let current_doctor = state
             .get_patient(patient_id)
             .and_then(|p| p.current_doctor)
             .unwrap_or(1);
 
-        let new_pref = loop {
-            let candidate = rng.gen_range(1..=num_doctors);
-            if candidate != current_doctor {
-                break candidate;
-            }
-        };
+        let new_pref = pick_preferred(current_doctor, districts, cross_prob, num_doctors, rng);
+        if districts.by_doctor[new_pref] != districts.by_doctor[current_doctor] {
+            cross_added += 1;
+        }
 
         if let Some(p) = state.get_patient_mut(patient_id) {
             p.preferred_doctor = new_pref;
@@ -311,9 +473,14 @@ fn add_new_requests(state: &mut AssignmentState, count: usize, rng: &mut impl Rn
     }
 
     rebuild_all_doctor_state(state);
+    (cross_added, candidates.len() - cross_added)
 }
 
-pub fn init_state(config: &SimulationConfig, rng: &mut impl Rng) -> AssignmentState {
+pub fn init_state(
+    config: &SimulationConfig,
+    districts: &Districts,
+    rng: &mut impl Rng,
+) -> AssignmentState {
     let n = config.num_patients;
     let num_docs = config.num_doctors;
 
@@ -351,12 +518,8 @@ pub fn init_state(config: &SimulationConfig, rng: &mut impl Rng) -> AssignmentSt
 
     for &idx in &order {
         let current_doctor = patients[idx].current_doctor.unwrap();
-        let new_pref = loop {
-            let candidate = rng.gen_range(1..=num_docs);
-            if candidate != current_doctor {
-                break candidate;
-            }
-        };
+        let new_pref =
+            pick_preferred(current_doctor, districts, config.cross_district_prob, num_docs, rng);
         patients[idx].preferred_doctor = new_pref;
         patients[idx].wants_to_switch = true;
     }
@@ -376,17 +539,51 @@ pub fn init_state(config: &SimulationConfig, rng: &mut impl Rng) -> AssignmentSt
 
 pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
     let mut rng = StdRng::seed_from_u64(config.seed);
-    let mut state = init_state(&config, &mut rng);
+    let districts = assign_districts(config.num_doctors, config.num_districts, &mut rng);
+    let mut state = init_state(&config, &districts, &mut rng);
 
     let num_patients = config.num_patients;
     let num_doctors = config.num_doctors;
     let num_days = config.num_days;
+
+    // District structure (finding 1). Capacities are fixed for the whole run, so
+    // patient_count per district = sum of its doctors' capacities, read once here.
+    let district_stats: Vec<DistrictStat> = districts
+        .by_district
+        .iter()
+        .enumerate()
+        .map(|(d, docs)| DistrictStat {
+            district_id: d,
+            doctor_count: docs.len(),
+            patient_count: docs.iter().map(|&doc| state.doctors[doc].capacity).sum(),
+        })
+        .collect();
 
     let mut day_stats: Vec<DayStats> = Vec::with_capacity(num_days);
 
     // Running histogram of completed (resolved) wait times across the whole run,
     // indexed by wait days. Built incrementally as patients resolve each day.
     let mut wait_hist_resolved: Vec<u64> = Vec::new();
+
+    // Cross-district accumulators (finding 2). Resolved waits are split by whether
+    // the request crossed districts so cross-district wait penalty is measurable.
+    let mut wait_hist_resolved_cross: Vec<u64> = Vec::new();
+    let mut wait_hist_resolved_within: Vec<u64> = Vec::new();
+    // Seed the "added" totals with the initial waitlist's requests, so the
+    // realization rate (resolved / added) has the right denominator. Without this
+    // the initial waitlist is resolved but never counted as added -> rate > 100%.
+    let mut total_cross_added = 0usize;
+    let mut total_within_added = 0usize;
+    for p in &state.patients {
+        if !p.is_dummy && p.wants_to_switch {
+            let cur = p.current_doctor.unwrap();
+            if districts.by_doctor[p.preferred_doctor] != districts.by_doctor[cur] {
+                total_cross_added += 1;
+            } else {
+                total_within_added += 1;
+            }
+        }
+    }
 
     let pb = ProgressBar::new(num_days as u64);
     pb.set_style(
@@ -416,32 +613,51 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
 
         let waitlist_before = state.count_unsatisfied_patients();
 
-        // Snapshot wait_days for all currently waiting patients before algorithm runs
+        // Snapshot wait_days for all currently waiting patients before algorithm runs,
+        // plus which of them carry a cross-district request (preferred doctor in a
+        // different district than current doctor).
         let wait_snapshot: HashMap<usize, usize> = state.patients.iter()
             .filter(|p| !p.is_dummy && p.wants_to_switch)
             .map(|p| (p.id, p.wait_days))
             .collect();
-
-        let result = (config.algorithm)(&mut state);
-
-        // Compute wait time stats for patients resolved this day
-        let resolved_waits: Vec<usize> = state.patients.iter()
-            .filter(|p| !p.is_dummy && !p.wants_to_switch)
-            .filter_map(|p| wait_snapshot.get(&p.id).copied())
+        let cross_request_ids: HashSet<usize> = state.patients.iter()
+            .filter(|p| !p.is_dummy && p.wants_to_switch)
+            .filter(|p| {
+                let cur = p.current_doctor.unwrap();
+                districts.by_doctor[p.preferred_doctor] != districts.by_doctor[cur]
+            })
+            .map(|p| p.id)
             .collect();
+
+        let solve_start = Instant::now();
+        let result = (config.algorithm)(&mut state);
+        let solve_ms = solve_start.elapsed().as_secs_f64() * 1000.0;
+
+        // Compute wait time stats for patients resolved this day, split by whether
+        // their request crossed districts.
+        let mut resolved_waits: Vec<usize> = Vec::new();
+        let mut cross_resolved = 0usize;
+        for p in &state.patients {
+            if p.is_dummy || p.wants_to_switch {
+                continue;
+            }
+            if let Some(&w) = wait_snapshot.get(&p.id) {
+                resolved_waits.push(w);
+                hist_add(&mut wait_hist_resolved, w);
+                if cross_request_ids.contains(&p.id) {
+                    hist_add(&mut wait_hist_resolved_cross, w);
+                    cross_resolved += 1;
+                } else {
+                    hist_add(&mut wait_hist_resolved_within, w);
+                }
+            }
+        }
         let avg_wait = if resolved_waits.is_empty() {
             0.0
         } else {
             resolved_waits.iter().sum::<usize>() as f64 / resolved_waits.len() as f64
         };
         let max_wait = resolved_waits.iter().copied().max().unwrap_or(0);
-
-        // Fold this day's completed waits into the run-wide histogram. This is
-        // the "running max/avg updated every time someone is resolved" — every
-        // resolved patient contributes its wait at the moment of resolution.
-        for &w in &resolved_waits {
-            hist_add(&mut wait_hist_resolved, w);
-        }
 
         let new_count = match &config.new_requests_per_day {
             NewRequestMode::SameAsResolved => result.patients_reassigned,
@@ -451,7 +667,10 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
         let min_new = (config.num_patients as f64 * config.min_new_requests_fraction).ceil() as usize;
         let new_count = new_count.max(min_new);
 
-        add_new_requests(&mut state, new_count, &mut rng);
+        let (cross_added, within_added) =
+            add_new_requests(&mut state, new_count, &districts, config.cross_district_prob, &mut rng);
+        total_cross_added += cross_added;
+        total_within_added += within_added;
 
         let waitlist_after = state.count_unsatisfied_patients();
         let sat_rate = if waitlist_before == 0 {
@@ -472,6 +691,9 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
             max_cycle_length: result.cycle_stats.max_cycle_length(),
             avg_wait_days: avg_wait,
             max_wait_days: max_wait,
+            cross_requests_added: cross_added,
+            cross_resolved,
+            solve_ms,
         });
 
         pb.inc(1);
@@ -508,9 +730,17 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
     // patient who was never resolved has had wait_days incremented every day it
     // waited, so its value reflects the full outstanding wait (up to num_days).
     let mut wait_hist_outstanding: Vec<u64> = Vec::new();
+    let mut wait_hist_outstanding_cross: Vec<u64> = Vec::new();
+    let mut wait_hist_outstanding_within: Vec<u64> = Vec::new();
     for p in &state.patients {
         if !p.is_dummy && p.wants_to_switch {
             hist_add(&mut wait_hist_outstanding, p.wait_days);
+            let cur = p.current_doctor.unwrap();
+            if districts.by_doctor[p.preferred_doctor] != districts.by_doctor[cur] {
+                hist_add(&mut wait_hist_outstanding_cross, p.wait_days);
+            } else {
+                hist_add(&mut wait_hist_outstanding_within, p.wait_days);
+            }
         }
     }
 
@@ -532,6 +762,19 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
     let min_waitlist_size = day_stats.iter().map(|s| s.waitlist_size_before).min().unwrap_or(0);
     let max_waitlist_size = day_stats.iter().map(|s| s.waitlist_size_before).max().unwrap_or(0);
     let final_waitlist_size = day_stats.last().map(|s| s.waitlist_size_after).unwrap_or(0);
+
+    let total_solve_ms: f64 = day_stats.iter().map(|s| s.solve_ms).sum();
+    let avg_solve_ms = if n_days > 0.0 { total_solve_ms / n_days } else { 0.0 };
+    let max_solve_ms = day_stats.iter().map(|s| s.solve_ms).fold(0.0_f64, f64::max);
+
+    let cross_district = CrossDistrictStats {
+        cross_added: total_cross_added,
+        within_added: total_within_added,
+        resolved_cross: wait_summary_from_hist(&wait_hist_resolved_cross),
+        resolved_within: wait_summary_from_hist(&wait_hist_resolved_within),
+        outstanding_cross: wait_summary_from_hist(&wait_hist_outstanding_cross),
+        outstanding_within: wait_summary_from_hist(&wait_hist_outstanding_within),
+    };
 
     SimulationResult {
         algorithm_name: config.algorithm_name,
@@ -556,6 +799,13 @@ pub fn run_simulation(config: SimulationConfig) -> SimulationResult {
         starved_outstanding,
         wait_hist_resolved,
         wait_hist_outstanding,
+        total_solve_ms,
+        avg_solve_ms,
+        max_solve_ms,
+        num_districts: config.num_districts,
+        cross_district_prob: config.cross_district_prob,
+        district_stats,
+        cross_district,
     }
 }
 
@@ -652,6 +902,14 @@ fn run_util_with_prio(
 
 pub fn run_util_linear(state: &mut AssignmentState) -> ResultWithStats {
     run_util_with_prio(state, |p| p.priority as i128)
+}
+
+pub fn run_util_exp_1_01(state: &mut AssignmentState) -> ResultWithStats {
+    run_util_with_prio(state, |p| util_exp_weight(1.01, p.priority))
+}
+
+pub fn run_util_exp_1_05(state: &mut AssignmentState) -> ResultWithStats {
+    run_util_with_prio(state, |p| util_exp_weight(1.05, p.priority))
 }
 
 pub fn run_util_exp_1_1(state: &mut AssignmentState) -> ResultWithStats {

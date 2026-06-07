@@ -26,7 +26,13 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 
-COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
+# 12 distinct colors (matplotlib tab10 + 2 darks) so all 10 algorithms get a
+# unique color without the palette wrapping around.
+COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
+          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#637939"]
+
+# Auto-named plots go here; an explicit --out is still honored verbatim.
+PLOTS_DIR = "plots"
 PERCENTILES = [50, 90, 95, 99]
 
 
@@ -169,7 +175,8 @@ def plot(algorithms, kinds, hist, kinds_to_show, style, max_days, log, out_path,
 
     if out_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_path = f"wait_hist_{style}_{ts}.png"
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        out_path = os.path.join(PLOTS_DIR, f"wait_hist_{style}_{ts}.png")
     plt.savefig(out_path, dpi=150)
     print(f"\nPlot saved to: {out_path}")
 

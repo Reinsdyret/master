@@ -30,13 +30,22 @@ METRICS = {
     "new_requests":       "New Requests Added",
     "avg_wait_days":      "Avg Wait Days (Resolved)",
     "max_wait_days":      "Max Wait Days (Resolved)",
+    "cross_requests_added": "Cross-District Requests Added",
+    "cross_resolved":     "Cross-District Resolved",
+    "solve_ms":           "Solver Time (ms/day)",
 }
 
 # Metrics that make most sense as candlesticks (shown first in help)
 CANDLE_GOOD_METRICS = ["patients_resolved", "avg_wait_days", "waitlist_before",
                        "waitlist_after", "satisfaction_rate", "cycles_found"]
 
-COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
+# 12 distinct colors (matplotlib tab10 + 2 darks) so all 10 algorithms get a
+# unique color without the palette wrapping around.
+COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
+          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#637939"]
+
+# Auto-named plots go here; an explicit --out is still honored verbatim.
+PLOTS_DIR = "plots"
 
 
 def load_csv(path):
@@ -60,6 +69,9 @@ def load_csv(path):
                 "max_cycle_length":  int(row["max_cycle_length"]),
                 "avg_wait_days":     float(row.get("avg_wait_days", 0)),
                 "max_wait_days":     int(row.get("max_wait_days", 0)),
+                "cross_requests_added": int(row.get("cross_requests_added", 0)),
+                "cross_resolved":    int(row.get("cross_resolved", 0)),
+                "solve_ms":          float(row.get("solve_ms", 0)),
             }
     return algorithms, data
 
@@ -189,7 +201,8 @@ def plot(csv_path, day_from, day_to, metric, out_path, style, window):
 
     if out_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_path = f"simulation_plot_{metric}_{style}_{day_from}_{day_to}_{ts}.png"
+        os.makedirs(PLOTS_DIR, exist_ok=True)
+        out_path = os.path.join(PLOTS_DIR, f"simulation_plot_{metric}_{style}_{day_from}_{day_to}_{ts}.png")
 
     plt.savefig(out_path, dpi=150)
     print(f"Plot saved to: {out_path}")
