@@ -1,0 +1,5494 @@
+algorithm,kind,wait_days,count
+Greedy DFS,resolved,1,8111
+Greedy DFS,resolved,2,133
+Greedy DFS,resolved,3,111
+Greedy DFS,resolved,4,125
+Greedy DFS,resolved,5,98
+Greedy DFS,resolved,6,81
+Greedy DFS,resolved,7,83
+Greedy DFS,resolved,8,80
+Greedy DFS,resolved,9,67
+Greedy DFS,resolved,10,76
+Greedy DFS,resolved,11,74
+Greedy DFS,resolved,12,58
+Greedy DFS,resolved,13,48
+Greedy DFS,resolved,14,50
+Greedy DFS,resolved,15,41
+Greedy DFS,resolved,16,54
+Greedy DFS,resolved,17,47
+Greedy DFS,resolved,18,50
+Greedy DFS,resolved,19,62
+Greedy DFS,resolved,20,51
+Greedy DFS,resolved,21,62
+Greedy DFS,resolved,22,59
+Greedy DFS,resolved,23,53
+Greedy DFS,resolved,24,47
+Greedy DFS,resolved,25,41
+Greedy DFS,resolved,26,43
+Greedy DFS,resolved,27,24
+Greedy DFS,resolved,28,67
+Greedy DFS,resolved,29,40
+Greedy DFS,resolved,30,45
+Greedy DFS,resolved,31,40
+Greedy DFS,resolved,32,49
+Greedy DFS,resolved,33,47
+Greedy DFS,resolved,34,40
+Greedy DFS,resolved,35,54
+Greedy DFS,resolved,36,48
+Greedy DFS,resolved,37,47
+Greedy DFS,resolved,38,58
+Greedy DFS,resolved,39,62
+Greedy DFS,resolved,40,51
+Greedy DFS,resolved,41,30
+Greedy DFS,resolved,42,34
+Greedy DFS,resolved,43,31
+Greedy DFS,resolved,44,54
+Greedy DFS,resolved,45,47
+Greedy DFS,resolved,46,29
+Greedy DFS,resolved,47,25
+Greedy DFS,resolved,48,26
+Greedy DFS,resolved,49,32
+Greedy DFS,resolved,50,47
+Greedy DFS,resolved,51,28
+Greedy DFS,resolved,52,34
+Greedy DFS,resolved,53,39
+Greedy DFS,resolved,54,36
+Greedy DFS,resolved,55,41
+Greedy DFS,resolved,56,50
+Greedy DFS,resolved,57,56
+Greedy DFS,resolved,58,43
+Greedy DFS,resolved,59,35
+Greedy DFS,resolved,60,36
+Greedy DFS,resolved,61,29
+Greedy DFS,resolved,62,44
+Greedy DFS,resolved,63,42
+Greedy DFS,resolved,64,38
+Greedy DFS,resolved,65,47
+Greedy DFS,resolved,66,61
+Greedy DFS,resolved,67,61
+Greedy DFS,resolved,68,74
+Greedy DFS,resolved,69,64
+Greedy DFS,resolved,70,57
+Greedy DFS,resolved,71,66
+Greedy DFS,resolved,72,52
+Greedy DFS,resolved,73,58
+Greedy DFS,resolved,74,61
+Greedy DFS,resolved,75,42
+Greedy DFS,resolved,76,60
+Greedy DFS,resolved,77,59
+Greedy DFS,resolved,78,49
+Greedy DFS,resolved,79,33
+Greedy DFS,resolved,80,29
+Greedy DFS,resolved,81,23
+Greedy DFS,resolved,82,20
+Greedy DFS,resolved,83,27
+Greedy DFS,resolved,84,21
+Greedy DFS,resolved,85,34
+Greedy DFS,resolved,86,30
+Greedy DFS,resolved,87,38
+Greedy DFS,resolved,88,41
+Greedy DFS,resolved,89,42
+Greedy DFS,resolved,90,39
+Greedy DFS,resolved,91,36
+Greedy DFS,resolved,92,42
+Greedy DFS,resolved,93,39
+Greedy DFS,resolved,94,36
+Greedy DFS,resolved,95,42
+Greedy DFS,resolved,96,46
+Greedy DFS,resolved,97,46
+Greedy DFS,resolved,98,28
+Greedy DFS,resolved,99,40
+Greedy DFS,resolved,100,44
+Greedy DFS,resolved,101,50
+Greedy DFS,resolved,102,45
+Greedy DFS,resolved,103,70
+Greedy DFS,resolved,104,51
+Greedy DFS,resolved,105,69
+Greedy DFS,resolved,106,58
+Greedy DFS,resolved,107,62
+Greedy DFS,resolved,108,54
+Greedy DFS,resolved,109,51
+Greedy DFS,resolved,110,48
+Greedy DFS,resolved,111,49
+Greedy DFS,resolved,112,42
+Greedy DFS,resolved,113,43
+Greedy DFS,resolved,114,42
+Greedy DFS,resolved,115,44
+Greedy DFS,resolved,116,50
+Greedy DFS,resolved,117,46
+Greedy DFS,resolved,118,57
+Greedy DFS,resolved,119,46
+Greedy DFS,resolved,120,34
+Greedy DFS,resolved,121,18
+Greedy DFS,resolved,122,38
+Greedy DFS,resolved,123,13
+Greedy DFS,resolved,124,18
+Greedy DFS,resolved,125,17
+Greedy DFS,resolved,126,33
+Greedy DFS,resolved,127,27
+Greedy DFS,resolved,128,15
+Greedy DFS,resolved,129,12
+Greedy DFS,resolved,130,13
+Greedy DFS,resolved,131,17
+Greedy DFS,resolved,132,12
+Greedy DFS,resolved,133,29
+Greedy DFS,resolved,134,10
+Greedy DFS,resolved,135,28
+Greedy DFS,resolved,136,16
+Greedy DFS,resolved,137,15
+Greedy DFS,resolved,138,12
+Greedy DFS,resolved,139,10
+Greedy DFS,resolved,140,11
+Greedy DFS,resolved,141,6
+Greedy DFS,resolved,142,5
+Greedy DFS,resolved,143,2
+Greedy DFS,resolved,144,9
+Greedy DFS,resolved,145,9
+Greedy DFS,resolved,146,8
+Greedy DFS,resolved,147,16
+Greedy DFS,resolved,148,15
+Greedy DFS,resolved,149,4
+Greedy DFS,resolved,150,5
+Greedy DFS,outstanding,0,40
+Greedy DFS,outstanding,1,22
+Greedy DFS,outstanding,2,18
+Greedy DFS,outstanding,3,27
+Greedy DFS,outstanding,4,25
+Greedy DFS,outstanding,5,17
+Greedy DFS,outstanding,6,25
+Greedy DFS,outstanding,7,20
+Greedy DFS,outstanding,8,20
+Greedy DFS,outstanding,9,14
+Greedy DFS,outstanding,10,20
+Greedy DFS,outstanding,11,21
+Greedy DFS,outstanding,12,16
+Greedy DFS,outstanding,13,21
+Greedy DFS,outstanding,14,19
+Greedy DFS,outstanding,15,16
+Greedy DFS,outstanding,16,24
+Greedy DFS,outstanding,17,13
+Greedy DFS,outstanding,18,19
+Greedy DFS,outstanding,19,18
+Greedy DFS,outstanding,20,17
+Greedy DFS,outstanding,21,21
+Greedy DFS,outstanding,22,22
+Greedy DFS,outstanding,23,20
+Greedy DFS,outstanding,24,23
+Greedy DFS,outstanding,25,21
+Greedy DFS,outstanding,26,16
+Greedy DFS,outstanding,27,19
+Greedy DFS,outstanding,28,21
+Greedy DFS,outstanding,29,22
+Greedy DFS,outstanding,30,20
+Greedy DFS,outstanding,31,19
+Greedy DFS,outstanding,32,17
+Greedy DFS,outstanding,33,19
+Greedy DFS,outstanding,34,19
+Greedy DFS,outstanding,35,18
+Greedy DFS,outstanding,36,20
+Greedy DFS,outstanding,37,22
+Greedy DFS,outstanding,38,16
+Greedy DFS,outstanding,39,17
+Greedy DFS,outstanding,40,19
+Greedy DFS,outstanding,41,23
+Greedy DFS,outstanding,42,14
+Greedy DFS,outstanding,43,23
+Greedy DFS,outstanding,44,25
+Greedy DFS,outstanding,45,12
+Greedy DFS,outstanding,46,13
+Greedy DFS,outstanding,47,19
+Greedy DFS,outstanding,48,19
+Greedy DFS,outstanding,49,20
+Greedy DFS,outstanding,50,18
+Greedy DFS,outstanding,51,22
+Greedy DFS,outstanding,52,18
+Greedy DFS,outstanding,53,16
+Greedy DFS,outstanding,54,15
+Greedy DFS,outstanding,55,20
+Greedy DFS,outstanding,56,16
+Greedy DFS,outstanding,57,16
+Greedy DFS,outstanding,58,18
+Greedy DFS,outstanding,59,19
+Greedy DFS,outstanding,60,18
+Greedy DFS,outstanding,61,11
+Greedy DFS,outstanding,62,15
+Greedy DFS,outstanding,63,16
+Greedy DFS,outstanding,64,16
+Greedy DFS,outstanding,65,19
+Greedy DFS,outstanding,66,15
+Greedy DFS,outstanding,67,19
+Greedy DFS,outstanding,68,23
+Greedy DFS,outstanding,69,18
+Greedy DFS,outstanding,70,15
+Greedy DFS,outstanding,71,10
+Greedy DFS,outstanding,72,17
+Greedy DFS,outstanding,73,14
+Greedy DFS,outstanding,74,16
+Greedy DFS,outstanding,75,21
+Greedy DFS,outstanding,76,13
+Greedy DFS,outstanding,77,11
+Greedy DFS,outstanding,78,13
+Greedy DFS,outstanding,79,19
+Greedy DFS,outstanding,80,13
+Greedy DFS,outstanding,81,19
+Greedy DFS,outstanding,82,11
+Greedy DFS,outstanding,83,10
+Greedy DFS,outstanding,84,14
+Greedy DFS,outstanding,85,15
+Greedy DFS,outstanding,86,14
+Greedy DFS,outstanding,87,13
+Greedy DFS,outstanding,88,10
+Greedy DFS,outstanding,89,8
+Greedy DFS,outstanding,90,13
+Greedy DFS,outstanding,91,18
+Greedy DFS,outstanding,92,16
+Greedy DFS,outstanding,93,14
+Greedy DFS,outstanding,94,10
+Greedy DFS,outstanding,95,13
+Greedy DFS,outstanding,96,18
+Greedy DFS,outstanding,97,11
+Greedy DFS,outstanding,98,12
+Greedy DFS,outstanding,99,14
+Greedy DFS,outstanding,100,12
+Greedy DFS,outstanding,101,15
+Greedy DFS,outstanding,102,13
+Greedy DFS,outstanding,103,14
+Greedy DFS,outstanding,104,11
+Greedy DFS,outstanding,105,15
+Greedy DFS,outstanding,106,8
+Greedy DFS,outstanding,107,12
+Greedy DFS,outstanding,108,12
+Greedy DFS,outstanding,109,15
+Greedy DFS,outstanding,110,8
+Greedy DFS,outstanding,111,9
+Greedy DFS,outstanding,112,11
+Greedy DFS,outstanding,113,12
+Greedy DFS,outstanding,114,13
+Greedy DFS,outstanding,115,10
+Greedy DFS,outstanding,116,11
+Greedy DFS,outstanding,117,10
+Greedy DFS,outstanding,118,6
+Greedy DFS,outstanding,119,12
+Greedy DFS,outstanding,120,9
+Greedy DFS,outstanding,121,10
+Greedy DFS,outstanding,122,10
+Greedy DFS,outstanding,123,9
+Greedy DFS,outstanding,124,11
+Greedy DFS,outstanding,125,12
+Greedy DFS,outstanding,126,7
+Greedy DFS,outstanding,127,9
+Greedy DFS,outstanding,128,7
+Greedy DFS,outstanding,129,7
+Greedy DFS,outstanding,130,7
+Greedy DFS,outstanding,131,8
+Greedy DFS,outstanding,132,6
+Greedy DFS,outstanding,133,7
+Greedy DFS,outstanding,134,5
+Greedy DFS,outstanding,135,8
+Greedy DFS,outstanding,136,5
+Greedy DFS,outstanding,137,5
+Greedy DFS,outstanding,138,8
+Greedy DFS,outstanding,139,4
+Greedy DFS,outstanding,140,3
+Greedy DFS,outstanding,141,8
+Greedy DFS,outstanding,142,3
+Greedy DFS,outstanding,143,5
+Greedy DFS,outstanding,144,3
+Greedy DFS,outstanding,145,2
+Greedy DFS,outstanding,146,3
+Greedy DFS,outstanding,147,5
+Greedy DFS,outstanding,148,2
+Greedy DFS,outstanding,149,4
+Greedy DFS,outstanding,150,1
+Huitfeldt TTC,resolved,1,10317
+Huitfeldt TTC,resolved,2,1092
+Huitfeldt TTC,resolved,3,540
+Huitfeldt TTC,resolved,4,375
+Huitfeldt TTC,resolved,5,265
+Huitfeldt TTC,resolved,6,197
+Huitfeldt TTC,resolved,7,162
+Huitfeldt TTC,resolved,8,104
+Huitfeldt TTC,resolved,9,109
+Huitfeldt TTC,resolved,10,84
+Huitfeldt TTC,resolved,11,85
+Huitfeldt TTC,resolved,12,81
+Huitfeldt TTC,resolved,13,66
+Huitfeldt TTC,resolved,14,68
+Huitfeldt TTC,resolved,15,51
+Huitfeldt TTC,resolved,16,46
+Huitfeldt TTC,resolved,17,47
+Huitfeldt TTC,resolved,18,39
+Huitfeldt TTC,resolved,19,45
+Huitfeldt TTC,resolved,20,31
+Huitfeldt TTC,resolved,21,28
+Huitfeldt TTC,resolved,22,30
+Huitfeldt TTC,resolved,23,27
+Huitfeldt TTC,resolved,24,29
+Huitfeldt TTC,resolved,25,18
+Huitfeldt TTC,resolved,26,18
+Huitfeldt TTC,resolved,27,12
+Huitfeldt TTC,resolved,28,20
+Huitfeldt TTC,resolved,29,15
+Huitfeldt TTC,resolved,30,14
+Huitfeldt TTC,resolved,31,16
+Huitfeldt TTC,resolved,32,18
+Huitfeldt TTC,resolved,33,15
+Huitfeldt TTC,resolved,34,21
+Huitfeldt TTC,resolved,35,19
+Huitfeldt TTC,resolved,36,13
+Huitfeldt TTC,resolved,37,12
+Huitfeldt TTC,resolved,38,11
+Huitfeldt TTC,resolved,39,19
+Huitfeldt TTC,resolved,40,8
+Huitfeldt TTC,resolved,41,11
+Huitfeldt TTC,resolved,42,9
+Huitfeldt TTC,resolved,43,8
+Huitfeldt TTC,resolved,44,11
+Huitfeldt TTC,resolved,45,11
+Huitfeldt TTC,resolved,46,3
+Huitfeldt TTC,resolved,47,9
+Huitfeldt TTC,resolved,48,14
+Huitfeldt TTC,resolved,49,11
+Huitfeldt TTC,resolved,50,11
+Huitfeldt TTC,resolved,51,6
+Huitfeldt TTC,resolved,52,8
+Huitfeldt TTC,resolved,53,6
+Huitfeldt TTC,resolved,54,5
+Huitfeldt TTC,resolved,55,6
+Huitfeldt TTC,resolved,56,7
+Huitfeldt TTC,resolved,57,2
+Huitfeldt TTC,resolved,58,10
+Huitfeldt TTC,resolved,59,5
+Huitfeldt TTC,resolved,60,8
+Huitfeldt TTC,resolved,61,11
+Huitfeldt TTC,resolved,62,5
+Huitfeldt TTC,resolved,63,6
+Huitfeldt TTC,resolved,64,7
+Huitfeldt TTC,resolved,65,5
+Huitfeldt TTC,resolved,66,6
+Huitfeldt TTC,resolved,67,3
+Huitfeldt TTC,resolved,68,4
+Huitfeldt TTC,resolved,69,3
+Huitfeldt TTC,resolved,70,3
+Huitfeldt TTC,resolved,71,4
+Huitfeldt TTC,resolved,72,10
+Huitfeldt TTC,resolved,73,3
+Huitfeldt TTC,resolved,74,8
+Huitfeldt TTC,resolved,76,2
+Huitfeldt TTC,resolved,77,2
+Huitfeldt TTC,resolved,78,3
+Huitfeldt TTC,resolved,79,2
+Huitfeldt TTC,resolved,80,11
+Huitfeldt TTC,resolved,81,6
+Huitfeldt TTC,resolved,82,2
+Huitfeldt TTC,resolved,83,2
+Huitfeldt TTC,resolved,84,2
+Huitfeldt TTC,resolved,85,6
+Huitfeldt TTC,resolved,86,5
+Huitfeldt TTC,resolved,87,3
+Huitfeldt TTC,resolved,88,3
+Huitfeldt TTC,resolved,89,1
+Huitfeldt TTC,resolved,90,4
+Huitfeldt TTC,resolved,91,4
+Huitfeldt TTC,resolved,92,4
+Huitfeldt TTC,resolved,93,2
+Huitfeldt TTC,resolved,95,4
+Huitfeldt TTC,resolved,97,1
+Huitfeldt TTC,resolved,98,2
+Huitfeldt TTC,resolved,99,1
+Huitfeldt TTC,resolved,100,4
+Huitfeldt TTC,resolved,101,1
+Huitfeldt TTC,resolved,102,2
+Huitfeldt TTC,resolved,103,1
+Huitfeldt TTC,resolved,104,2
+Huitfeldt TTC,resolved,105,2
+Huitfeldt TTC,resolved,106,4
+Huitfeldt TTC,resolved,107,2
+Huitfeldt TTC,resolved,109,2
+Huitfeldt TTC,resolved,110,5
+Huitfeldt TTC,resolved,111,1
+Huitfeldt TTC,resolved,112,2
+Huitfeldt TTC,resolved,113,2
+Huitfeldt TTC,resolved,114,1
+Huitfeldt TTC,resolved,115,3
+Huitfeldt TTC,resolved,116,3
+Huitfeldt TTC,resolved,117,2
+Huitfeldt TTC,resolved,118,2
+Huitfeldt TTC,resolved,119,2
+Huitfeldt TTC,resolved,121,3
+Huitfeldt TTC,resolved,122,1
+Huitfeldt TTC,resolved,123,1
+Huitfeldt TTC,resolved,124,2
+Huitfeldt TTC,resolved,125,1
+Huitfeldt TTC,resolved,127,1
+Huitfeldt TTC,resolved,130,1
+Huitfeldt TTC,resolved,132,3
+Huitfeldt TTC,resolved,133,1
+Huitfeldt TTC,resolved,134,1
+Huitfeldt TTC,resolved,135,1
+Huitfeldt TTC,resolved,136,2
+Huitfeldt TTC,resolved,137,3
+Huitfeldt TTC,resolved,138,1
+Huitfeldt TTC,resolved,140,2
+Huitfeldt TTC,resolved,141,1
+Huitfeldt TTC,resolved,143,3
+Huitfeldt TTC,resolved,144,2
+Huitfeldt TTC,resolved,145,3
+Huitfeldt TTC,resolved,146,1
+Huitfeldt TTC,resolved,147,1
+Huitfeldt TTC,resolved,148,4
+Huitfeldt TTC,resolved,149,1
+Huitfeldt TTC,resolved,151,2
+Huitfeldt TTC,resolved,152,2
+Huitfeldt TTC,resolved,153,1
+Huitfeldt TTC,resolved,154,1
+Huitfeldt TTC,resolved,155,1
+Huitfeldt TTC,resolved,158,4
+Huitfeldt TTC,resolved,159,1
+Huitfeldt TTC,resolved,160,2
+Huitfeldt TTC,resolved,162,3
+Huitfeldt TTC,resolved,163,1
+Huitfeldt TTC,resolved,164,2
+Huitfeldt TTC,resolved,166,1
+Huitfeldt TTC,resolved,167,2
+Huitfeldt TTC,resolved,171,1
+Huitfeldt TTC,resolved,173,1
+Huitfeldt TTC,resolved,174,1
+Huitfeldt TTC,resolved,175,3
+Huitfeldt TTC,resolved,177,1
+Huitfeldt TTC,resolved,179,1
+Huitfeldt TTC,resolved,180,1
+Huitfeldt TTC,resolved,183,1
+Huitfeldt TTC,resolved,185,1
+Huitfeldt TTC,resolved,189,1
+Huitfeldt TTC,resolved,190,3
+Huitfeldt TTC,resolved,192,2
+Huitfeldt TTC,resolved,193,2
+Huitfeldt TTC,resolved,195,1
+Huitfeldt TTC,resolved,202,2
+Huitfeldt TTC,resolved,204,1
+Huitfeldt TTC,resolved,205,1
+Huitfeldt TTC,resolved,206,3
+Huitfeldt TTC,resolved,207,2
+Huitfeldt TTC,resolved,210,1
+Huitfeldt TTC,resolved,212,2
+Huitfeldt TTC,resolved,216,1
+Huitfeldt TTC,resolved,219,1
+Huitfeldt TTC,resolved,220,1
+Huitfeldt TTC,resolved,224,1
+Huitfeldt TTC,resolved,225,1
+Huitfeldt TTC,resolved,228,1
+Huitfeldt TTC,resolved,233,2
+Huitfeldt TTC,resolved,235,1
+Huitfeldt TTC,resolved,238,1
+Huitfeldt TTC,resolved,240,2
+Huitfeldt TTC,resolved,241,1
+Huitfeldt TTC,resolved,242,1
+Huitfeldt TTC,resolved,247,1
+Huitfeldt TTC,resolved,250,1
+Huitfeldt TTC,resolved,255,1
+Huitfeldt TTC,resolved,269,1
+Huitfeldt TTC,resolved,274,1
+Huitfeldt TTC,resolved,284,1
+Huitfeldt TTC,resolved,285,1
+Huitfeldt TTC,resolved,291,1
+Huitfeldt TTC,resolved,293,1
+Huitfeldt TTC,resolved,294,1
+Huitfeldt TTC,resolved,298,1
+Huitfeldt TTC,resolved,300,1
+Huitfeldt TTC,resolved,306,1
+Huitfeldt TTC,resolved,311,1
+Huitfeldt TTC,resolved,316,1
+Huitfeldt TTC,resolved,325,1
+Huitfeldt TTC,resolved,327,2
+Huitfeldt TTC,resolved,328,1
+Huitfeldt TTC,resolved,342,1
+Huitfeldt TTC,resolved,345,1
+Huitfeldt TTC,resolved,363,1
+Huitfeldt TTC,outstanding,0,40
+Huitfeldt TTC,outstanding,1,17
+Huitfeldt TTC,outstanding,2,7
+Huitfeldt TTC,outstanding,3,12
+Huitfeldt TTC,outstanding,4,12
+Huitfeldt TTC,outstanding,5,7
+Huitfeldt TTC,outstanding,6,3
+Huitfeldt TTC,outstanding,7,3
+Huitfeldt TTC,outstanding,8,10
+Huitfeldt TTC,outstanding,9,7
+Huitfeldt TTC,outstanding,10,10
+Huitfeldt TTC,outstanding,11,5
+Huitfeldt TTC,outstanding,12,3
+Huitfeldt TTC,outstanding,13,6
+Huitfeldt TTC,outstanding,14,9
+Huitfeldt TTC,outstanding,15,7
+Huitfeldt TTC,outstanding,16,10
+Huitfeldt TTC,outstanding,17,11
+Huitfeldt TTC,outstanding,18,4
+Huitfeldt TTC,outstanding,19,9
+Huitfeldt TTC,outstanding,20,5
+Huitfeldt TTC,outstanding,21,5
+Huitfeldt TTC,outstanding,22,10
+Huitfeldt TTC,outstanding,23,9
+Huitfeldt TTC,outstanding,24,6
+Huitfeldt TTC,outstanding,25,6
+Huitfeldt TTC,outstanding,26,6
+Huitfeldt TTC,outstanding,27,7
+Huitfeldt TTC,outstanding,28,6
+Huitfeldt TTC,outstanding,29,4
+Huitfeldt TTC,outstanding,30,3
+Huitfeldt TTC,outstanding,31,5
+Huitfeldt TTC,outstanding,32,6
+Huitfeldt TTC,outstanding,33,7
+Huitfeldt TTC,outstanding,34,2
+Huitfeldt TTC,outstanding,35,9
+Huitfeldt TTC,outstanding,36,6
+Huitfeldt TTC,outstanding,37,6
+Huitfeldt TTC,outstanding,38,3
+Huitfeldt TTC,outstanding,39,5
+Huitfeldt TTC,outstanding,40,5
+Huitfeldt TTC,outstanding,41,4
+Huitfeldt TTC,outstanding,42,4
+Huitfeldt TTC,outstanding,43,8
+Huitfeldt TTC,outstanding,44,5
+Huitfeldt TTC,outstanding,45,6
+Huitfeldt TTC,outstanding,46,4
+Huitfeldt TTC,outstanding,47,2
+Huitfeldt TTC,outstanding,48,9
+Huitfeldt TTC,outstanding,49,8
+Huitfeldt TTC,outstanding,50,6
+Huitfeldt TTC,outstanding,51,4
+Huitfeldt TTC,outstanding,52,5
+Huitfeldt TTC,outstanding,53,6
+Huitfeldt TTC,outstanding,54,3
+Huitfeldt TTC,outstanding,55,3
+Huitfeldt TTC,outstanding,56,2
+Huitfeldt TTC,outstanding,57,4
+Huitfeldt TTC,outstanding,58,5
+Huitfeldt TTC,outstanding,59,4
+Huitfeldt TTC,outstanding,60,6
+Huitfeldt TTC,outstanding,61,7
+Huitfeldt TTC,outstanding,62,4
+Huitfeldt TTC,outstanding,63,5
+Huitfeldt TTC,outstanding,64,4
+Huitfeldt TTC,outstanding,65,3
+Huitfeldt TTC,outstanding,66,3
+Huitfeldt TTC,outstanding,67,4
+Huitfeldt TTC,outstanding,68,5
+Huitfeldt TTC,outstanding,69,7
+Huitfeldt TTC,outstanding,70,3
+Huitfeldt TTC,outstanding,71,3
+Huitfeldt TTC,outstanding,72,6
+Huitfeldt TTC,outstanding,73,3
+Huitfeldt TTC,outstanding,74,2
+Huitfeldt TTC,outstanding,75,3
+Huitfeldt TTC,outstanding,76,6
+Huitfeldt TTC,outstanding,77,4
+Huitfeldt TTC,outstanding,78,6
+Huitfeldt TTC,outstanding,80,4
+Huitfeldt TTC,outstanding,81,3
+Huitfeldt TTC,outstanding,82,5
+Huitfeldt TTC,outstanding,83,2
+Huitfeldt TTC,outstanding,84,2
+Huitfeldt TTC,outstanding,85,4
+Huitfeldt TTC,outstanding,86,6
+Huitfeldt TTC,outstanding,87,5
+Huitfeldt TTC,outstanding,88,4
+Huitfeldt TTC,outstanding,89,7
+Huitfeldt TTC,outstanding,90,5
+Huitfeldt TTC,outstanding,91,4
+Huitfeldt TTC,outstanding,92,6
+Huitfeldt TTC,outstanding,93,4
+Huitfeldt TTC,outstanding,94,4
+Huitfeldt TTC,outstanding,95,6
+Huitfeldt TTC,outstanding,96,4
+Huitfeldt TTC,outstanding,97,6
+Huitfeldt TTC,outstanding,98,3
+Huitfeldt TTC,outstanding,99,2
+Huitfeldt TTC,outstanding,100,3
+Huitfeldt TTC,outstanding,101,5
+Huitfeldt TTC,outstanding,102,5
+Huitfeldt TTC,outstanding,103,3
+Huitfeldt TTC,outstanding,104,2
+Huitfeldt TTC,outstanding,105,5
+Huitfeldt TTC,outstanding,106,5
+Huitfeldt TTC,outstanding,107,3
+Huitfeldt TTC,outstanding,108,2
+Huitfeldt TTC,outstanding,109,3
+Huitfeldt TTC,outstanding,110,7
+Huitfeldt TTC,outstanding,111,8
+Huitfeldt TTC,outstanding,112,8
+Huitfeldt TTC,outstanding,113,3
+Huitfeldt TTC,outstanding,114,2
+Huitfeldt TTC,outstanding,115,4
+Huitfeldt TTC,outstanding,116,6
+Huitfeldt TTC,outstanding,117,4
+Huitfeldt TTC,outstanding,118,3
+Huitfeldt TTC,outstanding,119,3
+Huitfeldt TTC,outstanding,120,7
+Huitfeldt TTC,outstanding,121,3
+Huitfeldt TTC,outstanding,122,5
+Huitfeldt TTC,outstanding,123,5
+Huitfeldt TTC,outstanding,124,6
+Huitfeldt TTC,outstanding,125,5
+Huitfeldt TTC,outstanding,126,7
+Huitfeldt TTC,outstanding,127,3
+Huitfeldt TTC,outstanding,128,2
+Huitfeldt TTC,outstanding,129,4
+Huitfeldt TTC,outstanding,130,3
+Huitfeldt TTC,outstanding,131,3
+Huitfeldt TTC,outstanding,132,4
+Huitfeldt TTC,outstanding,133,5
+Huitfeldt TTC,outstanding,134,1
+Huitfeldt TTC,outstanding,136,6
+Huitfeldt TTC,outstanding,137,5
+Huitfeldt TTC,outstanding,138,6
+Huitfeldt TTC,outstanding,139,4
+Huitfeldt TTC,outstanding,140,3
+Huitfeldt TTC,outstanding,141,3
+Huitfeldt TTC,outstanding,142,1
+Huitfeldt TTC,outstanding,143,5
+Huitfeldt TTC,outstanding,144,6
+Huitfeldt TTC,outstanding,145,3
+Huitfeldt TTC,outstanding,146,4
+Huitfeldt TTC,outstanding,147,3
+Huitfeldt TTC,outstanding,148,8
+Huitfeldt TTC,outstanding,149,5
+Huitfeldt TTC,outstanding,150,2
+Huitfeldt TTC,outstanding,151,3
+Huitfeldt TTC,outstanding,152,5
+Huitfeldt TTC,outstanding,153,2
+Huitfeldt TTC,outstanding,154,3
+Huitfeldt TTC,outstanding,155,7
+Huitfeldt TTC,outstanding,156,6
+Huitfeldt TTC,outstanding,157,5
+Huitfeldt TTC,outstanding,158,6
+Huitfeldt TTC,outstanding,159,4
+Huitfeldt TTC,outstanding,160,4
+Huitfeldt TTC,outstanding,161,4
+Huitfeldt TTC,outstanding,162,5
+Huitfeldt TTC,outstanding,163,5
+Huitfeldt TTC,outstanding,164,4
+Huitfeldt TTC,outstanding,165,1
+Huitfeldt TTC,outstanding,166,6
+Huitfeldt TTC,outstanding,167,4
+Huitfeldt TTC,outstanding,168,3
+Huitfeldt TTC,outstanding,169,4
+Huitfeldt TTC,outstanding,170,5
+Huitfeldt TTC,outstanding,171,3
+Huitfeldt TTC,outstanding,172,3
+Huitfeldt TTC,outstanding,173,3
+Huitfeldt TTC,outstanding,174,2
+Huitfeldt TTC,outstanding,175,6
+Huitfeldt TTC,outstanding,176,6
+Huitfeldt TTC,outstanding,177,1
+Huitfeldt TTC,outstanding,178,4
+Huitfeldt TTC,outstanding,179,8
+Huitfeldt TTC,outstanding,180,3
+Huitfeldt TTC,outstanding,181,4
+Huitfeldt TTC,outstanding,182,7
+Huitfeldt TTC,outstanding,183,3
+Huitfeldt TTC,outstanding,184,2
+Huitfeldt TTC,outstanding,185,2
+Huitfeldt TTC,outstanding,186,7
+Huitfeldt TTC,outstanding,187,4
+Huitfeldt TTC,outstanding,188,5
+Huitfeldt TTC,outstanding,189,3
+Huitfeldt TTC,outstanding,190,4
+Huitfeldt TTC,outstanding,191,3
+Huitfeldt TTC,outstanding,192,3
+Huitfeldt TTC,outstanding,193,4
+Huitfeldt TTC,outstanding,194,8
+Huitfeldt TTC,outstanding,195,3
+Huitfeldt TTC,outstanding,196,6
+Huitfeldt TTC,outstanding,197,5
+Huitfeldt TTC,outstanding,198,2
+Huitfeldt TTC,outstanding,199,4
+Huitfeldt TTC,outstanding,200,5
+Huitfeldt TTC,outstanding,201,7
+Huitfeldt TTC,outstanding,202,3
+Huitfeldt TTC,outstanding,203,5
+Huitfeldt TTC,outstanding,204,4
+Huitfeldt TTC,outstanding,205,4
+Huitfeldt TTC,outstanding,206,3
+Huitfeldt TTC,outstanding,207,3
+Huitfeldt TTC,outstanding,208,5
+Huitfeldt TTC,outstanding,209,7
+Huitfeldt TTC,outstanding,210,4
+Huitfeldt TTC,outstanding,211,1
+Huitfeldt TTC,outstanding,212,4
+Huitfeldt TTC,outstanding,213,6
+Huitfeldt TTC,outstanding,214,4
+Huitfeldt TTC,outstanding,215,9
+Huitfeldt TTC,outstanding,216,6
+Huitfeldt TTC,outstanding,217,5
+Huitfeldt TTC,outstanding,218,4
+Huitfeldt TTC,outstanding,219,5
+Huitfeldt TTC,outstanding,220,4
+Huitfeldt TTC,outstanding,221,1
+Huitfeldt TTC,outstanding,222,7
+Huitfeldt TTC,outstanding,223,1
+Huitfeldt TTC,outstanding,224,3
+Huitfeldt TTC,outstanding,225,3
+Huitfeldt TTC,outstanding,226,4
+Huitfeldt TTC,outstanding,227,4
+Huitfeldt TTC,outstanding,228,4
+Huitfeldt TTC,outstanding,229,1
+Huitfeldt TTC,outstanding,230,6
+Huitfeldt TTC,outstanding,231,4
+Huitfeldt TTC,outstanding,232,5
+Huitfeldt TTC,outstanding,233,6
+Huitfeldt TTC,outstanding,234,3
+Huitfeldt TTC,outstanding,235,3
+Huitfeldt TTC,outstanding,236,5
+Huitfeldt TTC,outstanding,237,4
+Huitfeldt TTC,outstanding,238,7
+Huitfeldt TTC,outstanding,239,3
+Huitfeldt TTC,outstanding,241,2
+Huitfeldt TTC,outstanding,242,5
+Huitfeldt TTC,outstanding,243,4
+Huitfeldt TTC,outstanding,244,10
+Huitfeldt TTC,outstanding,245,6
+Huitfeldt TTC,outstanding,246,5
+Huitfeldt TTC,outstanding,247,3
+Huitfeldt TTC,outstanding,248,6
+Huitfeldt TTC,outstanding,249,3
+Huitfeldt TTC,outstanding,250,2
+Huitfeldt TTC,outstanding,251,7
+Huitfeldt TTC,outstanding,252,6
+Huitfeldt TTC,outstanding,253,2
+Huitfeldt TTC,outstanding,254,5
+Huitfeldt TTC,outstanding,255,5
+Huitfeldt TTC,outstanding,257,5
+Huitfeldt TTC,outstanding,258,2
+Huitfeldt TTC,outstanding,259,4
+Huitfeldt TTC,outstanding,260,3
+Huitfeldt TTC,outstanding,261,3
+Huitfeldt TTC,outstanding,262,6
+Huitfeldt TTC,outstanding,263,6
+Huitfeldt TTC,outstanding,264,3
+Huitfeldt TTC,outstanding,265,7
+Huitfeldt TTC,outstanding,266,3
+Huitfeldt TTC,outstanding,267,6
+Huitfeldt TTC,outstanding,268,8
+Huitfeldt TTC,outstanding,269,5
+Huitfeldt TTC,outstanding,270,8
+Huitfeldt TTC,outstanding,271,1
+Huitfeldt TTC,outstanding,272,3
+Huitfeldt TTC,outstanding,273,6
+Huitfeldt TTC,outstanding,274,3
+Huitfeldt TTC,outstanding,275,3
+Huitfeldt TTC,outstanding,276,1
+Huitfeldt TTC,outstanding,277,7
+Huitfeldt TTC,outstanding,278,4
+Huitfeldt TTC,outstanding,279,10
+Huitfeldt TTC,outstanding,280,5
+Huitfeldt TTC,outstanding,281,5
+Huitfeldt TTC,outstanding,282,7
+Huitfeldt TTC,outstanding,283,6
+Huitfeldt TTC,outstanding,284,4
+Huitfeldt TTC,outstanding,285,7
+Huitfeldt TTC,outstanding,286,2
+Huitfeldt TTC,outstanding,287,3
+Huitfeldt TTC,outstanding,288,2
+Huitfeldt TTC,outstanding,289,6
+Huitfeldt TTC,outstanding,290,6
+Huitfeldt TTC,outstanding,291,6
+Huitfeldt TTC,outstanding,292,8
+Huitfeldt TTC,outstanding,293,4
+Huitfeldt TTC,outstanding,294,1
+Huitfeldt TTC,outstanding,295,5
+Huitfeldt TTC,outstanding,296,3
+Huitfeldt TTC,outstanding,297,7
+Huitfeldt TTC,outstanding,298,6
+Huitfeldt TTC,outstanding,299,2
+Huitfeldt TTC,outstanding,300,8
+Huitfeldt TTC,outstanding,301,4
+Huitfeldt TTC,outstanding,302,2
+Huitfeldt TTC,outstanding,303,6
+Huitfeldt TTC,outstanding,304,6
+Huitfeldt TTC,outstanding,305,6
+Huitfeldt TTC,outstanding,306,2
+Huitfeldt TTC,outstanding,307,5
+Huitfeldt TTC,outstanding,308,4
+Huitfeldt TTC,outstanding,309,8
+Huitfeldt TTC,outstanding,310,3
+Huitfeldt TTC,outstanding,311,6
+Huitfeldt TTC,outstanding,312,6
+Huitfeldt TTC,outstanding,313,6
+Huitfeldt TTC,outstanding,314,5
+Huitfeldt TTC,outstanding,315,5
+Huitfeldt TTC,outstanding,316,2
+Huitfeldt TTC,outstanding,317,7
+Huitfeldt TTC,outstanding,318,6
+Huitfeldt TTC,outstanding,319,3
+Huitfeldt TTC,outstanding,320,4
+Huitfeldt TTC,outstanding,321,8
+Huitfeldt TTC,outstanding,322,6
+Huitfeldt TTC,outstanding,323,3
+Huitfeldt TTC,outstanding,324,8
+Huitfeldt TTC,outstanding,325,5
+Huitfeldt TTC,outstanding,326,6
+Huitfeldt TTC,outstanding,327,9
+Huitfeldt TTC,outstanding,328,4
+Huitfeldt TTC,outstanding,329,5
+Huitfeldt TTC,outstanding,330,5
+Huitfeldt TTC,outstanding,331,3
+Huitfeldt TTC,outstanding,332,5
+Huitfeldt TTC,outstanding,333,3
+Huitfeldt TTC,outstanding,334,6
+Huitfeldt TTC,outstanding,335,4
+Huitfeldt TTC,outstanding,336,8
+Huitfeldt TTC,outstanding,337,2
+Huitfeldt TTC,outstanding,338,3
+Huitfeldt TTC,outstanding,339,3
+Huitfeldt TTC,outstanding,340,1
+Huitfeldt TTC,outstanding,341,1
+Huitfeldt TTC,outstanding,342,3
+Huitfeldt TTC,outstanding,343,10
+Huitfeldt TTC,outstanding,344,4
+Huitfeldt TTC,outstanding,345,3
+Huitfeldt TTC,outstanding,346,3
+Huitfeldt TTC,outstanding,347,2
+Huitfeldt TTC,outstanding,348,3
+Huitfeldt TTC,outstanding,349,2
+Huitfeldt TTC,outstanding,350,5
+Huitfeldt TTC,outstanding,351,6
+Huitfeldt TTC,outstanding,352,6
+Huitfeldt TTC,outstanding,353,3
+Huitfeldt TTC,outstanding,354,5
+Huitfeldt TTC,outstanding,355,5
+Huitfeldt TTC,outstanding,356,4
+Huitfeldt TTC,outstanding,357,5
+Huitfeldt TTC,outstanding,358,4
+Huitfeldt TTC,outstanding,359,5
+Huitfeldt TTC,outstanding,360,6
+Huitfeldt TTC,outstanding,361,4
+Huitfeldt TTC,outstanding,362,3
+Huitfeldt TTC,outstanding,363,5
+Huitfeldt TTC,outstanding,364,4
+Huitfeldt TTC,outstanding,365,211
+Exact Cardinality,resolved,1,10631
+Exact Cardinality,resolved,2,1198
+Exact Cardinality,resolved,3,568
+Exact Cardinality,resolved,4,373
+Exact Cardinality,resolved,5,270
+Exact Cardinality,resolved,6,168
+Exact Cardinality,resolved,7,148
+Exact Cardinality,resolved,8,114
+Exact Cardinality,resolved,9,89
+Exact Cardinality,resolved,10,76
+Exact Cardinality,resolved,11,73
+Exact Cardinality,resolved,12,75
+Exact Cardinality,resolved,13,62
+Exact Cardinality,resolved,14,47
+Exact Cardinality,resolved,15,52
+Exact Cardinality,resolved,16,29
+Exact Cardinality,resolved,17,37
+Exact Cardinality,resolved,18,42
+Exact Cardinality,resolved,19,38
+Exact Cardinality,resolved,20,30
+Exact Cardinality,resolved,21,42
+Exact Cardinality,resolved,22,25
+Exact Cardinality,resolved,23,27
+Exact Cardinality,resolved,24,26
+Exact Cardinality,resolved,25,19
+Exact Cardinality,resolved,26,26
+Exact Cardinality,resolved,27,19
+Exact Cardinality,resolved,28,27
+Exact Cardinality,resolved,29,19
+Exact Cardinality,resolved,30,22
+Exact Cardinality,resolved,31,13
+Exact Cardinality,resolved,32,12
+Exact Cardinality,resolved,33,17
+Exact Cardinality,resolved,34,7
+Exact Cardinality,resolved,35,15
+Exact Cardinality,resolved,36,15
+Exact Cardinality,resolved,37,14
+Exact Cardinality,resolved,38,12
+Exact Cardinality,resolved,39,14
+Exact Cardinality,resolved,40,12
+Exact Cardinality,resolved,41,10
+Exact Cardinality,resolved,42,9
+Exact Cardinality,resolved,43,9
+Exact Cardinality,resolved,44,6
+Exact Cardinality,resolved,45,6
+Exact Cardinality,resolved,46,12
+Exact Cardinality,resolved,47,8
+Exact Cardinality,resolved,48,7
+Exact Cardinality,resolved,49,12
+Exact Cardinality,resolved,50,8
+Exact Cardinality,resolved,51,8
+Exact Cardinality,resolved,52,9
+Exact Cardinality,resolved,53,7
+Exact Cardinality,resolved,54,7
+Exact Cardinality,resolved,55,5
+Exact Cardinality,resolved,56,7
+Exact Cardinality,resolved,57,7
+Exact Cardinality,resolved,58,6
+Exact Cardinality,resolved,59,4
+Exact Cardinality,resolved,60,7
+Exact Cardinality,resolved,61,7
+Exact Cardinality,resolved,62,4
+Exact Cardinality,resolved,63,6
+Exact Cardinality,resolved,64,6
+Exact Cardinality,resolved,65,6
+Exact Cardinality,resolved,66,5
+Exact Cardinality,resolved,67,8
+Exact Cardinality,resolved,68,5
+Exact Cardinality,resolved,69,6
+Exact Cardinality,resolved,70,7
+Exact Cardinality,resolved,71,10
+Exact Cardinality,resolved,72,2
+Exact Cardinality,resolved,73,6
+Exact Cardinality,resolved,74,6
+Exact Cardinality,resolved,75,1
+Exact Cardinality,resolved,76,3
+Exact Cardinality,resolved,77,5
+Exact Cardinality,resolved,78,5
+Exact Cardinality,resolved,79,5
+Exact Cardinality,resolved,80,6
+Exact Cardinality,resolved,81,2
+Exact Cardinality,resolved,82,7
+Exact Cardinality,resolved,83,4
+Exact Cardinality,resolved,84,4
+Exact Cardinality,resolved,85,3
+Exact Cardinality,resolved,86,1
+Exact Cardinality,resolved,87,4
+Exact Cardinality,resolved,88,5
+Exact Cardinality,resolved,89,6
+Exact Cardinality,resolved,90,4
+Exact Cardinality,resolved,91,4
+Exact Cardinality,resolved,92,5
+Exact Cardinality,resolved,93,2
+Exact Cardinality,resolved,94,4
+Exact Cardinality,resolved,95,5
+Exact Cardinality,resolved,96,1
+Exact Cardinality,resolved,97,2
+Exact Cardinality,resolved,99,4
+Exact Cardinality,resolved,100,2
+Exact Cardinality,resolved,101,3
+Exact Cardinality,resolved,102,1
+Exact Cardinality,resolved,103,3
+Exact Cardinality,resolved,104,2
+Exact Cardinality,resolved,105,2
+Exact Cardinality,resolved,106,4
+Exact Cardinality,resolved,107,3
+Exact Cardinality,resolved,108,2
+Exact Cardinality,resolved,110,2
+Exact Cardinality,resolved,111,2
+Exact Cardinality,resolved,112,3
+Exact Cardinality,resolved,113,3
+Exact Cardinality,resolved,114,2
+Exact Cardinality,resolved,117,2
+Exact Cardinality,resolved,118,2
+Exact Cardinality,resolved,119,1
+Exact Cardinality,resolved,120,4
+Exact Cardinality,resolved,121,1
+Exact Cardinality,resolved,123,2
+Exact Cardinality,resolved,124,1
+Exact Cardinality,resolved,125,2
+Exact Cardinality,resolved,126,5
+Exact Cardinality,resolved,127,3
+Exact Cardinality,resolved,128,4
+Exact Cardinality,resolved,129,6
+Exact Cardinality,resolved,130,3
+Exact Cardinality,resolved,131,3
+Exact Cardinality,resolved,132,6
+Exact Cardinality,resolved,133,1
+Exact Cardinality,resolved,136,2
+Exact Cardinality,resolved,137,1
+Exact Cardinality,resolved,138,2
+Exact Cardinality,resolved,139,1
+Exact Cardinality,resolved,140,1
+Exact Cardinality,resolved,142,1
+Exact Cardinality,resolved,143,1
+Exact Cardinality,resolved,144,4
+Exact Cardinality,resolved,145,6
+Exact Cardinality,resolved,146,2
+Exact Cardinality,resolved,147,3
+Exact Cardinality,resolved,148,4
+Exact Cardinality,resolved,149,1
+Exact Cardinality,resolved,150,2
+Exact Cardinality,resolved,153,1
+Exact Cardinality,resolved,154,1
+Exact Cardinality,resolved,155,1
+Exact Cardinality,resolved,156,2
+Exact Cardinality,resolved,157,2
+Exact Cardinality,resolved,160,1
+Exact Cardinality,resolved,164,1
+Exact Cardinality,resolved,165,1
+Exact Cardinality,resolved,166,1
+Exact Cardinality,resolved,167,1
+Exact Cardinality,resolved,170,1
+Exact Cardinality,resolved,172,2
+Exact Cardinality,resolved,174,1
+Exact Cardinality,resolved,175,4
+Exact Cardinality,resolved,176,2
+Exact Cardinality,resolved,177,1
+Exact Cardinality,resolved,178,1
+Exact Cardinality,resolved,180,1
+Exact Cardinality,resolved,181,1
+Exact Cardinality,resolved,182,1
+Exact Cardinality,resolved,189,1
+Exact Cardinality,resolved,190,1
+Exact Cardinality,resolved,191,1
+Exact Cardinality,resolved,192,1
+Exact Cardinality,resolved,193,1
+Exact Cardinality,resolved,200,1
+Exact Cardinality,resolved,202,1
+Exact Cardinality,resolved,205,1
+Exact Cardinality,resolved,210,2
+Exact Cardinality,resolved,211,1
+Exact Cardinality,resolved,213,1
+Exact Cardinality,resolved,215,1
+Exact Cardinality,resolved,217,2
+Exact Cardinality,resolved,224,1
+Exact Cardinality,resolved,225,1
+Exact Cardinality,resolved,227,1
+Exact Cardinality,resolved,228,1
+Exact Cardinality,resolved,229,2
+Exact Cardinality,resolved,236,1
+Exact Cardinality,resolved,238,1
+Exact Cardinality,resolved,241,1
+Exact Cardinality,resolved,242,2
+Exact Cardinality,resolved,255,1
+Exact Cardinality,resolved,260,1
+Exact Cardinality,resolved,261,1
+Exact Cardinality,resolved,262,2
+Exact Cardinality,resolved,270,1
+Exact Cardinality,resolved,273,1
+Exact Cardinality,resolved,275,1
+Exact Cardinality,resolved,278,1
+Exact Cardinality,resolved,288,1
+Exact Cardinality,resolved,291,2
+Exact Cardinality,resolved,295,1
+Exact Cardinality,resolved,296,1
+Exact Cardinality,resolved,300,2
+Exact Cardinality,resolved,305,1
+Exact Cardinality,resolved,312,1
+Exact Cardinality,resolved,314,1
+Exact Cardinality,resolved,317,1
+Exact Cardinality,resolved,324,1
+Exact Cardinality,resolved,344,1
+Exact Cardinality,resolved,347,1
+Exact Cardinality,resolved,352,1
+Exact Cardinality,resolved,357,1
+Exact Cardinality,resolved,360,1
+Exact Cardinality,outstanding,0,40
+Exact Cardinality,outstanding,1,17
+Exact Cardinality,outstanding,2,6
+Exact Cardinality,outstanding,3,11
+Exact Cardinality,outstanding,4,7
+Exact Cardinality,outstanding,5,10
+Exact Cardinality,outstanding,6,5
+Exact Cardinality,outstanding,7,6
+Exact Cardinality,outstanding,8,4
+Exact Cardinality,outstanding,9,4
+Exact Cardinality,outstanding,10,4
+Exact Cardinality,outstanding,11,8
+Exact Cardinality,outstanding,12,14
+Exact Cardinality,outstanding,13,6
+Exact Cardinality,outstanding,14,11
+Exact Cardinality,outstanding,15,5
+Exact Cardinality,outstanding,16,2
+Exact Cardinality,outstanding,17,4
+Exact Cardinality,outstanding,18,3
+Exact Cardinality,outstanding,19,8
+Exact Cardinality,outstanding,20,4
+Exact Cardinality,outstanding,21,7
+Exact Cardinality,outstanding,22,5
+Exact Cardinality,outstanding,23,2
+Exact Cardinality,outstanding,24,3
+Exact Cardinality,outstanding,25,6
+Exact Cardinality,outstanding,26,3
+Exact Cardinality,outstanding,27,6
+Exact Cardinality,outstanding,28,3
+Exact Cardinality,outstanding,29,6
+Exact Cardinality,outstanding,30,5
+Exact Cardinality,outstanding,31,4
+Exact Cardinality,outstanding,32,4
+Exact Cardinality,outstanding,33,4
+Exact Cardinality,outstanding,34,6
+Exact Cardinality,outstanding,35,4
+Exact Cardinality,outstanding,36,2
+Exact Cardinality,outstanding,37,3
+Exact Cardinality,outstanding,38,6
+Exact Cardinality,outstanding,39,4
+Exact Cardinality,outstanding,40,2
+Exact Cardinality,outstanding,41,8
+Exact Cardinality,outstanding,42,4
+Exact Cardinality,outstanding,43,4
+Exact Cardinality,outstanding,44,4
+Exact Cardinality,outstanding,45,1
+Exact Cardinality,outstanding,46,5
+Exact Cardinality,outstanding,47,5
+Exact Cardinality,outstanding,49,5
+Exact Cardinality,outstanding,50,7
+Exact Cardinality,outstanding,51,2
+Exact Cardinality,outstanding,52,6
+Exact Cardinality,outstanding,53,5
+Exact Cardinality,outstanding,54,4
+Exact Cardinality,outstanding,55,5
+Exact Cardinality,outstanding,56,7
+Exact Cardinality,outstanding,57,5
+Exact Cardinality,outstanding,58,5
+Exact Cardinality,outstanding,59,3
+Exact Cardinality,outstanding,60,4
+Exact Cardinality,outstanding,61,3
+Exact Cardinality,outstanding,62,4
+Exact Cardinality,outstanding,63,6
+Exact Cardinality,outstanding,64,6
+Exact Cardinality,outstanding,65,6
+Exact Cardinality,outstanding,66,8
+Exact Cardinality,outstanding,67,5
+Exact Cardinality,outstanding,68,3
+Exact Cardinality,outstanding,69,4
+Exact Cardinality,outstanding,70,3
+Exact Cardinality,outstanding,71,8
+Exact Cardinality,outstanding,72,4
+Exact Cardinality,outstanding,73,6
+Exact Cardinality,outstanding,74,3
+Exact Cardinality,outstanding,75,3
+Exact Cardinality,outstanding,76,5
+Exact Cardinality,outstanding,77,5
+Exact Cardinality,outstanding,78,5
+Exact Cardinality,outstanding,79,3
+Exact Cardinality,outstanding,80,4
+Exact Cardinality,outstanding,81,2
+Exact Cardinality,outstanding,82,1
+Exact Cardinality,outstanding,83,2
+Exact Cardinality,outstanding,84,4
+Exact Cardinality,outstanding,85,3
+Exact Cardinality,outstanding,87,8
+Exact Cardinality,outstanding,88,3
+Exact Cardinality,outstanding,89,5
+Exact Cardinality,outstanding,90,4
+Exact Cardinality,outstanding,91,6
+Exact Cardinality,outstanding,92,2
+Exact Cardinality,outstanding,93,6
+Exact Cardinality,outstanding,94,8
+Exact Cardinality,outstanding,95,4
+Exact Cardinality,outstanding,96,2
+Exact Cardinality,outstanding,97,7
+Exact Cardinality,outstanding,98,1
+Exact Cardinality,outstanding,99,2
+Exact Cardinality,outstanding,100,7
+Exact Cardinality,outstanding,101,3
+Exact Cardinality,outstanding,102,5
+Exact Cardinality,outstanding,103,4
+Exact Cardinality,outstanding,104,6
+Exact Cardinality,outstanding,105,7
+Exact Cardinality,outstanding,106,2
+Exact Cardinality,outstanding,107,4
+Exact Cardinality,outstanding,108,7
+Exact Cardinality,outstanding,109,6
+Exact Cardinality,outstanding,111,3
+Exact Cardinality,outstanding,112,3
+Exact Cardinality,outstanding,113,4
+Exact Cardinality,outstanding,114,3
+Exact Cardinality,outstanding,115,2
+Exact Cardinality,outstanding,116,6
+Exact Cardinality,outstanding,117,4
+Exact Cardinality,outstanding,118,6
+Exact Cardinality,outstanding,119,5
+Exact Cardinality,outstanding,120,3
+Exact Cardinality,outstanding,121,4
+Exact Cardinality,outstanding,122,3
+Exact Cardinality,outstanding,123,4
+Exact Cardinality,outstanding,124,6
+Exact Cardinality,outstanding,125,4
+Exact Cardinality,outstanding,126,1
+Exact Cardinality,outstanding,127,1
+Exact Cardinality,outstanding,128,2
+Exact Cardinality,outstanding,129,3
+Exact Cardinality,outstanding,130,2
+Exact Cardinality,outstanding,131,6
+Exact Cardinality,outstanding,132,5
+Exact Cardinality,outstanding,133,5
+Exact Cardinality,outstanding,134,3
+Exact Cardinality,outstanding,135,5
+Exact Cardinality,outstanding,136,3
+Exact Cardinality,outstanding,137,4
+Exact Cardinality,outstanding,138,3
+Exact Cardinality,outstanding,139,4
+Exact Cardinality,outstanding,140,2
+Exact Cardinality,outstanding,141,4
+Exact Cardinality,outstanding,142,3
+Exact Cardinality,outstanding,143,4
+Exact Cardinality,outstanding,144,5
+Exact Cardinality,outstanding,145,3
+Exact Cardinality,outstanding,146,4
+Exact Cardinality,outstanding,147,2
+Exact Cardinality,outstanding,148,6
+Exact Cardinality,outstanding,149,2
+Exact Cardinality,outstanding,150,2
+Exact Cardinality,outstanding,151,4
+Exact Cardinality,outstanding,152,3
+Exact Cardinality,outstanding,153,7
+Exact Cardinality,outstanding,154,2
+Exact Cardinality,outstanding,155,2
+Exact Cardinality,outstanding,156,2
+Exact Cardinality,outstanding,157,5
+Exact Cardinality,outstanding,158,3
+Exact Cardinality,outstanding,159,5
+Exact Cardinality,outstanding,160,6
+Exact Cardinality,outstanding,161,4
+Exact Cardinality,outstanding,162,2
+Exact Cardinality,outstanding,163,3
+Exact Cardinality,outstanding,164,5
+Exact Cardinality,outstanding,165,3
+Exact Cardinality,outstanding,166,3
+Exact Cardinality,outstanding,167,5
+Exact Cardinality,outstanding,168,5
+Exact Cardinality,outstanding,169,2
+Exact Cardinality,outstanding,171,6
+Exact Cardinality,outstanding,172,4
+Exact Cardinality,outstanding,174,2
+Exact Cardinality,outstanding,175,3
+Exact Cardinality,outstanding,176,4
+Exact Cardinality,outstanding,177,5
+Exact Cardinality,outstanding,178,6
+Exact Cardinality,outstanding,179,4
+Exact Cardinality,outstanding,180,1
+Exact Cardinality,outstanding,181,2
+Exact Cardinality,outstanding,182,2
+Exact Cardinality,outstanding,183,2
+Exact Cardinality,outstanding,184,2
+Exact Cardinality,outstanding,185,6
+Exact Cardinality,outstanding,186,3
+Exact Cardinality,outstanding,187,2
+Exact Cardinality,outstanding,188,4
+Exact Cardinality,outstanding,189,3
+Exact Cardinality,outstanding,190,3
+Exact Cardinality,outstanding,191,1
+Exact Cardinality,outstanding,192,6
+Exact Cardinality,outstanding,193,1
+Exact Cardinality,outstanding,194,4
+Exact Cardinality,outstanding,195,2
+Exact Cardinality,outstanding,196,5
+Exact Cardinality,outstanding,197,4
+Exact Cardinality,outstanding,198,1
+Exact Cardinality,outstanding,199,4
+Exact Cardinality,outstanding,200,4
+Exact Cardinality,outstanding,201,4
+Exact Cardinality,outstanding,202,2
+Exact Cardinality,outstanding,203,2
+Exact Cardinality,outstanding,204,1
+Exact Cardinality,outstanding,205,6
+Exact Cardinality,outstanding,206,5
+Exact Cardinality,outstanding,207,2
+Exact Cardinality,outstanding,208,2
+Exact Cardinality,outstanding,209,5
+Exact Cardinality,outstanding,210,1
+Exact Cardinality,outstanding,211,2
+Exact Cardinality,outstanding,212,3
+Exact Cardinality,outstanding,213,4
+Exact Cardinality,outstanding,214,7
+Exact Cardinality,outstanding,215,3
+Exact Cardinality,outstanding,216,3
+Exact Cardinality,outstanding,217,4
+Exact Cardinality,outstanding,218,1
+Exact Cardinality,outstanding,219,2
+Exact Cardinality,outstanding,220,1
+Exact Cardinality,outstanding,221,4
+Exact Cardinality,outstanding,222,2
+Exact Cardinality,outstanding,223,1
+Exact Cardinality,outstanding,224,5
+Exact Cardinality,outstanding,225,6
+Exact Cardinality,outstanding,226,4
+Exact Cardinality,outstanding,227,1
+Exact Cardinality,outstanding,228,3
+Exact Cardinality,outstanding,229,2
+Exact Cardinality,outstanding,230,6
+Exact Cardinality,outstanding,231,4
+Exact Cardinality,outstanding,232,3
+Exact Cardinality,outstanding,233,3
+Exact Cardinality,outstanding,234,2
+Exact Cardinality,outstanding,235,6
+Exact Cardinality,outstanding,236,4
+Exact Cardinality,outstanding,237,3
+Exact Cardinality,outstanding,238,6
+Exact Cardinality,outstanding,239,3
+Exact Cardinality,outstanding,240,2
+Exact Cardinality,outstanding,241,1
+Exact Cardinality,outstanding,242,1
+Exact Cardinality,outstanding,243,3
+Exact Cardinality,outstanding,244,5
+Exact Cardinality,outstanding,245,3
+Exact Cardinality,outstanding,246,1
+Exact Cardinality,outstanding,247,3
+Exact Cardinality,outstanding,248,6
+Exact Cardinality,outstanding,249,2
+Exact Cardinality,outstanding,251,4
+Exact Cardinality,outstanding,252,3
+Exact Cardinality,outstanding,253,2
+Exact Cardinality,outstanding,254,3
+Exact Cardinality,outstanding,255,4
+Exact Cardinality,outstanding,256,3
+Exact Cardinality,outstanding,257,5
+Exact Cardinality,outstanding,258,3
+Exact Cardinality,outstanding,259,4
+Exact Cardinality,outstanding,260,5
+Exact Cardinality,outstanding,261,5
+Exact Cardinality,outstanding,262,1
+Exact Cardinality,outstanding,263,3
+Exact Cardinality,outstanding,264,6
+Exact Cardinality,outstanding,265,4
+Exact Cardinality,outstanding,267,3
+Exact Cardinality,outstanding,268,4
+Exact Cardinality,outstanding,269,3
+Exact Cardinality,outstanding,270,6
+Exact Cardinality,outstanding,271,2
+Exact Cardinality,outstanding,272,2
+Exact Cardinality,outstanding,273,5
+Exact Cardinality,outstanding,274,6
+Exact Cardinality,outstanding,275,3
+Exact Cardinality,outstanding,276,3
+Exact Cardinality,outstanding,277,5
+Exact Cardinality,outstanding,278,6
+Exact Cardinality,outstanding,279,5
+Exact Cardinality,outstanding,280,4
+Exact Cardinality,outstanding,281,2
+Exact Cardinality,outstanding,282,4
+Exact Cardinality,outstanding,283,5
+Exact Cardinality,outstanding,284,2
+Exact Cardinality,outstanding,285,4
+Exact Cardinality,outstanding,286,3
+Exact Cardinality,outstanding,287,1
+Exact Cardinality,outstanding,288,5
+Exact Cardinality,outstanding,289,3
+Exact Cardinality,outstanding,290,1
+Exact Cardinality,outstanding,291,3
+Exact Cardinality,outstanding,292,5
+Exact Cardinality,outstanding,293,6
+Exact Cardinality,outstanding,294,5
+Exact Cardinality,outstanding,295,5
+Exact Cardinality,outstanding,296,1
+Exact Cardinality,outstanding,297,1
+Exact Cardinality,outstanding,298,4
+Exact Cardinality,outstanding,299,4
+Exact Cardinality,outstanding,300,4
+Exact Cardinality,outstanding,301,5
+Exact Cardinality,outstanding,302,2
+Exact Cardinality,outstanding,303,4
+Exact Cardinality,outstanding,304,2
+Exact Cardinality,outstanding,305,1
+Exact Cardinality,outstanding,306,5
+Exact Cardinality,outstanding,307,4
+Exact Cardinality,outstanding,308,3
+Exact Cardinality,outstanding,309,3
+Exact Cardinality,outstanding,310,1
+Exact Cardinality,outstanding,311,6
+Exact Cardinality,outstanding,312,2
+Exact Cardinality,outstanding,313,2
+Exact Cardinality,outstanding,314,4
+Exact Cardinality,outstanding,315,2
+Exact Cardinality,outstanding,316,4
+Exact Cardinality,outstanding,317,1
+Exact Cardinality,outstanding,318,3
+Exact Cardinality,outstanding,319,9
+Exact Cardinality,outstanding,320,5
+Exact Cardinality,outstanding,321,2
+Exact Cardinality,outstanding,322,4
+Exact Cardinality,outstanding,323,6
+Exact Cardinality,outstanding,324,1
+Exact Cardinality,outstanding,325,4
+Exact Cardinality,outstanding,326,1
+Exact Cardinality,outstanding,327,5
+Exact Cardinality,outstanding,328,2
+Exact Cardinality,outstanding,329,4
+Exact Cardinality,outstanding,330,4
+Exact Cardinality,outstanding,331,1
+Exact Cardinality,outstanding,332,2
+Exact Cardinality,outstanding,333,3
+Exact Cardinality,outstanding,334,5
+Exact Cardinality,outstanding,335,4
+Exact Cardinality,outstanding,336,1
+Exact Cardinality,outstanding,337,3
+Exact Cardinality,outstanding,338,2
+Exact Cardinality,outstanding,339,5
+Exact Cardinality,outstanding,340,4
+Exact Cardinality,outstanding,341,5
+Exact Cardinality,outstanding,342,1
+Exact Cardinality,outstanding,344,6
+Exact Cardinality,outstanding,345,5
+Exact Cardinality,outstanding,346,3
+Exact Cardinality,outstanding,347,5
+Exact Cardinality,outstanding,348,7
+Exact Cardinality,outstanding,349,4
+Exact Cardinality,outstanding,350,5
+Exact Cardinality,outstanding,351,1
+Exact Cardinality,outstanding,352,4
+Exact Cardinality,outstanding,353,3
+Exact Cardinality,outstanding,354,3
+Exact Cardinality,outstanding,355,1
+Exact Cardinality,outstanding,356,3
+Exact Cardinality,outstanding,357,4
+Exact Cardinality,outstanding,358,3
+Exact Cardinality,outstanding,359,3
+Exact Cardinality,outstanding,360,3
+Exact Cardinality,outstanding,361,2
+Exact Cardinality,outstanding,362,5
+Exact Cardinality,outstanding,363,3
+Exact Cardinality,outstanding,364,3
+Exact Cardinality,outstanding,365,150
+Exact Priority,resolved,1,8177
+Exact Priority,resolved,2,119
+Exact Priority,resolved,3,72
+Exact Priority,resolved,4,48
+Exact Priority,resolved,5,69
+Exact Priority,resolved,6,78
+Exact Priority,resolved,7,60
+Exact Priority,resolved,8,59
+Exact Priority,resolved,9,42
+Exact Priority,resolved,10,54
+Exact Priority,resolved,11,44
+Exact Priority,resolved,12,45
+Exact Priority,resolved,13,37
+Exact Priority,resolved,14,49
+Exact Priority,resolved,15,60
+Exact Priority,resolved,16,27
+Exact Priority,resolved,17,40
+Exact Priority,resolved,18,38
+Exact Priority,resolved,19,42
+Exact Priority,resolved,20,40
+Exact Priority,resolved,21,44
+Exact Priority,resolved,22,33
+Exact Priority,resolved,23,31
+Exact Priority,resolved,24,24
+Exact Priority,resolved,25,24
+Exact Priority,resolved,26,32
+Exact Priority,resolved,27,31
+Exact Priority,resolved,28,27
+Exact Priority,resolved,29,26
+Exact Priority,resolved,30,29
+Exact Priority,resolved,31,45
+Exact Priority,resolved,32,36
+Exact Priority,resolved,33,47
+Exact Priority,resolved,34,57
+Exact Priority,resolved,35,49
+Exact Priority,resolved,36,68
+Exact Priority,resolved,37,54
+Exact Priority,resolved,38,53
+Exact Priority,resolved,39,49
+Exact Priority,resolved,40,63
+Exact Priority,resolved,41,61
+Exact Priority,resolved,42,56
+Exact Priority,resolved,43,76
+Exact Priority,resolved,44,83
+Exact Priority,resolved,45,88
+Exact Priority,resolved,46,70
+Exact Priority,resolved,47,125
+Exact Priority,resolved,48,75
+Exact Priority,resolved,49,82
+Exact Priority,resolved,50,96
+Exact Priority,resolved,51,98
+Exact Priority,resolved,52,83
+Exact Priority,resolved,53,74
+Exact Priority,resolved,54,70
+Exact Priority,resolved,55,78
+Exact Priority,resolved,56,88
+Exact Priority,resolved,57,79
+Exact Priority,resolved,58,74
+Exact Priority,resolved,59,41
+Exact Priority,resolved,60,50
+Exact Priority,resolved,61,51
+Exact Priority,resolved,62,47
+Exact Priority,resolved,63,51
+Exact Priority,resolved,64,42
+Exact Priority,resolved,65,39
+Exact Priority,resolved,66,28
+Exact Priority,resolved,67,36
+Exact Priority,resolved,68,44
+Exact Priority,resolved,69,52
+Exact Priority,resolved,70,51
+Exact Priority,resolved,71,63
+Exact Priority,resolved,72,51
+Exact Priority,resolved,73,44
+Exact Priority,resolved,74,53
+Exact Priority,resolved,75,64
+Exact Priority,resolved,76,52
+Exact Priority,resolved,77,52
+Exact Priority,resolved,78,72
+Exact Priority,resolved,79,122
+Exact Priority,resolved,80,91
+Exact Priority,resolved,81,102
+Exact Priority,resolved,82,85
+Exact Priority,resolved,83,65
+Exact Priority,resolved,84,25
+Exact Priority,resolved,85,26
+Exact Priority,resolved,86,25
+Exact Priority,resolved,87,19
+Exact Priority,resolved,88,23
+Exact Priority,resolved,89,26
+Exact Priority,resolved,90,37
+Exact Priority,resolved,91,40
+Exact Priority,resolved,92,55
+Exact Priority,resolved,93,40
+Exact Priority,resolved,94,40
+Exact Priority,resolved,95,48
+Exact Priority,resolved,96,51
+Exact Priority,resolved,97,30
+Exact Priority,resolved,98,27
+Exact Priority,resolved,99,38
+Exact Priority,resolved,100,45
+Exact Priority,resolved,101,25
+Exact Priority,resolved,102,27
+Exact Priority,resolved,103,34
+Exact Priority,resolved,104,30
+Exact Priority,resolved,105,44
+Exact Priority,resolved,106,33
+Exact Priority,resolved,107,27
+Exact Priority,resolved,108,20
+Exact Priority,resolved,109,38
+Exact Priority,resolved,110,59
+Exact Priority,resolved,111,68
+Exact Priority,resolved,112,64
+Exact Priority,resolved,113,47
+Exact Priority,resolved,114,25
+Exact Priority,resolved,115,28
+Exact Priority,resolved,116,16
+Exact Priority,resolved,117,13
+Exact Priority,resolved,118,9
+Exact Priority,resolved,119,14
+Exact Priority,resolved,120,18
+Exact Priority,resolved,121,16
+Exact Priority,resolved,122,12
+Exact Priority,resolved,123,18
+Exact Priority,resolved,124,22
+Exact Priority,resolved,125,24
+Exact Priority,resolved,126,27
+Exact Priority,resolved,127,23
+Exact Priority,resolved,128,12
+Exact Priority,resolved,129,10
+Exact Priority,resolved,130,7
+Exact Priority,resolved,131,4
+Exact Priority,resolved,132,13
+Exact Priority,resolved,133,3
+Exact Priority,resolved,134,2
+Exact Priority,resolved,135,3
+Exact Priority,resolved,136,13
+Exact Priority,resolved,137,8
+Exact Priority,resolved,138,6
+Exact Priority,resolved,139,2
+Exact Priority,resolved,141,4
+Exact Priority,resolved,142,7
+Exact Priority,resolved,143,12
+Exact Priority,resolved,144,16
+Exact Priority,resolved,145,12
+Exact Priority,resolved,146,12
+Exact Priority,resolved,147,15
+Exact Priority,resolved,148,1
+Exact Priority,outstanding,0,40
+Exact Priority,outstanding,1,24
+Exact Priority,outstanding,2,24
+Exact Priority,outstanding,3,21
+Exact Priority,outstanding,4,19
+Exact Priority,outstanding,5,24
+Exact Priority,outstanding,6,21
+Exact Priority,outstanding,7,27
+Exact Priority,outstanding,8,22
+Exact Priority,outstanding,9,19
+Exact Priority,outstanding,10,25
+Exact Priority,outstanding,11,29
+Exact Priority,outstanding,12,18
+Exact Priority,outstanding,13,20
+Exact Priority,outstanding,14,19
+Exact Priority,outstanding,15,20
+Exact Priority,outstanding,16,20
+Exact Priority,outstanding,17,23
+Exact Priority,outstanding,18,18
+Exact Priority,outstanding,19,17
+Exact Priority,outstanding,20,23
+Exact Priority,outstanding,21,18
+Exact Priority,outstanding,22,20
+Exact Priority,outstanding,23,23
+Exact Priority,outstanding,24,15
+Exact Priority,outstanding,25,23
+Exact Priority,outstanding,26,19
+Exact Priority,outstanding,27,26
+Exact Priority,outstanding,28,20
+Exact Priority,outstanding,29,16
+Exact Priority,outstanding,30,23
+Exact Priority,outstanding,31,22
+Exact Priority,outstanding,32,24
+Exact Priority,outstanding,33,23
+Exact Priority,outstanding,34,24
+Exact Priority,outstanding,35,22
+Exact Priority,outstanding,36,16
+Exact Priority,outstanding,37,15
+Exact Priority,outstanding,38,15
+Exact Priority,outstanding,39,15
+Exact Priority,outstanding,40,16
+Exact Priority,outstanding,41,23
+Exact Priority,outstanding,42,20
+Exact Priority,outstanding,43,15
+Exact Priority,outstanding,44,21
+Exact Priority,outstanding,45,15
+Exact Priority,outstanding,46,20
+Exact Priority,outstanding,47,12
+Exact Priority,outstanding,48,17
+Exact Priority,outstanding,49,18
+Exact Priority,outstanding,50,16
+Exact Priority,outstanding,51,19
+Exact Priority,outstanding,52,17
+Exact Priority,outstanding,53,21
+Exact Priority,outstanding,54,22
+Exact Priority,outstanding,55,19
+Exact Priority,outstanding,56,20
+Exact Priority,outstanding,57,16
+Exact Priority,outstanding,58,18
+Exact Priority,outstanding,59,19
+Exact Priority,outstanding,60,18
+Exact Priority,outstanding,61,17
+Exact Priority,outstanding,62,13
+Exact Priority,outstanding,63,25
+Exact Priority,outstanding,64,21
+Exact Priority,outstanding,65,13
+Exact Priority,outstanding,66,14
+Exact Priority,outstanding,67,20
+Exact Priority,outstanding,68,15
+Exact Priority,outstanding,69,16
+Exact Priority,outstanding,70,24
+Exact Priority,outstanding,71,21
+Exact Priority,outstanding,72,19
+Exact Priority,outstanding,73,17
+Exact Priority,outstanding,74,21
+Exact Priority,outstanding,75,13
+Exact Priority,outstanding,76,16
+Exact Priority,outstanding,77,11
+Exact Priority,outstanding,78,15
+Exact Priority,outstanding,79,16
+Exact Priority,outstanding,80,15
+Exact Priority,outstanding,81,16
+Exact Priority,outstanding,82,15
+Exact Priority,outstanding,83,17
+Exact Priority,outstanding,84,16
+Exact Priority,outstanding,85,13
+Exact Priority,outstanding,86,15
+Exact Priority,outstanding,87,6
+Exact Priority,outstanding,88,18
+Exact Priority,outstanding,89,11
+Exact Priority,outstanding,90,13
+Exact Priority,outstanding,91,14
+Exact Priority,outstanding,92,11
+Exact Priority,outstanding,93,15
+Exact Priority,outstanding,94,12
+Exact Priority,outstanding,95,14
+Exact Priority,outstanding,96,10
+Exact Priority,outstanding,97,11
+Exact Priority,outstanding,98,15
+Exact Priority,outstanding,99,17
+Exact Priority,outstanding,100,9
+Exact Priority,outstanding,101,15
+Exact Priority,outstanding,102,11
+Exact Priority,outstanding,103,10
+Exact Priority,outstanding,104,13
+Exact Priority,outstanding,105,13
+Exact Priority,outstanding,106,13
+Exact Priority,outstanding,107,13
+Exact Priority,outstanding,108,16
+Exact Priority,outstanding,109,17
+Exact Priority,outstanding,110,12
+Exact Priority,outstanding,111,14
+Exact Priority,outstanding,112,10
+Exact Priority,outstanding,113,8
+Exact Priority,outstanding,114,9
+Exact Priority,outstanding,115,9
+Exact Priority,outstanding,116,8
+Exact Priority,outstanding,117,5
+Exact Priority,outstanding,118,5
+Exact Priority,outstanding,119,6
+Exact Priority,outstanding,120,3
+Exact Priority,outstanding,121,6
+Exact Priority,outstanding,122,2
+Exact Priority,outstanding,124,2
+Exact Priority,outstanding,125,8
+Exact Priority,outstanding,126,1
+Exact Priority,outstanding,127,3
+Exact Priority,outstanding,128,4
+Exact Priority,outstanding,129,2
+Exact Priority,outstanding,130,3
+Exact Priority,outstanding,131,5
+Exact Priority,outstanding,132,1
+Exact Priority,outstanding,133,3
+Exact Priority,outstanding,134,5
+Exact Priority,outstanding,135,4
+Exact Priority,outstanding,136,5
+Exact Priority,outstanding,137,6
+Exact Priority,outstanding,138,5
+Exact Priority,outstanding,139,2
+Exact Priority,outstanding,140,3
+Exact Priority,outstanding,141,1
+Exact Priority,outstanding,142,2
+Exact Priority,outstanding,143,2
+Exact Priority,outstanding,144,3
+Exact Priority,outstanding,145,2
+Exact Priority,outstanding,146,2
+Util Linear,resolved,1,9817
+Util Linear,resolved,2,853
+Util Linear,resolved,3,499
+Util Linear,resolved,4,349
+Util Linear,resolved,5,229
+Util Linear,resolved,6,193
+Util Linear,resolved,7,144
+Util Linear,resolved,8,135
+Util Linear,resolved,9,108
+Util Linear,resolved,10,107
+Util Linear,resolved,11,68
+Util Linear,resolved,12,83
+Util Linear,resolved,13,63
+Util Linear,resolved,14,63
+Util Linear,resolved,15,53
+Util Linear,resolved,16,59
+Util Linear,resolved,17,57
+Util Linear,resolved,18,48
+Util Linear,resolved,19,50
+Util Linear,resolved,20,56
+Util Linear,resolved,21,50
+Util Linear,resolved,22,40
+Util Linear,resolved,23,46
+Util Linear,resolved,24,42
+Util Linear,resolved,25,37
+Util Linear,resolved,26,31
+Util Linear,resolved,27,34
+Util Linear,resolved,28,40
+Util Linear,resolved,29,29
+Util Linear,resolved,30,25
+Util Linear,resolved,31,29
+Util Linear,resolved,32,42
+Util Linear,resolved,33,26
+Util Linear,resolved,34,21
+Util Linear,resolved,35,24
+Util Linear,resolved,36,10
+Util Linear,resolved,37,37
+Util Linear,resolved,38,26
+Util Linear,resolved,39,34
+Util Linear,resolved,40,18
+Util Linear,resolved,41,23
+Util Linear,resolved,42,19
+Util Linear,resolved,43,20
+Util Linear,resolved,44,33
+Util Linear,resolved,45,17
+Util Linear,resolved,46,30
+Util Linear,resolved,47,14
+Util Linear,resolved,48,21
+Util Linear,resolved,49,20
+Util Linear,resolved,50,9
+Util Linear,resolved,51,15
+Util Linear,resolved,52,18
+Util Linear,resolved,53,16
+Util Linear,resolved,54,19
+Util Linear,resolved,55,25
+Util Linear,resolved,56,16
+Util Linear,resolved,57,18
+Util Linear,resolved,58,12
+Util Linear,resolved,59,12
+Util Linear,resolved,60,11
+Util Linear,resolved,61,22
+Util Linear,resolved,62,23
+Util Linear,resolved,63,16
+Util Linear,resolved,64,12
+Util Linear,resolved,65,16
+Util Linear,resolved,66,16
+Util Linear,resolved,67,16
+Util Linear,resolved,68,17
+Util Linear,resolved,69,12
+Util Linear,resolved,70,14
+Util Linear,resolved,71,10
+Util Linear,resolved,72,6
+Util Linear,resolved,73,14
+Util Linear,resolved,74,11
+Util Linear,resolved,75,12
+Util Linear,resolved,76,17
+Util Linear,resolved,77,7
+Util Linear,resolved,78,12
+Util Linear,resolved,79,14
+Util Linear,resolved,80,9
+Util Linear,resolved,81,6
+Util Linear,resolved,82,12
+Util Linear,resolved,83,9
+Util Linear,resolved,84,9
+Util Linear,resolved,85,12
+Util Linear,resolved,86,11
+Util Linear,resolved,87,7
+Util Linear,resolved,88,5
+Util Linear,resolved,89,11
+Util Linear,resolved,90,8
+Util Linear,resolved,91,4
+Util Linear,resolved,92,9
+Util Linear,resolved,93,8
+Util Linear,resolved,94,8
+Util Linear,resolved,95,7
+Util Linear,resolved,96,6
+Util Linear,resolved,97,3
+Util Linear,resolved,98,4
+Util Linear,resolved,99,7
+Util Linear,resolved,100,10
+Util Linear,resolved,101,3
+Util Linear,resolved,102,9
+Util Linear,resolved,103,6
+Util Linear,resolved,104,2
+Util Linear,resolved,105,4
+Util Linear,resolved,106,8
+Util Linear,resolved,107,4
+Util Linear,resolved,108,4
+Util Linear,resolved,109,2
+Util Linear,resolved,110,4
+Util Linear,resolved,111,6
+Util Linear,resolved,112,4
+Util Linear,resolved,113,4
+Util Linear,resolved,114,7
+Util Linear,resolved,115,4
+Util Linear,resolved,116,5
+Util Linear,resolved,117,6
+Util Linear,resolved,118,7
+Util Linear,resolved,119,9
+Util Linear,resolved,120,4
+Util Linear,resolved,121,3
+Util Linear,resolved,122,5
+Util Linear,resolved,123,8
+Util Linear,resolved,124,2
+Util Linear,resolved,125,4
+Util Linear,resolved,126,5
+Util Linear,resolved,127,3
+Util Linear,resolved,128,3
+Util Linear,resolved,129,4
+Util Linear,resolved,130,4
+Util Linear,resolved,131,8
+Util Linear,resolved,132,4
+Util Linear,resolved,133,4
+Util Linear,resolved,134,4
+Util Linear,resolved,135,1
+Util Linear,resolved,136,3
+Util Linear,resolved,137,7
+Util Linear,resolved,138,5
+Util Linear,resolved,139,3
+Util Linear,resolved,140,1
+Util Linear,resolved,141,8
+Util Linear,resolved,143,2
+Util Linear,resolved,144,5
+Util Linear,resolved,145,1
+Util Linear,resolved,146,2
+Util Linear,resolved,147,9
+Util Linear,resolved,148,2
+Util Linear,resolved,149,3
+Util Linear,resolved,150,4
+Util Linear,resolved,151,2
+Util Linear,resolved,152,5
+Util Linear,resolved,153,5
+Util Linear,resolved,154,2
+Util Linear,resolved,155,1
+Util Linear,resolved,156,5
+Util Linear,resolved,157,5
+Util Linear,resolved,158,7
+Util Linear,resolved,159,4
+Util Linear,resolved,160,2
+Util Linear,resolved,161,4
+Util Linear,resolved,162,1
+Util Linear,resolved,164,1
+Util Linear,resolved,165,2
+Util Linear,resolved,166,1
+Util Linear,resolved,167,1
+Util Linear,resolved,169,1
+Util Linear,resolved,170,1
+Util Linear,resolved,171,1
+Util Linear,resolved,172,2
+Util Linear,resolved,173,2
+Util Linear,resolved,175,2
+Util Linear,resolved,176,2
+Util Linear,resolved,177,1
+Util Linear,resolved,178,1
+Util Linear,resolved,179,2
+Util Linear,resolved,181,4
+Util Linear,resolved,183,3
+Util Linear,resolved,184,1
+Util Linear,resolved,185,1
+Util Linear,resolved,186,1
+Util Linear,resolved,187,3
+Util Linear,resolved,188,2
+Util Linear,resolved,189,2
+Util Linear,resolved,191,3
+Util Linear,resolved,192,2
+Util Linear,resolved,196,1
+Util Linear,resolved,197,4
+Util Linear,resolved,198,2
+Util Linear,resolved,199,1
+Util Linear,resolved,201,2
+Util Linear,resolved,202,1
+Util Linear,resolved,203,1
+Util Linear,resolved,204,1
+Util Linear,resolved,205,1
+Util Linear,resolved,207,1
+Util Linear,resolved,208,2
+Util Linear,resolved,209,4
+Util Linear,resolved,212,1
+Util Linear,resolved,213,2
+Util Linear,resolved,214,1
+Util Linear,resolved,215,1
+Util Linear,resolved,216,1
+Util Linear,resolved,217,1
+Util Linear,resolved,218,1
+Util Linear,resolved,221,1
+Util Linear,resolved,222,2
+Util Linear,resolved,223,1
+Util Linear,resolved,227,2
+Util Linear,resolved,228,2
+Util Linear,resolved,229,1
+Util Linear,resolved,230,2
+Util Linear,resolved,231,1
+Util Linear,resolved,232,2
+Util Linear,resolved,237,1
+Util Linear,resolved,238,1
+Util Linear,resolved,239,1
+Util Linear,resolved,240,1
+Util Linear,resolved,241,1
+Util Linear,resolved,242,3
+Util Linear,resolved,244,1
+Util Linear,resolved,247,1
+Util Linear,resolved,250,1
+Util Linear,resolved,251,2
+Util Linear,resolved,252,1
+Util Linear,resolved,254,1
+Util Linear,resolved,255,2
+Util Linear,resolved,256,2
+Util Linear,resolved,259,1
+Util Linear,resolved,264,1
+Util Linear,resolved,265,1
+Util Linear,resolved,269,1
+Util Linear,resolved,270,1
+Util Linear,resolved,271,3
+Util Linear,resolved,273,1
+Util Linear,resolved,279,1
+Util Linear,resolved,288,1
+Util Linear,resolved,292,1
+Util Linear,resolved,301,1
+Util Linear,resolved,307,1
+Util Linear,resolved,314,1
+Util Linear,resolved,316,1
+Util Linear,resolved,318,1
+Util Linear,resolved,319,2
+Util Linear,resolved,320,1
+Util Linear,resolved,322,4
+Util Linear,resolved,324,1
+Util Linear,resolved,325,3
+Util Linear,resolved,326,1
+Util Linear,resolved,329,1
+Util Linear,resolved,331,1
+Util Linear,resolved,336,1
+Util Linear,resolved,344,2
+Util Linear,resolved,354,1
+Util Linear,resolved,357,1
+Util Linear,outstanding,0,40
+Util Linear,outstanding,1,19
+Util Linear,outstanding,2,14
+Util Linear,outstanding,3,13
+Util Linear,outstanding,4,13
+Util Linear,outstanding,5,14
+Util Linear,outstanding,6,7
+Util Linear,outstanding,7,15
+Util Linear,outstanding,8,12
+Util Linear,outstanding,9,11
+Util Linear,outstanding,10,11
+Util Linear,outstanding,11,12
+Util Linear,outstanding,12,8
+Util Linear,outstanding,13,12
+Util Linear,outstanding,14,7
+Util Linear,outstanding,15,16
+Util Linear,outstanding,16,11
+Util Linear,outstanding,17,9
+Util Linear,outstanding,18,12
+Util Linear,outstanding,19,19
+Util Linear,outstanding,20,11
+Util Linear,outstanding,21,4
+Util Linear,outstanding,22,10
+Util Linear,outstanding,23,10
+Util Linear,outstanding,24,10
+Util Linear,outstanding,25,8
+Util Linear,outstanding,26,7
+Util Linear,outstanding,27,10
+Util Linear,outstanding,28,16
+Util Linear,outstanding,29,15
+Util Linear,outstanding,30,8
+Util Linear,outstanding,31,11
+Util Linear,outstanding,32,12
+Util Linear,outstanding,33,3
+Util Linear,outstanding,34,10
+Util Linear,outstanding,35,9
+Util Linear,outstanding,36,7
+Util Linear,outstanding,37,8
+Util Linear,outstanding,38,7
+Util Linear,outstanding,39,8
+Util Linear,outstanding,40,9
+Util Linear,outstanding,41,7
+Util Linear,outstanding,42,9
+Util Linear,outstanding,43,6
+Util Linear,outstanding,44,11
+Util Linear,outstanding,45,8
+Util Linear,outstanding,46,6
+Util Linear,outstanding,47,8
+Util Linear,outstanding,48,8
+Util Linear,outstanding,49,4
+Util Linear,outstanding,50,7
+Util Linear,outstanding,51,2
+Util Linear,outstanding,52,8
+Util Linear,outstanding,53,2
+Util Linear,outstanding,54,6
+Util Linear,outstanding,55,5
+Util Linear,outstanding,56,3
+Util Linear,outstanding,57,9
+Util Linear,outstanding,58,5
+Util Linear,outstanding,59,3
+Util Linear,outstanding,61,4
+Util Linear,outstanding,62,3
+Util Linear,outstanding,63,8
+Util Linear,outstanding,64,11
+Util Linear,outstanding,65,5
+Util Linear,outstanding,66,7
+Util Linear,outstanding,67,5
+Util Linear,outstanding,68,8
+Util Linear,outstanding,69,7
+Util Linear,outstanding,70,3
+Util Linear,outstanding,71,3
+Util Linear,outstanding,72,3
+Util Linear,outstanding,73,2
+Util Linear,outstanding,74,7
+Util Linear,outstanding,75,5
+Util Linear,outstanding,76,3
+Util Linear,outstanding,77,6
+Util Linear,outstanding,78,3
+Util Linear,outstanding,79,5
+Util Linear,outstanding,80,3
+Util Linear,outstanding,81,7
+Util Linear,outstanding,82,8
+Util Linear,outstanding,83,5
+Util Linear,outstanding,84,2
+Util Linear,outstanding,85,8
+Util Linear,outstanding,86,6
+Util Linear,outstanding,87,6
+Util Linear,outstanding,88,10
+Util Linear,outstanding,89,7
+Util Linear,outstanding,90,6
+Util Linear,outstanding,91,5
+Util Linear,outstanding,92,3
+Util Linear,outstanding,93,4
+Util Linear,outstanding,94,10
+Util Linear,outstanding,95,3
+Util Linear,outstanding,96,6
+Util Linear,outstanding,97,7
+Util Linear,outstanding,98,3
+Util Linear,outstanding,99,3
+Util Linear,outstanding,100,5
+Util Linear,outstanding,101,3
+Util Linear,outstanding,102,5
+Util Linear,outstanding,103,7
+Util Linear,outstanding,104,4
+Util Linear,outstanding,105,4
+Util Linear,outstanding,106,5
+Util Linear,outstanding,107,5
+Util Linear,outstanding,108,4
+Util Linear,outstanding,109,8
+Util Linear,outstanding,110,2
+Util Linear,outstanding,111,5
+Util Linear,outstanding,112,6
+Util Linear,outstanding,113,5
+Util Linear,outstanding,114,6
+Util Linear,outstanding,115,3
+Util Linear,outstanding,116,8
+Util Linear,outstanding,117,10
+Util Linear,outstanding,118,5
+Util Linear,outstanding,119,6
+Util Linear,outstanding,120,4
+Util Linear,outstanding,121,6
+Util Linear,outstanding,122,6
+Util Linear,outstanding,123,6
+Util Linear,outstanding,124,6
+Util Linear,outstanding,125,2
+Util Linear,outstanding,126,8
+Util Linear,outstanding,127,4
+Util Linear,outstanding,128,4
+Util Linear,outstanding,129,5
+Util Linear,outstanding,130,6
+Util Linear,outstanding,131,6
+Util Linear,outstanding,132,4
+Util Linear,outstanding,133,3
+Util Linear,outstanding,134,4
+Util Linear,outstanding,135,5
+Util Linear,outstanding,136,2
+Util Linear,outstanding,137,4
+Util Linear,outstanding,138,3
+Util Linear,outstanding,139,3
+Util Linear,outstanding,140,7
+Util Linear,outstanding,141,3
+Util Linear,outstanding,142,2
+Util Linear,outstanding,143,2
+Util Linear,outstanding,144,4
+Util Linear,outstanding,145,4
+Util Linear,outstanding,147,3
+Util Linear,outstanding,148,5
+Util Linear,outstanding,149,3
+Util Linear,outstanding,150,2
+Util Linear,outstanding,151,5
+Util Linear,outstanding,152,1
+Util Linear,outstanding,153,3
+Util Linear,outstanding,154,2
+Util Linear,outstanding,155,4
+Util Linear,outstanding,156,3
+Util Linear,outstanding,157,5
+Util Linear,outstanding,158,4
+Util Linear,outstanding,159,4
+Util Linear,outstanding,160,2
+Util Linear,outstanding,161,6
+Util Linear,outstanding,162,1
+Util Linear,outstanding,163,6
+Util Linear,outstanding,164,6
+Util Linear,outstanding,165,1
+Util Linear,outstanding,166,4
+Util Linear,outstanding,167,3
+Util Linear,outstanding,168,1
+Util Linear,outstanding,169,6
+Util Linear,outstanding,170,2
+Util Linear,outstanding,171,3
+Util Linear,outstanding,172,2
+Util Linear,outstanding,173,1
+Util Linear,outstanding,174,5
+Util Linear,outstanding,175,1
+Util Linear,outstanding,176,1
+Util Linear,outstanding,177,1
+Util Linear,outstanding,178,3
+Util Linear,outstanding,179,2
+Util Linear,outstanding,180,3
+Util Linear,outstanding,181,3
+Util Linear,outstanding,182,2
+Util Linear,outstanding,183,3
+Util Linear,outstanding,184,3
+Util Linear,outstanding,185,5
+Util Linear,outstanding,186,2
+Util Linear,outstanding,187,1
+Util Linear,outstanding,188,4
+Util Linear,outstanding,189,2
+Util Linear,outstanding,190,7
+Util Linear,outstanding,191,4
+Util Linear,outstanding,192,4
+Util Linear,outstanding,194,2
+Util Linear,outstanding,195,4
+Util Linear,outstanding,196,3
+Util Linear,outstanding,197,1
+Util Linear,outstanding,199,3
+Util Linear,outstanding,200,2
+Util Linear,outstanding,201,3
+Util Linear,outstanding,202,2
+Util Linear,outstanding,203,3
+Util Linear,outstanding,205,1
+Util Linear,outstanding,206,6
+Util Linear,outstanding,207,2
+Util Linear,outstanding,208,6
+Util Linear,outstanding,209,3
+Util Linear,outstanding,210,6
+Util Linear,outstanding,211,1
+Util Linear,outstanding,212,3
+Util Linear,outstanding,213,5
+Util Linear,outstanding,214,6
+Util Linear,outstanding,215,2
+Util Linear,outstanding,216,2
+Util Linear,outstanding,217,1
+Util Linear,outstanding,218,3
+Util Linear,outstanding,219,3
+Util Linear,outstanding,220,5
+Util Linear,outstanding,221,7
+Util Linear,outstanding,222,4
+Util Linear,outstanding,223,3
+Util Linear,outstanding,224,6
+Util Linear,outstanding,225,1
+Util Linear,outstanding,226,3
+Util Linear,outstanding,227,6
+Util Linear,outstanding,228,5
+Util Linear,outstanding,229,3
+Util Linear,outstanding,230,4
+Util Linear,outstanding,231,3
+Util Linear,outstanding,232,4
+Util Linear,outstanding,233,2
+Util Linear,outstanding,234,6
+Util Linear,outstanding,235,4
+Util Linear,outstanding,237,6
+Util Linear,outstanding,238,4
+Util Linear,outstanding,239,3
+Util Linear,outstanding,240,2
+Util Linear,outstanding,241,2
+Util Linear,outstanding,242,7
+Util Linear,outstanding,243,2
+Util Linear,outstanding,244,5
+Util Linear,outstanding,245,3
+Util Linear,outstanding,246,4
+Util Linear,outstanding,247,3
+Util Linear,outstanding,248,3
+Util Linear,outstanding,249,4
+Util Linear,outstanding,252,2
+Util Linear,outstanding,254,2
+Util Linear,outstanding,255,5
+Util Linear,outstanding,256,1
+Util Linear,outstanding,257,4
+Util Linear,outstanding,258,3
+Util Linear,outstanding,259,1
+Util Linear,outstanding,260,4
+Util Linear,outstanding,261,3
+Util Linear,outstanding,262,4
+Util Linear,outstanding,263,1
+Util Linear,outstanding,264,1
+Util Linear,outstanding,265,1
+Util Linear,outstanding,266,5
+Util Linear,outstanding,268,4
+Util Linear,outstanding,269,2
+Util Linear,outstanding,270,4
+Util Linear,outstanding,271,3
+Util Linear,outstanding,272,2
+Util Linear,outstanding,273,5
+Util Linear,outstanding,274,2
+Util Linear,outstanding,275,3
+Util Linear,outstanding,276,2
+Util Linear,outstanding,277,2
+Util Linear,outstanding,278,3
+Util Linear,outstanding,279,1
+Util Linear,outstanding,280,4
+Util Linear,outstanding,281,4
+Util Linear,outstanding,282,2
+Util Linear,outstanding,283,4
+Util Linear,outstanding,284,3
+Util Linear,outstanding,285,2
+Util Linear,outstanding,286,4
+Util Linear,outstanding,287,2
+Util Linear,outstanding,288,2
+Util Linear,outstanding,289,1
+Util Linear,outstanding,290,1
+Util Linear,outstanding,291,5
+Util Linear,outstanding,292,2
+Util Linear,outstanding,293,4
+Util Linear,outstanding,294,4
+Util Linear,outstanding,295,4
+Util Linear,outstanding,296,3
+Util Linear,outstanding,297,4
+Util Linear,outstanding,298,3
+Util Linear,outstanding,299,6
+Util Linear,outstanding,300,3
+Util Linear,outstanding,301,2
+Util Linear,outstanding,302,3
+Util Linear,outstanding,303,4
+Util Linear,outstanding,304,5
+Util Linear,outstanding,305,1
+Util Linear,outstanding,307,2
+Util Linear,outstanding,308,3
+Util Linear,outstanding,309,2
+Util Linear,outstanding,310,2
+Util Linear,outstanding,311,5
+Util Linear,outstanding,312,2
+Util Linear,outstanding,313,2
+Util Linear,outstanding,314,3
+Util Linear,outstanding,315,2
+Util Linear,outstanding,316,5
+Util Linear,outstanding,318,3
+Util Linear,outstanding,319,2
+Util Linear,outstanding,320,3
+Util Linear,outstanding,321,1
+Util Linear,outstanding,322,4
+Util Linear,outstanding,323,1
+Util Linear,outstanding,324,3
+Util Linear,outstanding,325,1
+Util Linear,outstanding,326,1
+Util Linear,outstanding,327,4
+Util Linear,outstanding,328,2
+Util Linear,outstanding,329,3
+Util Linear,outstanding,330,2
+Util Linear,outstanding,332,1
+Util Linear,outstanding,333,1
+Util Linear,outstanding,334,2
+Util Linear,outstanding,335,2
+Util Linear,outstanding,338,3
+Util Linear,outstanding,339,2
+Util Linear,outstanding,340,1
+Util Linear,outstanding,341,6
+Util Linear,outstanding,343,4
+Util Linear,outstanding,344,5
+Util Linear,outstanding,345,1
+Util Linear,outstanding,346,4
+Util Linear,outstanding,347,1
+Util Linear,outstanding,348,2
+Util Linear,outstanding,349,2
+Util Linear,outstanding,350,2
+Util Linear,outstanding,351,4
+Util Linear,outstanding,352,2
+Util Linear,outstanding,353,1
+Util Linear,outstanding,354,4
+Util Linear,outstanding,355,5
+Util Linear,outstanding,356,1
+Util Linear,outstanding,357,3
+Util Linear,outstanding,358,1
+Util Linear,outstanding,359,3
+Util Linear,outstanding,360,5
+Util Linear,outstanding,361,1
+Util Linear,outstanding,362,1
+Util Linear,outstanding,363,2
+Util Linear,outstanding,364,3
+Util Linear,outstanding,365,93
+Util Exp 1.01,resolved,1,10592
+Util Exp 1.01,resolved,2,1263
+Util Exp 1.01,resolved,3,594
+Util Exp 1.01,resolved,4,345
+Util Exp 1.01,resolved,5,243
+Util Exp 1.01,resolved,6,192
+Util Exp 1.01,resolved,7,149
+Util Exp 1.01,resolved,8,103
+Util Exp 1.01,resolved,9,113
+Util Exp 1.01,resolved,10,63
+Util Exp 1.01,resolved,11,78
+Util Exp 1.01,resolved,12,67
+Util Exp 1.01,resolved,13,72
+Util Exp 1.01,resolved,14,42
+Util Exp 1.01,resolved,15,60
+Util Exp 1.01,resolved,16,42
+Util Exp 1.01,resolved,17,36
+Util Exp 1.01,resolved,18,36
+Util Exp 1.01,resolved,19,38
+Util Exp 1.01,resolved,20,32
+Util Exp 1.01,resolved,21,24
+Util Exp 1.01,resolved,22,32
+Util Exp 1.01,resolved,23,27
+Util Exp 1.01,resolved,24,25
+Util Exp 1.01,resolved,25,26
+Util Exp 1.01,resolved,26,27
+Util Exp 1.01,resolved,27,27
+Util Exp 1.01,resolved,28,26
+Util Exp 1.01,resolved,29,26
+Util Exp 1.01,resolved,30,15
+Util Exp 1.01,resolved,31,22
+Util Exp 1.01,resolved,32,15
+Util Exp 1.01,resolved,33,9
+Util Exp 1.01,resolved,34,12
+Util Exp 1.01,resolved,35,16
+Util Exp 1.01,resolved,36,22
+Util Exp 1.01,resolved,37,16
+Util Exp 1.01,resolved,38,14
+Util Exp 1.01,resolved,39,11
+Util Exp 1.01,resolved,40,9
+Util Exp 1.01,resolved,41,8
+Util Exp 1.01,resolved,42,12
+Util Exp 1.01,resolved,43,3
+Util Exp 1.01,resolved,44,9
+Util Exp 1.01,resolved,45,6
+Util Exp 1.01,resolved,46,10
+Util Exp 1.01,resolved,47,7
+Util Exp 1.01,resolved,48,8
+Util Exp 1.01,resolved,49,4
+Util Exp 1.01,resolved,50,9
+Util Exp 1.01,resolved,51,15
+Util Exp 1.01,resolved,52,7
+Util Exp 1.01,resolved,53,11
+Util Exp 1.01,resolved,54,8
+Util Exp 1.01,resolved,55,9
+Util Exp 1.01,resolved,56,10
+Util Exp 1.01,resolved,57,5
+Util Exp 1.01,resolved,58,2
+Util Exp 1.01,resolved,59,4
+Util Exp 1.01,resolved,60,7
+Util Exp 1.01,resolved,61,4
+Util Exp 1.01,resolved,62,7
+Util Exp 1.01,resolved,63,5
+Util Exp 1.01,resolved,64,2
+Util Exp 1.01,resolved,65,5
+Util Exp 1.01,resolved,66,1
+Util Exp 1.01,resolved,67,7
+Util Exp 1.01,resolved,68,5
+Util Exp 1.01,resolved,69,2
+Util Exp 1.01,resolved,70,7
+Util Exp 1.01,resolved,71,2
+Util Exp 1.01,resolved,72,6
+Util Exp 1.01,resolved,73,1
+Util Exp 1.01,resolved,74,3
+Util Exp 1.01,resolved,75,2
+Util Exp 1.01,resolved,76,5
+Util Exp 1.01,resolved,77,3
+Util Exp 1.01,resolved,78,2
+Util Exp 1.01,resolved,79,3
+Util Exp 1.01,resolved,80,3
+Util Exp 1.01,resolved,81,5
+Util Exp 1.01,resolved,82,3
+Util Exp 1.01,resolved,83,4
+Util Exp 1.01,resolved,84,6
+Util Exp 1.01,resolved,85,2
+Util Exp 1.01,resolved,86,5
+Util Exp 1.01,resolved,87,4
+Util Exp 1.01,resolved,88,4
+Util Exp 1.01,resolved,89,6
+Util Exp 1.01,resolved,90,5
+Util Exp 1.01,resolved,91,6
+Util Exp 1.01,resolved,92,4
+Util Exp 1.01,resolved,93,2
+Util Exp 1.01,resolved,94,3
+Util Exp 1.01,resolved,95,5
+Util Exp 1.01,resolved,96,4
+Util Exp 1.01,resolved,97,1
+Util Exp 1.01,resolved,98,1
+Util Exp 1.01,resolved,100,3
+Util Exp 1.01,resolved,101,1
+Util Exp 1.01,resolved,102,2
+Util Exp 1.01,resolved,103,2
+Util Exp 1.01,resolved,104,3
+Util Exp 1.01,resolved,105,4
+Util Exp 1.01,resolved,106,1
+Util Exp 1.01,resolved,107,1
+Util Exp 1.01,resolved,108,5
+Util Exp 1.01,resolved,110,2
+Util Exp 1.01,resolved,111,2
+Util Exp 1.01,resolved,112,1
+Util Exp 1.01,resolved,113,2
+Util Exp 1.01,resolved,114,5
+Util Exp 1.01,resolved,115,1
+Util Exp 1.01,resolved,116,1
+Util Exp 1.01,resolved,118,1
+Util Exp 1.01,resolved,119,1
+Util Exp 1.01,resolved,120,1
+Util Exp 1.01,resolved,122,3
+Util Exp 1.01,resolved,123,5
+Util Exp 1.01,resolved,124,1
+Util Exp 1.01,resolved,127,2
+Util Exp 1.01,resolved,128,4
+Util Exp 1.01,resolved,129,4
+Util Exp 1.01,resolved,130,2
+Util Exp 1.01,resolved,131,5
+Util Exp 1.01,resolved,133,2
+Util Exp 1.01,resolved,134,4
+Util Exp 1.01,resolved,137,1
+Util Exp 1.01,resolved,138,2
+Util Exp 1.01,resolved,139,5
+Util Exp 1.01,resolved,140,2
+Util Exp 1.01,resolved,142,2
+Util Exp 1.01,resolved,143,2
+Util Exp 1.01,resolved,144,3
+Util Exp 1.01,resolved,146,2
+Util Exp 1.01,resolved,147,3
+Util Exp 1.01,resolved,148,2
+Util Exp 1.01,resolved,149,1
+Util Exp 1.01,resolved,150,2
+Util Exp 1.01,resolved,151,1
+Util Exp 1.01,resolved,152,1
+Util Exp 1.01,resolved,153,4
+Util Exp 1.01,resolved,154,3
+Util Exp 1.01,resolved,155,1
+Util Exp 1.01,resolved,156,1
+Util Exp 1.01,resolved,158,1
+Util Exp 1.01,resolved,159,5
+Util Exp 1.01,resolved,160,2
+Util Exp 1.01,resolved,161,2
+Util Exp 1.01,resolved,162,2
+Util Exp 1.01,resolved,163,5
+Util Exp 1.01,resolved,165,2
+Util Exp 1.01,resolved,167,2
+Util Exp 1.01,resolved,168,2
+Util Exp 1.01,resolved,169,2
+Util Exp 1.01,resolved,171,1
+Util Exp 1.01,resolved,174,1
+Util Exp 1.01,resolved,176,3
+Util Exp 1.01,resolved,177,2
+Util Exp 1.01,resolved,178,3
+Util Exp 1.01,resolved,180,1
+Util Exp 1.01,resolved,181,1
+Util Exp 1.01,resolved,182,1
+Util Exp 1.01,resolved,184,5
+Util Exp 1.01,resolved,185,3
+Util Exp 1.01,resolved,186,1
+Util Exp 1.01,resolved,189,1
+Util Exp 1.01,resolved,190,1
+Util Exp 1.01,resolved,191,2
+Util Exp 1.01,resolved,192,2
+Util Exp 1.01,resolved,193,1
+Util Exp 1.01,resolved,194,3
+Util Exp 1.01,resolved,195,1
+Util Exp 1.01,resolved,196,1
+Util Exp 1.01,resolved,197,1
+Util Exp 1.01,resolved,199,1
+Util Exp 1.01,resolved,202,2
+Util Exp 1.01,resolved,205,3
+Util Exp 1.01,resolved,206,1
+Util Exp 1.01,resolved,207,3
+Util Exp 1.01,resolved,209,1
+Util Exp 1.01,resolved,212,1
+Util Exp 1.01,resolved,215,2
+Util Exp 1.01,resolved,216,1
+Util Exp 1.01,resolved,218,2
+Util Exp 1.01,resolved,219,1
+Util Exp 1.01,resolved,220,1
+Util Exp 1.01,resolved,221,1
+Util Exp 1.01,resolved,222,1
+Util Exp 1.01,resolved,223,1
+Util Exp 1.01,resolved,224,1
+Util Exp 1.01,resolved,226,2
+Util Exp 1.01,resolved,229,1
+Util Exp 1.01,resolved,231,2
+Util Exp 1.01,resolved,233,1
+Util Exp 1.01,resolved,236,1
+Util Exp 1.01,resolved,238,1
+Util Exp 1.01,resolved,239,1
+Util Exp 1.01,resolved,240,3
+Util Exp 1.01,resolved,241,1
+Util Exp 1.01,resolved,243,1
+Util Exp 1.01,resolved,245,1
+Util Exp 1.01,resolved,247,1
+Util Exp 1.01,resolved,248,1
+Util Exp 1.01,resolved,249,1
+Util Exp 1.01,resolved,251,1
+Util Exp 1.01,resolved,253,1
+Util Exp 1.01,resolved,254,1
+Util Exp 1.01,resolved,257,3
+Util Exp 1.01,resolved,268,1
+Util Exp 1.01,resolved,271,1
+Util Exp 1.01,resolved,272,1
+Util Exp 1.01,resolved,275,1
+Util Exp 1.01,resolved,276,1
+Util Exp 1.01,resolved,280,3
+Util Exp 1.01,resolved,283,1
+Util Exp 1.01,resolved,291,1
+Util Exp 1.01,resolved,293,1
+Util Exp 1.01,resolved,295,1
+Util Exp 1.01,resolved,297,1
+Util Exp 1.01,resolved,302,1
+Util Exp 1.01,resolved,303,1
+Util Exp 1.01,resolved,305,2
+Util Exp 1.01,resolved,309,1
+Util Exp 1.01,resolved,313,1
+Util Exp 1.01,resolved,314,1
+Util Exp 1.01,resolved,319,2
+Util Exp 1.01,resolved,322,1
+Util Exp 1.01,resolved,323,1
+Util Exp 1.01,resolved,325,1
+Util Exp 1.01,resolved,326,2
+Util Exp 1.01,resolved,328,1
+Util Exp 1.01,resolved,348,1
+Util Exp 1.01,resolved,349,1
+Util Exp 1.01,resolved,350,1
+Util Exp 1.01,resolved,362,1
+Util Exp 1.01,outstanding,0,40
+Util Exp 1.01,outstanding,1,12
+Util Exp 1.01,outstanding,2,13
+Util Exp 1.01,outstanding,3,6
+Util Exp 1.01,outstanding,4,5
+Util Exp 1.01,outstanding,5,4
+Util Exp 1.01,outstanding,6,10
+Util Exp 1.01,outstanding,7,5
+Util Exp 1.01,outstanding,8,3
+Util Exp 1.01,outstanding,9,6
+Util Exp 1.01,outstanding,10,2
+Util Exp 1.01,outstanding,11,3
+Util Exp 1.01,outstanding,12,6
+Util Exp 1.01,outstanding,13,11
+Util Exp 1.01,outstanding,14,7
+Util Exp 1.01,outstanding,15,6
+Util Exp 1.01,outstanding,16,6
+Util Exp 1.01,outstanding,17,6
+Util Exp 1.01,outstanding,18,7
+Util Exp 1.01,outstanding,19,9
+Util Exp 1.01,outstanding,20,8
+Util Exp 1.01,outstanding,21,7
+Util Exp 1.01,outstanding,22,2
+Util Exp 1.01,outstanding,23,1
+Util Exp 1.01,outstanding,24,6
+Util Exp 1.01,outstanding,25,9
+Util Exp 1.01,outstanding,26,2
+Util Exp 1.01,outstanding,27,7
+Util Exp 1.01,outstanding,28,7
+Util Exp 1.01,outstanding,29,3
+Util Exp 1.01,outstanding,30,3
+Util Exp 1.01,outstanding,31,5
+Util Exp 1.01,outstanding,32,7
+Util Exp 1.01,outstanding,33,3
+Util Exp 1.01,outstanding,34,5
+Util Exp 1.01,outstanding,35,4
+Util Exp 1.01,outstanding,36,5
+Util Exp 1.01,outstanding,37,2
+Util Exp 1.01,outstanding,38,8
+Util Exp 1.01,outstanding,39,5
+Util Exp 1.01,outstanding,40,5
+Util Exp 1.01,outstanding,41,6
+Util Exp 1.01,outstanding,42,2
+Util Exp 1.01,outstanding,43,4
+Util Exp 1.01,outstanding,44,2
+Util Exp 1.01,outstanding,45,7
+Util Exp 1.01,outstanding,46,2
+Util Exp 1.01,outstanding,47,4
+Util Exp 1.01,outstanding,48,2
+Util Exp 1.01,outstanding,49,3
+Util Exp 1.01,outstanding,50,8
+Util Exp 1.01,outstanding,51,6
+Util Exp 1.01,outstanding,52,3
+Util Exp 1.01,outstanding,53,4
+Util Exp 1.01,outstanding,54,7
+Util Exp 1.01,outstanding,55,5
+Util Exp 1.01,outstanding,56,2
+Util Exp 1.01,outstanding,57,1
+Util Exp 1.01,outstanding,58,2
+Util Exp 1.01,outstanding,59,5
+Util Exp 1.01,outstanding,60,2
+Util Exp 1.01,outstanding,61,2
+Util Exp 1.01,outstanding,62,3
+Util Exp 1.01,outstanding,63,5
+Util Exp 1.01,outstanding,65,1
+Util Exp 1.01,outstanding,66,6
+Util Exp 1.01,outstanding,67,5
+Util Exp 1.01,outstanding,68,7
+Util Exp 1.01,outstanding,69,2
+Util Exp 1.01,outstanding,70,1
+Util Exp 1.01,outstanding,71,8
+Util Exp 1.01,outstanding,72,2
+Util Exp 1.01,outstanding,73,5
+Util Exp 1.01,outstanding,74,3
+Util Exp 1.01,outstanding,75,1
+Util Exp 1.01,outstanding,76,3
+Util Exp 1.01,outstanding,77,4
+Util Exp 1.01,outstanding,78,7
+Util Exp 1.01,outstanding,79,4
+Util Exp 1.01,outstanding,80,10
+Util Exp 1.01,outstanding,81,4
+Util Exp 1.01,outstanding,82,3
+Util Exp 1.01,outstanding,83,5
+Util Exp 1.01,outstanding,84,6
+Util Exp 1.01,outstanding,85,5
+Util Exp 1.01,outstanding,86,3
+Util Exp 1.01,outstanding,87,2
+Util Exp 1.01,outstanding,88,3
+Util Exp 1.01,outstanding,89,3
+Util Exp 1.01,outstanding,90,5
+Util Exp 1.01,outstanding,91,4
+Util Exp 1.01,outstanding,92,8
+Util Exp 1.01,outstanding,93,7
+Util Exp 1.01,outstanding,94,2
+Util Exp 1.01,outstanding,95,8
+Util Exp 1.01,outstanding,96,3
+Util Exp 1.01,outstanding,97,6
+Util Exp 1.01,outstanding,98,5
+Util Exp 1.01,outstanding,99,5
+Util Exp 1.01,outstanding,100,6
+Util Exp 1.01,outstanding,101,6
+Util Exp 1.01,outstanding,102,6
+Util Exp 1.01,outstanding,103,8
+Util Exp 1.01,outstanding,104,4
+Util Exp 1.01,outstanding,105,11
+Util Exp 1.01,outstanding,106,2
+Util Exp 1.01,outstanding,107,8
+Util Exp 1.01,outstanding,108,2
+Util Exp 1.01,outstanding,109,2
+Util Exp 1.01,outstanding,110,5
+Util Exp 1.01,outstanding,111,8
+Util Exp 1.01,outstanding,112,4
+Util Exp 1.01,outstanding,113,7
+Util Exp 1.01,outstanding,114,5
+Util Exp 1.01,outstanding,115,2
+Util Exp 1.01,outstanding,117,6
+Util Exp 1.01,outstanding,118,3
+Util Exp 1.01,outstanding,119,3
+Util Exp 1.01,outstanding,120,5
+Util Exp 1.01,outstanding,121,2
+Util Exp 1.01,outstanding,122,4
+Util Exp 1.01,outstanding,123,2
+Util Exp 1.01,outstanding,124,3
+Util Exp 1.01,outstanding,125,5
+Util Exp 1.01,outstanding,126,2
+Util Exp 1.01,outstanding,127,3
+Util Exp 1.01,outstanding,128,3
+Util Exp 1.01,outstanding,129,4
+Util Exp 1.01,outstanding,130,6
+Util Exp 1.01,outstanding,131,2
+Util Exp 1.01,outstanding,132,3
+Util Exp 1.01,outstanding,133,2
+Util Exp 1.01,outstanding,134,1
+Util Exp 1.01,outstanding,135,4
+Util Exp 1.01,outstanding,136,3
+Util Exp 1.01,outstanding,137,3
+Util Exp 1.01,outstanding,138,4
+Util Exp 1.01,outstanding,139,2
+Util Exp 1.01,outstanding,140,6
+Util Exp 1.01,outstanding,141,6
+Util Exp 1.01,outstanding,142,3
+Util Exp 1.01,outstanding,143,3
+Util Exp 1.01,outstanding,144,6
+Util Exp 1.01,outstanding,145,5
+Util Exp 1.01,outstanding,146,7
+Util Exp 1.01,outstanding,147,3
+Util Exp 1.01,outstanding,148,3
+Util Exp 1.01,outstanding,149,5
+Util Exp 1.01,outstanding,151,4
+Util Exp 1.01,outstanding,152,3
+Util Exp 1.01,outstanding,153,4
+Util Exp 1.01,outstanding,154,9
+Util Exp 1.01,outstanding,155,2
+Util Exp 1.01,outstanding,156,1
+Util Exp 1.01,outstanding,157,3
+Util Exp 1.01,outstanding,158,3
+Util Exp 1.01,outstanding,159,2
+Util Exp 1.01,outstanding,160,3
+Util Exp 1.01,outstanding,161,5
+Util Exp 1.01,outstanding,162,2
+Util Exp 1.01,outstanding,163,3
+Util Exp 1.01,outstanding,164,6
+Util Exp 1.01,outstanding,165,3
+Util Exp 1.01,outstanding,166,2
+Util Exp 1.01,outstanding,167,6
+Util Exp 1.01,outstanding,168,7
+Util Exp 1.01,outstanding,169,1
+Util Exp 1.01,outstanding,170,3
+Util Exp 1.01,outstanding,171,5
+Util Exp 1.01,outstanding,172,1
+Util Exp 1.01,outstanding,173,2
+Util Exp 1.01,outstanding,174,2
+Util Exp 1.01,outstanding,175,3
+Util Exp 1.01,outstanding,176,2
+Util Exp 1.01,outstanding,177,3
+Util Exp 1.01,outstanding,178,2
+Util Exp 1.01,outstanding,179,6
+Util Exp 1.01,outstanding,180,6
+Util Exp 1.01,outstanding,181,2
+Util Exp 1.01,outstanding,182,1
+Util Exp 1.01,outstanding,183,5
+Util Exp 1.01,outstanding,184,1
+Util Exp 1.01,outstanding,186,1
+Util Exp 1.01,outstanding,187,1
+Util Exp 1.01,outstanding,189,3
+Util Exp 1.01,outstanding,190,3
+Util Exp 1.01,outstanding,191,1
+Util Exp 1.01,outstanding,192,3
+Util Exp 1.01,outstanding,193,6
+Util Exp 1.01,outstanding,194,6
+Util Exp 1.01,outstanding,195,2
+Util Exp 1.01,outstanding,196,2
+Util Exp 1.01,outstanding,198,3
+Util Exp 1.01,outstanding,199,4
+Util Exp 1.01,outstanding,200,1
+Util Exp 1.01,outstanding,201,2
+Util Exp 1.01,outstanding,202,3
+Util Exp 1.01,outstanding,203,4
+Util Exp 1.01,outstanding,204,7
+Util Exp 1.01,outstanding,205,4
+Util Exp 1.01,outstanding,206,3
+Util Exp 1.01,outstanding,207,2
+Util Exp 1.01,outstanding,208,2
+Util Exp 1.01,outstanding,209,3
+Util Exp 1.01,outstanding,210,3
+Util Exp 1.01,outstanding,211,5
+Util Exp 1.01,outstanding,212,1
+Util Exp 1.01,outstanding,213,3
+Util Exp 1.01,outstanding,214,6
+Util Exp 1.01,outstanding,215,4
+Util Exp 1.01,outstanding,216,4
+Util Exp 1.01,outstanding,217,5
+Util Exp 1.01,outstanding,218,3
+Util Exp 1.01,outstanding,219,2
+Util Exp 1.01,outstanding,220,5
+Util Exp 1.01,outstanding,221,2
+Util Exp 1.01,outstanding,222,4
+Util Exp 1.01,outstanding,223,3
+Util Exp 1.01,outstanding,224,4
+Util Exp 1.01,outstanding,225,1
+Util Exp 1.01,outstanding,226,4
+Util Exp 1.01,outstanding,227,1
+Util Exp 1.01,outstanding,228,4
+Util Exp 1.01,outstanding,229,1
+Util Exp 1.01,outstanding,230,3
+Util Exp 1.01,outstanding,231,1
+Util Exp 1.01,outstanding,232,1
+Util Exp 1.01,outstanding,233,2
+Util Exp 1.01,outstanding,234,1
+Util Exp 1.01,outstanding,235,4
+Util Exp 1.01,outstanding,236,3
+Util Exp 1.01,outstanding,237,4
+Util Exp 1.01,outstanding,238,5
+Util Exp 1.01,outstanding,239,7
+Util Exp 1.01,outstanding,240,2
+Util Exp 1.01,outstanding,241,1
+Util Exp 1.01,outstanding,242,2
+Util Exp 1.01,outstanding,243,6
+Util Exp 1.01,outstanding,244,4
+Util Exp 1.01,outstanding,245,5
+Util Exp 1.01,outstanding,246,2
+Util Exp 1.01,outstanding,247,4
+Util Exp 1.01,outstanding,248,1
+Util Exp 1.01,outstanding,249,2
+Util Exp 1.01,outstanding,250,8
+Util Exp 1.01,outstanding,251,3
+Util Exp 1.01,outstanding,252,4
+Util Exp 1.01,outstanding,253,7
+Util Exp 1.01,outstanding,254,5
+Util Exp 1.01,outstanding,255,4
+Util Exp 1.01,outstanding,256,4
+Util Exp 1.01,outstanding,257,5
+Util Exp 1.01,outstanding,258,7
+Util Exp 1.01,outstanding,259,4
+Util Exp 1.01,outstanding,260,1
+Util Exp 1.01,outstanding,261,2
+Util Exp 1.01,outstanding,262,2
+Util Exp 1.01,outstanding,263,1
+Util Exp 1.01,outstanding,264,5
+Util Exp 1.01,outstanding,265,3
+Util Exp 1.01,outstanding,266,3
+Util Exp 1.01,outstanding,267,3
+Util Exp 1.01,outstanding,268,1
+Util Exp 1.01,outstanding,269,6
+Util Exp 1.01,outstanding,270,3
+Util Exp 1.01,outstanding,271,1
+Util Exp 1.01,outstanding,272,3
+Util Exp 1.01,outstanding,273,1
+Util Exp 1.01,outstanding,274,5
+Util Exp 1.01,outstanding,275,2
+Util Exp 1.01,outstanding,276,3
+Util Exp 1.01,outstanding,277,2
+Util Exp 1.01,outstanding,278,1
+Util Exp 1.01,outstanding,279,3
+Util Exp 1.01,outstanding,280,2
+Util Exp 1.01,outstanding,281,2
+Util Exp 1.01,outstanding,282,4
+Util Exp 1.01,outstanding,283,5
+Util Exp 1.01,outstanding,284,3
+Util Exp 1.01,outstanding,285,3
+Util Exp 1.01,outstanding,286,1
+Util Exp 1.01,outstanding,287,2
+Util Exp 1.01,outstanding,288,1
+Util Exp 1.01,outstanding,290,2
+Util Exp 1.01,outstanding,291,3
+Util Exp 1.01,outstanding,292,9
+Util Exp 1.01,outstanding,293,1
+Util Exp 1.01,outstanding,294,1
+Util Exp 1.01,outstanding,295,4
+Util Exp 1.01,outstanding,296,1
+Util Exp 1.01,outstanding,297,3
+Util Exp 1.01,outstanding,298,4
+Util Exp 1.01,outstanding,299,3
+Util Exp 1.01,outstanding,300,1
+Util Exp 1.01,outstanding,301,2
+Util Exp 1.01,outstanding,302,2
+Util Exp 1.01,outstanding,303,2
+Util Exp 1.01,outstanding,304,6
+Util Exp 1.01,outstanding,305,3
+Util Exp 1.01,outstanding,306,3
+Util Exp 1.01,outstanding,307,3
+Util Exp 1.01,outstanding,309,2
+Util Exp 1.01,outstanding,310,5
+Util Exp 1.01,outstanding,311,3
+Util Exp 1.01,outstanding,313,2
+Util Exp 1.01,outstanding,314,2
+Util Exp 1.01,outstanding,315,4
+Util Exp 1.01,outstanding,316,3
+Util Exp 1.01,outstanding,317,3
+Util Exp 1.01,outstanding,318,7
+Util Exp 1.01,outstanding,319,4
+Util Exp 1.01,outstanding,320,5
+Util Exp 1.01,outstanding,321,3
+Util Exp 1.01,outstanding,322,4
+Util Exp 1.01,outstanding,323,4
+Util Exp 1.01,outstanding,324,4
+Util Exp 1.01,outstanding,325,2
+Util Exp 1.01,outstanding,326,3
+Util Exp 1.01,outstanding,327,2
+Util Exp 1.01,outstanding,328,5
+Util Exp 1.01,outstanding,329,7
+Util Exp 1.01,outstanding,330,2
+Util Exp 1.01,outstanding,332,3
+Util Exp 1.01,outstanding,333,5
+Util Exp 1.01,outstanding,334,2
+Util Exp 1.01,outstanding,335,1
+Util Exp 1.01,outstanding,336,3
+Util Exp 1.01,outstanding,337,3
+Util Exp 1.01,outstanding,338,4
+Util Exp 1.01,outstanding,339,4
+Util Exp 1.01,outstanding,340,1
+Util Exp 1.01,outstanding,341,2
+Util Exp 1.01,outstanding,342,5
+Util Exp 1.01,outstanding,343,1
+Util Exp 1.01,outstanding,344,2
+Util Exp 1.01,outstanding,345,2
+Util Exp 1.01,outstanding,346,1
+Util Exp 1.01,outstanding,347,2
+Util Exp 1.01,outstanding,348,1
+Util Exp 1.01,outstanding,349,3
+Util Exp 1.01,outstanding,351,1
+Util Exp 1.01,outstanding,352,3
+Util Exp 1.01,outstanding,353,4
+Util Exp 1.01,outstanding,354,3
+Util Exp 1.01,outstanding,355,2
+Util Exp 1.01,outstanding,357,7
+Util Exp 1.01,outstanding,358,6
+Util Exp 1.01,outstanding,359,4
+Util Exp 1.01,outstanding,360,5
+Util Exp 1.01,outstanding,361,1
+Util Exp 1.01,outstanding,362,2
+Util Exp 1.01,outstanding,363,3
+Util Exp 1.01,outstanding,364,3
+Util Exp 1.01,outstanding,365,123
+Util Exp 1.05,resolved,1,10340
+Util Exp 1.05,resolved,2,1039
+Util Exp 1.05,resolved,3,525
+Util Exp 1.05,resolved,4,315
+Util Exp 1.05,resolved,5,232
+Util Exp 1.05,resolved,6,176
+Util Exp 1.05,resolved,7,135
+Util Exp 1.05,resolved,8,112
+Util Exp 1.05,resolved,9,102
+Util Exp 1.05,resolved,10,74
+Util Exp 1.05,resolved,11,74
+Util Exp 1.05,resolved,12,51
+Util Exp 1.05,resolved,13,56
+Util Exp 1.05,resolved,14,47
+Util Exp 1.05,resolved,15,54
+Util Exp 1.05,resolved,16,45
+Util Exp 1.05,resolved,17,45
+Util Exp 1.05,resolved,18,33
+Util Exp 1.05,resolved,19,34
+Util Exp 1.05,resolved,20,32
+Util Exp 1.05,resolved,21,22
+Util Exp 1.05,resolved,22,44
+Util Exp 1.05,resolved,23,18
+Util Exp 1.05,resolved,24,25
+Util Exp 1.05,resolved,25,27
+Util Exp 1.05,resolved,26,36
+Util Exp 1.05,resolved,27,26
+Util Exp 1.05,resolved,28,22
+Util Exp 1.05,resolved,29,21
+Util Exp 1.05,resolved,30,17
+Util Exp 1.05,resolved,31,18
+Util Exp 1.05,resolved,32,18
+Util Exp 1.05,resolved,33,22
+Util Exp 1.05,resolved,34,22
+Util Exp 1.05,resolved,35,15
+Util Exp 1.05,resolved,36,16
+Util Exp 1.05,resolved,37,16
+Util Exp 1.05,resolved,38,14
+Util Exp 1.05,resolved,39,16
+Util Exp 1.05,resolved,40,10
+Util Exp 1.05,resolved,41,13
+Util Exp 1.05,resolved,42,10
+Util Exp 1.05,resolved,43,4
+Util Exp 1.05,resolved,44,14
+Util Exp 1.05,resolved,45,12
+Util Exp 1.05,resolved,46,10
+Util Exp 1.05,resolved,47,12
+Util Exp 1.05,resolved,48,9
+Util Exp 1.05,resolved,49,9
+Util Exp 1.05,resolved,50,10
+Util Exp 1.05,resolved,51,19
+Util Exp 1.05,resolved,52,9
+Util Exp 1.05,resolved,53,10
+Util Exp 1.05,resolved,54,9
+Util Exp 1.05,resolved,55,8
+Util Exp 1.05,resolved,56,11
+Util Exp 1.05,resolved,57,10
+Util Exp 1.05,resolved,58,10
+Util Exp 1.05,resolved,59,9
+Util Exp 1.05,resolved,60,10
+Util Exp 1.05,resolved,61,5
+Util Exp 1.05,resolved,62,6
+Util Exp 1.05,resolved,63,3
+Util Exp 1.05,resolved,64,9
+Util Exp 1.05,resolved,65,7
+Util Exp 1.05,resolved,66,11
+Util Exp 1.05,resolved,67,7
+Util Exp 1.05,resolved,68,5
+Util Exp 1.05,resolved,69,4
+Util Exp 1.05,resolved,70,10
+Util Exp 1.05,resolved,71,5
+Util Exp 1.05,resolved,72,5
+Util Exp 1.05,resolved,73,5
+Util Exp 1.05,resolved,74,6
+Util Exp 1.05,resolved,75,5
+Util Exp 1.05,resolved,76,2
+Util Exp 1.05,resolved,77,6
+Util Exp 1.05,resolved,78,4
+Util Exp 1.05,resolved,79,4
+Util Exp 1.05,resolved,80,7
+Util Exp 1.05,resolved,81,1
+Util Exp 1.05,resolved,82,5
+Util Exp 1.05,resolved,83,5
+Util Exp 1.05,resolved,84,6
+Util Exp 1.05,resolved,85,1
+Util Exp 1.05,resolved,86,7
+Util Exp 1.05,resolved,87,9
+Util Exp 1.05,resolved,88,6
+Util Exp 1.05,resolved,89,7
+Util Exp 1.05,resolved,90,2
+Util Exp 1.05,resolved,91,3
+Util Exp 1.05,resolved,92,5
+Util Exp 1.05,resolved,93,8
+Util Exp 1.05,resolved,94,5
+Util Exp 1.05,resolved,95,5
+Util Exp 1.05,resolved,96,5
+Util Exp 1.05,resolved,97,2
+Util Exp 1.05,resolved,98,3
+Util Exp 1.05,resolved,99,2
+Util Exp 1.05,resolved,100,6
+Util Exp 1.05,resolved,101,4
+Util Exp 1.05,resolved,102,5
+Util Exp 1.05,resolved,104,3
+Util Exp 1.05,resolved,105,6
+Util Exp 1.05,resolved,106,2
+Util Exp 1.05,resolved,107,4
+Util Exp 1.05,resolved,108,7
+Util Exp 1.05,resolved,109,2
+Util Exp 1.05,resolved,110,6
+Util Exp 1.05,resolved,111,1
+Util Exp 1.05,resolved,112,2
+Util Exp 1.05,resolved,113,2
+Util Exp 1.05,resolved,114,3
+Util Exp 1.05,resolved,115,1
+Util Exp 1.05,resolved,116,5
+Util Exp 1.05,resolved,118,5
+Util Exp 1.05,resolved,119,2
+Util Exp 1.05,resolved,121,6
+Util Exp 1.05,resolved,122,4
+Util Exp 1.05,resolved,123,6
+Util Exp 1.05,resolved,124,3
+Util Exp 1.05,resolved,125,1
+Util Exp 1.05,resolved,126,4
+Util Exp 1.05,resolved,127,5
+Util Exp 1.05,resolved,128,2
+Util Exp 1.05,resolved,129,1
+Util Exp 1.05,resolved,130,3
+Util Exp 1.05,resolved,132,2
+Util Exp 1.05,resolved,133,5
+Util Exp 1.05,resolved,135,3
+Util Exp 1.05,resolved,136,3
+Util Exp 1.05,resolved,137,3
+Util Exp 1.05,resolved,138,5
+Util Exp 1.05,resolved,139,4
+Util Exp 1.05,resolved,140,3
+Util Exp 1.05,resolved,141,1
+Util Exp 1.05,resolved,142,3
+Util Exp 1.05,resolved,144,2
+Util Exp 1.05,resolved,145,6
+Util Exp 1.05,resolved,146,2
+Util Exp 1.05,resolved,147,2
+Util Exp 1.05,resolved,148,2
+Util Exp 1.05,resolved,149,8
+Util Exp 1.05,resolved,150,2
+Util Exp 1.05,resolved,151,1
+Util Exp 1.05,resolved,152,6
+Util Exp 1.05,resolved,153,2
+Util Exp 1.05,resolved,154,1
+Util Exp 1.05,resolved,155,3
+Util Exp 1.05,resolved,156,1
+Util Exp 1.05,resolved,157,3
+Util Exp 1.05,resolved,158,7
+Util Exp 1.05,resolved,159,6
+Util Exp 1.05,resolved,160,4
+Util Exp 1.05,resolved,161,1
+Util Exp 1.05,resolved,162,3
+Util Exp 1.05,resolved,163,3
+Util Exp 1.05,resolved,165,1
+Util Exp 1.05,resolved,166,1
+Util Exp 1.05,resolved,167,3
+Util Exp 1.05,resolved,168,4
+Util Exp 1.05,resolved,169,3
+Util Exp 1.05,resolved,170,2
+Util Exp 1.05,resolved,171,8
+Util Exp 1.05,resolved,172,4
+Util Exp 1.05,resolved,173,2
+Util Exp 1.05,resolved,174,2
+Util Exp 1.05,resolved,175,5
+Util Exp 1.05,resolved,177,1
+Util Exp 1.05,resolved,178,1
+Util Exp 1.05,resolved,179,3
+Util Exp 1.05,resolved,180,3
+Util Exp 1.05,resolved,181,4
+Util Exp 1.05,resolved,182,2
+Util Exp 1.05,resolved,183,3
+Util Exp 1.05,resolved,184,1
+Util Exp 1.05,resolved,185,1
+Util Exp 1.05,resolved,187,3
+Util Exp 1.05,resolved,188,1
+Util Exp 1.05,resolved,189,1
+Util Exp 1.05,resolved,191,4
+Util Exp 1.05,resolved,194,3
+Util Exp 1.05,resolved,195,5
+Util Exp 1.05,resolved,196,1
+Util Exp 1.05,resolved,197,3
+Util Exp 1.05,resolved,198,4
+Util Exp 1.05,resolved,199,2
+Util Exp 1.05,resolved,200,1
+Util Exp 1.05,resolved,201,1
+Util Exp 1.05,resolved,202,2
+Util Exp 1.05,resolved,203,2
+Util Exp 1.05,resolved,204,3
+Util Exp 1.05,resolved,206,2
+Util Exp 1.05,resolved,207,3
+Util Exp 1.05,resolved,208,1
+Util Exp 1.05,resolved,209,1
+Util Exp 1.05,resolved,210,1
+Util Exp 1.05,resolved,211,2
+Util Exp 1.05,resolved,212,2
+Util Exp 1.05,resolved,213,1
+Util Exp 1.05,resolved,214,2
+Util Exp 1.05,resolved,215,1
+Util Exp 1.05,resolved,217,2
+Util Exp 1.05,resolved,218,1
+Util Exp 1.05,resolved,219,2
+Util Exp 1.05,resolved,221,1
+Util Exp 1.05,resolved,222,1
+Util Exp 1.05,resolved,223,2
+Util Exp 1.05,resolved,224,1
+Util Exp 1.05,resolved,225,2
+Util Exp 1.05,resolved,226,1
+Util Exp 1.05,resolved,227,2
+Util Exp 1.05,resolved,228,1
+Util Exp 1.05,resolved,229,3
+Util Exp 1.05,resolved,230,1
+Util Exp 1.05,resolved,232,1
+Util Exp 1.05,resolved,233,1
+Util Exp 1.05,resolved,234,1
+Util Exp 1.05,resolved,236,2
+Util Exp 1.05,resolved,240,3
+Util Exp 1.05,resolved,241,2
+Util Exp 1.05,resolved,243,2
+Util Exp 1.05,resolved,245,1
+Util Exp 1.05,resolved,246,3
+Util Exp 1.05,resolved,247,1
+Util Exp 1.05,resolved,249,3
+Util Exp 1.05,resolved,250,1
+Util Exp 1.05,resolved,251,2
+Util Exp 1.05,resolved,252,1
+Util Exp 1.05,resolved,253,1
+Util Exp 1.05,resolved,255,2
+Util Exp 1.05,resolved,256,2
+Util Exp 1.05,resolved,257,1
+Util Exp 1.05,resolved,258,2
+Util Exp 1.05,resolved,259,1
+Util Exp 1.05,resolved,261,3
+Util Exp 1.05,resolved,264,2
+Util Exp 1.05,resolved,265,2
+Util Exp 1.05,resolved,267,1
+Util Exp 1.05,resolved,269,1
+Util Exp 1.05,resolved,270,1
+Util Exp 1.05,resolved,271,1
+Util Exp 1.05,resolved,272,2
+Util Exp 1.05,resolved,273,1
+Util Exp 1.05,resolved,274,1
+Util Exp 1.05,resolved,275,1
+Util Exp 1.05,resolved,276,1
+Util Exp 1.05,resolved,277,1
+Util Exp 1.05,resolved,278,1
+Util Exp 1.05,resolved,281,1
+Util Exp 1.05,resolved,282,2
+Util Exp 1.05,resolved,283,1
+Util Exp 1.05,resolved,287,1
+Util Exp 1.05,resolved,288,2
+Util Exp 1.05,resolved,289,1
+Util Exp 1.05,resolved,291,4
+Util Exp 1.05,resolved,293,1
+Util Exp 1.05,resolved,296,1
+Util Exp 1.05,resolved,297,1
+Util Exp 1.05,resolved,298,1
+Util Exp 1.05,resolved,299,1
+Util Exp 1.05,resolved,300,2
+Util Exp 1.05,resolved,302,1
+Util Exp 1.05,resolved,305,1
+Util Exp 1.05,resolved,306,1
+Util Exp 1.05,resolved,307,3
+Util Exp 1.05,resolved,310,2
+Util Exp 1.05,resolved,314,1
+Util Exp 1.05,resolved,316,2
+Util Exp 1.05,resolved,318,2
+Util Exp 1.05,resolved,319,1
+Util Exp 1.05,resolved,321,1
+Util Exp 1.05,resolved,322,1
+Util Exp 1.05,resolved,323,1
+Util Exp 1.05,resolved,327,1
+Util Exp 1.05,resolved,328,1
+Util Exp 1.05,resolved,330,2
+Util Exp 1.05,resolved,334,1
+Util Exp 1.05,resolved,335,1
+Util Exp 1.05,resolved,337,1
+Util Exp 1.05,resolved,339,1
+Util Exp 1.05,resolved,341,1
+Util Exp 1.05,resolved,342,1
+Util Exp 1.05,resolved,343,1
+Util Exp 1.05,resolved,344,1
+Util Exp 1.05,resolved,345,2
+Util Exp 1.05,resolved,349,1
+Util Exp 1.05,resolved,363,1
+Util Exp 1.05,outstanding,0,40
+Util Exp 1.05,outstanding,1,19
+Util Exp 1.05,outstanding,2,13
+Util Exp 1.05,outstanding,3,18
+Util Exp 1.05,outstanding,4,14
+Util Exp 1.05,outstanding,5,10
+Util Exp 1.05,outstanding,6,12
+Util Exp 1.05,outstanding,7,14
+Util Exp 1.05,outstanding,8,12
+Util Exp 1.05,outstanding,9,8
+Util Exp 1.05,outstanding,10,10
+Util Exp 1.05,outstanding,11,9
+Util Exp 1.05,outstanding,12,8
+Util Exp 1.05,outstanding,13,14
+Util Exp 1.05,outstanding,14,11
+Util Exp 1.05,outstanding,15,11
+Util Exp 1.05,outstanding,16,10
+Util Exp 1.05,outstanding,17,13
+Util Exp 1.05,outstanding,18,14
+Util Exp 1.05,outstanding,19,9
+Util Exp 1.05,outstanding,20,11
+Util Exp 1.05,outstanding,21,11
+Util Exp 1.05,outstanding,22,10
+Util Exp 1.05,outstanding,23,9
+Util Exp 1.05,outstanding,24,5
+Util Exp 1.05,outstanding,25,8
+Util Exp 1.05,outstanding,26,8
+Util Exp 1.05,outstanding,27,8
+Util Exp 1.05,outstanding,28,6
+Util Exp 1.05,outstanding,29,10
+Util Exp 1.05,outstanding,30,5
+Util Exp 1.05,outstanding,31,7
+Util Exp 1.05,outstanding,32,7
+Util Exp 1.05,outstanding,33,8
+Util Exp 1.05,outstanding,34,9
+Util Exp 1.05,outstanding,35,5
+Util Exp 1.05,outstanding,36,6
+Util Exp 1.05,outstanding,37,10
+Util Exp 1.05,outstanding,38,4
+Util Exp 1.05,outstanding,39,4
+Util Exp 1.05,outstanding,40,7
+Util Exp 1.05,outstanding,41,5
+Util Exp 1.05,outstanding,42,8
+Util Exp 1.05,outstanding,43,9
+Util Exp 1.05,outstanding,44,7
+Util Exp 1.05,outstanding,45,7
+Util Exp 1.05,outstanding,46,10
+Util Exp 1.05,outstanding,47,6
+Util Exp 1.05,outstanding,48,7
+Util Exp 1.05,outstanding,49,7
+Util Exp 1.05,outstanding,50,8
+Util Exp 1.05,outstanding,51,5
+Util Exp 1.05,outstanding,52,6
+Util Exp 1.05,outstanding,53,14
+Util Exp 1.05,outstanding,54,8
+Util Exp 1.05,outstanding,55,6
+Util Exp 1.05,outstanding,56,9
+Util Exp 1.05,outstanding,57,6
+Util Exp 1.05,outstanding,58,7
+Util Exp 1.05,outstanding,59,6
+Util Exp 1.05,outstanding,60,6
+Util Exp 1.05,outstanding,61,5
+Util Exp 1.05,outstanding,62,9
+Util Exp 1.05,outstanding,63,6
+Util Exp 1.05,outstanding,64,15
+Util Exp 1.05,outstanding,65,8
+Util Exp 1.05,outstanding,66,6
+Util Exp 1.05,outstanding,67,3
+Util Exp 1.05,outstanding,68,4
+Util Exp 1.05,outstanding,69,9
+Util Exp 1.05,outstanding,70,7
+Util Exp 1.05,outstanding,71,6
+Util Exp 1.05,outstanding,72,7
+Util Exp 1.05,outstanding,73,6
+Util Exp 1.05,outstanding,74,5
+Util Exp 1.05,outstanding,75,6
+Util Exp 1.05,outstanding,76,7
+Util Exp 1.05,outstanding,77,8
+Util Exp 1.05,outstanding,78,5
+Util Exp 1.05,outstanding,79,8
+Util Exp 1.05,outstanding,80,7
+Util Exp 1.05,outstanding,81,4
+Util Exp 1.05,outstanding,82,7
+Util Exp 1.05,outstanding,83,5
+Util Exp 1.05,outstanding,84,5
+Util Exp 1.05,outstanding,85,9
+Util Exp 1.05,outstanding,86,4
+Util Exp 1.05,outstanding,87,3
+Util Exp 1.05,outstanding,88,6
+Util Exp 1.05,outstanding,89,8
+Util Exp 1.05,outstanding,90,4
+Util Exp 1.05,outstanding,91,7
+Util Exp 1.05,outstanding,92,6
+Util Exp 1.05,outstanding,93,9
+Util Exp 1.05,outstanding,94,6
+Util Exp 1.05,outstanding,95,3
+Util Exp 1.05,outstanding,96,4
+Util Exp 1.05,outstanding,97,9
+Util Exp 1.05,outstanding,98,4
+Util Exp 1.05,outstanding,99,8
+Util Exp 1.05,outstanding,100,8
+Util Exp 1.05,outstanding,101,6
+Util Exp 1.05,outstanding,102,5
+Util Exp 1.05,outstanding,103,8
+Util Exp 1.05,outstanding,104,8
+Util Exp 1.05,outstanding,105,10
+Util Exp 1.05,outstanding,106,8
+Util Exp 1.05,outstanding,107,11
+Util Exp 1.05,outstanding,108,11
+Util Exp 1.05,outstanding,109,4
+Util Exp 1.05,outstanding,110,10
+Util Exp 1.05,outstanding,111,8
+Util Exp 1.05,outstanding,112,5
+Util Exp 1.05,outstanding,113,5
+Util Exp 1.05,outstanding,114,3
+Util Exp 1.05,outstanding,115,4
+Util Exp 1.05,outstanding,116,7
+Util Exp 1.05,outstanding,117,9
+Util Exp 1.05,outstanding,118,8
+Util Exp 1.05,outstanding,119,6
+Util Exp 1.05,outstanding,120,2
+Util Exp 1.05,outstanding,121,6
+Util Exp 1.05,outstanding,122,2
+Util Exp 1.05,outstanding,123,9
+Util Exp 1.05,outstanding,124,5
+Util Exp 1.05,outstanding,125,3
+Util Exp 1.05,outstanding,126,3
+Util Exp 1.05,outstanding,127,8
+Util Exp 1.05,outstanding,128,5
+Util Exp 1.05,outstanding,129,5
+Util Exp 1.05,outstanding,130,7
+Util Exp 1.05,outstanding,131,10
+Util Exp 1.05,outstanding,132,7
+Util Exp 1.05,outstanding,133,8
+Util Exp 1.05,outstanding,134,2
+Util Exp 1.05,outstanding,135,4
+Util Exp 1.05,outstanding,136,6
+Util Exp 1.05,outstanding,137,6
+Util Exp 1.05,outstanding,138,5
+Util Exp 1.05,outstanding,139,3
+Util Exp 1.05,outstanding,140,7
+Util Exp 1.05,outstanding,141,7
+Util Exp 1.05,outstanding,142,3
+Util Exp 1.05,outstanding,143,4
+Util Exp 1.05,outstanding,144,7
+Util Exp 1.05,outstanding,145,5
+Util Exp 1.05,outstanding,146,4
+Util Exp 1.05,outstanding,147,6
+Util Exp 1.05,outstanding,148,5
+Util Exp 1.05,outstanding,149,5
+Util Exp 1.05,outstanding,150,9
+Util Exp 1.05,outstanding,151,8
+Util Exp 1.05,outstanding,152,5
+Util Exp 1.05,outstanding,153,6
+Util Exp 1.05,outstanding,154,1
+Util Exp 1.05,outstanding,155,2
+Util Exp 1.05,outstanding,156,5
+Util Exp 1.05,outstanding,157,10
+Util Exp 1.05,outstanding,158,7
+Util Exp 1.05,outstanding,159,6
+Util Exp 1.05,outstanding,160,3
+Util Exp 1.05,outstanding,161,6
+Util Exp 1.05,outstanding,162,6
+Util Exp 1.05,outstanding,163,5
+Util Exp 1.05,outstanding,164,4
+Util Exp 1.05,outstanding,165,4
+Util Exp 1.05,outstanding,166,7
+Util Exp 1.05,outstanding,167,6
+Util Exp 1.05,outstanding,168,2
+Util Exp 1.05,outstanding,169,9
+Util Exp 1.05,outstanding,170,3
+Util Exp 1.05,outstanding,171,5
+Util Exp 1.05,outstanding,172,7
+Util Exp 1.05,outstanding,174,7
+Util Exp 1.05,outstanding,175,5
+Util Exp 1.05,outstanding,176,1
+Util Exp 1.05,outstanding,177,5
+Util Exp 1.05,outstanding,178,3
+Util Exp 1.05,outstanding,179,5
+Util Exp 1.05,outstanding,180,3
+Util Exp 1.05,outstanding,181,3
+Util Exp 1.05,outstanding,182,4
+Util Exp 1.05,outstanding,183,3
+Util Exp 1.05,outstanding,184,2
+Util Exp 1.05,outstanding,185,3
+Util Exp 1.05,outstanding,186,7
+Util Exp 1.05,outstanding,187,4
+Util Exp 1.05,outstanding,188,3
+Util Exp 1.05,outstanding,189,10
+Util Exp 1.05,outstanding,190,7
+Util Exp 1.05,outstanding,191,4
+Util Exp 1.05,outstanding,192,3
+Util Exp 1.05,outstanding,193,1
+Util Exp 1.05,outstanding,194,4
+Util Exp 1.05,outstanding,195,3
+Util Exp 1.05,outstanding,196,3
+Util Exp 1.05,outstanding,197,1
+Util Exp 1.05,outstanding,198,1
+Util Exp 1.05,outstanding,199,6
+Util Exp 1.05,outstanding,200,3
+Util Exp 1.05,outstanding,202,2
+Util Exp 1.05,outstanding,203,5
+Util Exp 1.05,outstanding,204,7
+Util Exp 1.05,outstanding,205,5
+Util Exp 1.05,outstanding,206,5
+Util Exp 1.05,outstanding,207,2
+Util Exp 1.05,outstanding,208,2
+Util Exp 1.05,outstanding,209,1
+Util Exp 1.05,outstanding,210,1
+Util Exp 1.05,outstanding,211,2
+Util Exp 1.05,outstanding,212,2
+Util Exp 1.05,outstanding,213,2
+Util Exp 1.05,outstanding,214,1
+Util Exp 1.05,outstanding,215,3
+Util Exp 1.05,outstanding,216,1
+Util Exp 1.05,outstanding,217,4
+Util Exp 1.05,outstanding,218,4
+Util Exp 1.05,outstanding,219,3
+Util Exp 1.05,outstanding,220,4
+Util Exp 1.05,outstanding,221,4
+Util Exp 1.05,outstanding,222,4
+Util Exp 1.05,outstanding,223,7
+Util Exp 1.05,outstanding,224,1
+Util Exp 1.05,outstanding,225,3
+Util Exp 1.05,outstanding,226,2
+Util Exp 1.05,outstanding,227,3
+Util Exp 1.05,outstanding,228,1
+Util Exp 1.05,outstanding,230,1
+Util Exp 1.05,outstanding,231,2
+Util Exp 1.05,outstanding,232,2
+Util Exp 1.05,outstanding,233,3
+Util Exp 1.05,outstanding,234,4
+Util Exp 1.05,outstanding,236,6
+Util Exp 1.05,outstanding,237,4
+Util Exp 1.05,outstanding,238,5
+Util Exp 1.05,outstanding,239,1
+Util Exp 1.05,outstanding,240,4
+Util Exp 1.05,outstanding,241,2
+Util Exp 1.05,outstanding,242,1
+Util Exp 1.05,outstanding,243,2
+Util Exp 1.05,outstanding,244,4
+Util Exp 1.05,outstanding,245,4
+Util Exp 1.05,outstanding,246,2
+Util Exp 1.05,outstanding,247,4
+Util Exp 1.05,outstanding,248,3
+Util Exp 1.05,outstanding,249,2
+Util Exp 1.05,outstanding,250,1
+Util Exp 1.05,outstanding,252,3
+Util Exp 1.05,outstanding,253,2
+Util Exp 1.05,outstanding,254,1
+Util Exp 1.05,outstanding,255,3
+Util Exp 1.05,outstanding,256,2
+Util Exp 1.05,outstanding,257,2
+Util Exp 1.05,outstanding,258,5
+Util Exp 1.05,outstanding,259,1
+Util Exp 1.05,outstanding,260,1
+Util Exp 1.05,outstanding,261,1
+Util Exp 1.05,outstanding,262,1
+Util Exp 1.05,outstanding,263,1
+Util Exp 1.05,outstanding,264,4
+Util Exp 1.05,outstanding,265,4
+Util Exp 1.05,outstanding,266,3
+Util Exp 1.05,outstanding,267,3
+Util Exp 1.05,outstanding,269,6
+Util Exp 1.05,outstanding,270,2
+Util Exp 1.05,outstanding,271,2
+Util Exp 1.05,outstanding,272,3
+Util Exp 1.05,outstanding,273,1
+Util Exp 1.05,outstanding,274,1
+Util Exp 1.05,outstanding,275,3
+Util Exp 1.05,outstanding,276,4
+Util Exp 1.05,outstanding,277,1
+Util Exp 1.05,outstanding,278,2
+Util Exp 1.05,outstanding,279,2
+Util Exp 1.05,outstanding,280,1
+Util Exp 1.05,outstanding,281,2
+Util Exp 1.05,outstanding,282,2
+Util Exp 1.05,outstanding,283,4
+Util Exp 1.05,outstanding,284,3
+Util Exp 1.05,outstanding,285,3
+Util Exp 1.05,outstanding,286,1
+Util Exp 1.05,outstanding,288,1
+Util Exp 1.05,outstanding,290,2
+Util Exp 1.05,outstanding,291,1
+Util Exp 1.05,outstanding,292,9
+Util Exp 1.05,outstanding,293,1
+Util Exp 1.05,outstanding,294,1
+Util Exp 1.05,outstanding,295,3
+Util Exp 1.05,outstanding,296,1
+Util Exp 1.05,outstanding,297,3
+Util Exp 1.05,outstanding,298,3
+Util Exp 1.05,outstanding,299,3
+Util Exp 1.05,outstanding,301,1
+Util Exp 1.05,outstanding,302,1
+Util Exp 1.05,outstanding,303,2
+Util Exp 1.05,outstanding,304,4
+Util Exp 1.05,outstanding,305,2
+Util Exp 1.05,outstanding,306,2
+Util Exp 1.05,outstanding,307,2
+Util Exp 1.05,outstanding,309,2
+Util Exp 1.05,outstanding,310,2
+Util Exp 1.05,outstanding,311,3
+Util Exp 1.05,outstanding,312,1
+Util Exp 1.05,outstanding,313,2
+Util Exp 1.05,outstanding,314,2
+Util Exp 1.05,outstanding,315,2
+Util Exp 1.05,outstanding,316,2
+Util Exp 1.05,outstanding,317,2
+Util Exp 1.05,outstanding,318,3
+Util Exp 1.05,outstanding,319,3
+Util Exp 1.05,outstanding,320,5
+Util Exp 1.05,outstanding,321,2
+Util Exp 1.05,outstanding,322,2
+Util Exp 1.05,outstanding,323,4
+Util Exp 1.05,outstanding,324,2
+Util Exp 1.05,outstanding,325,1
+Util Exp 1.05,outstanding,326,3
+Util Exp 1.05,outstanding,327,2
+Util Exp 1.05,outstanding,328,2
+Util Exp 1.05,outstanding,329,6
+Util Exp 1.05,outstanding,330,1
+Util Exp 1.05,outstanding,332,3
+Util Exp 1.05,outstanding,333,4
+Util Exp 1.05,outstanding,334,1
+Util Exp 1.05,outstanding,335,1
+Util Exp 1.05,outstanding,336,1
+Util Exp 1.05,outstanding,337,3
+Util Exp 1.05,outstanding,338,4
+Util Exp 1.05,outstanding,339,2
+Util Exp 1.05,outstanding,340,1
+Util Exp 1.05,outstanding,341,2
+Util Exp 1.05,outstanding,342,4
+Util Exp 1.05,outstanding,344,2
+Util Exp 1.05,outstanding,345,1
+Util Exp 1.05,outstanding,346,2
+Util Exp 1.05,outstanding,347,2
+Util Exp 1.05,outstanding,348,1
+Util Exp 1.05,outstanding,351,1
+Util Exp 1.05,outstanding,352,2
+Util Exp 1.05,outstanding,353,4
+Util Exp 1.05,outstanding,354,3
+Util Exp 1.05,outstanding,357,3
+Util Exp 1.05,outstanding,358,3
+Util Exp 1.05,outstanding,359,1
+Util Exp 1.05,outstanding,360,1
+Util Exp 1.05,outstanding,361,2
+Util Exp 1.05,outstanding,362,1
+Util Exp 1.05,outstanding,363,3
+Util Exp 1.05,outstanding,364,1
+Util Exp 1.05,outstanding,365,87
+Util Exp 1.1,resolved,1,9974
+Util Exp 1.1,resolved,2,912
+Util Exp 1.1,resolved,3,474
+Util Exp 1.1,resolved,4,289
+Util Exp 1.1,resolved,5,230
+Util Exp 1.1,resolved,6,134
+Util Exp 1.1,resolved,7,120
+Util Exp 1.1,resolved,8,127
+Util Exp 1.1,resolved,9,93
+Util Exp 1.1,resolved,10,82
+Util Exp 1.1,resolved,11,75
+Util Exp 1.1,resolved,12,81
+Util Exp 1.1,resolved,13,63
+Util Exp 1.1,resolved,14,46
+Util Exp 1.1,resolved,15,42
+Util Exp 1.1,resolved,16,56
+Util Exp 1.1,resolved,17,41
+Util Exp 1.1,resolved,18,40
+Util Exp 1.1,resolved,19,34
+Util Exp 1.1,resolved,20,17
+Util Exp 1.1,resolved,21,22
+Util Exp 1.1,resolved,22,33
+Util Exp 1.1,resolved,23,28
+Util Exp 1.1,resolved,24,24
+Util Exp 1.1,resolved,25,22
+Util Exp 1.1,resolved,26,29
+Util Exp 1.1,resolved,27,25
+Util Exp 1.1,resolved,28,29
+Util Exp 1.1,resolved,29,17
+Util Exp 1.1,resolved,30,24
+Util Exp 1.1,resolved,31,22
+Util Exp 1.1,resolved,32,18
+Util Exp 1.1,resolved,33,16
+Util Exp 1.1,resolved,34,18
+Util Exp 1.1,resolved,35,18
+Util Exp 1.1,resolved,36,19
+Util Exp 1.1,resolved,37,19
+Util Exp 1.1,resolved,38,19
+Util Exp 1.1,resolved,39,12
+Util Exp 1.1,resolved,40,20
+Util Exp 1.1,resolved,41,18
+Util Exp 1.1,resolved,42,6
+Util Exp 1.1,resolved,43,14
+Util Exp 1.1,resolved,44,18
+Util Exp 1.1,resolved,45,15
+Util Exp 1.1,resolved,46,9
+Util Exp 1.1,resolved,47,12
+Util Exp 1.1,resolved,48,12
+Util Exp 1.1,resolved,49,13
+Util Exp 1.1,resolved,50,5
+Util Exp 1.1,resolved,51,14
+Util Exp 1.1,resolved,52,10
+Util Exp 1.1,resolved,53,18
+Util Exp 1.1,resolved,54,11
+Util Exp 1.1,resolved,55,10
+Util Exp 1.1,resolved,56,11
+Util Exp 1.1,resolved,57,6
+Util Exp 1.1,resolved,58,10
+Util Exp 1.1,resolved,59,9
+Util Exp 1.1,resolved,60,9
+Util Exp 1.1,resolved,61,8
+Util Exp 1.1,resolved,62,11
+Util Exp 1.1,resolved,63,6
+Util Exp 1.1,resolved,64,8
+Util Exp 1.1,resolved,65,12
+Util Exp 1.1,resolved,66,10
+Util Exp 1.1,resolved,67,10
+Util Exp 1.1,resolved,68,5
+Util Exp 1.1,resolved,69,4
+Util Exp 1.1,resolved,70,13
+Util Exp 1.1,resolved,71,4
+Util Exp 1.1,resolved,72,11
+Util Exp 1.1,resolved,73,4
+Util Exp 1.1,resolved,74,8
+Util Exp 1.1,resolved,75,7
+Util Exp 1.1,resolved,76,7
+Util Exp 1.1,resolved,77,7
+Util Exp 1.1,resolved,78,4
+Util Exp 1.1,resolved,79,10
+Util Exp 1.1,resolved,80,10
+Util Exp 1.1,resolved,81,8
+Util Exp 1.1,resolved,82,3
+Util Exp 1.1,resolved,83,7
+Util Exp 1.1,resolved,84,5
+Util Exp 1.1,resolved,85,11
+Util Exp 1.1,resolved,86,2
+Util Exp 1.1,resolved,87,8
+Util Exp 1.1,resolved,88,3
+Util Exp 1.1,resolved,89,10
+Util Exp 1.1,resolved,90,10
+Util Exp 1.1,resolved,91,2
+Util Exp 1.1,resolved,92,11
+Util Exp 1.1,resolved,93,7
+Util Exp 1.1,resolved,94,5
+Util Exp 1.1,resolved,95,5
+Util Exp 1.1,resolved,96,4
+Util Exp 1.1,resolved,97,4
+Util Exp 1.1,resolved,98,4
+Util Exp 1.1,resolved,99,9
+Util Exp 1.1,resolved,100,4
+Util Exp 1.1,resolved,101,5
+Util Exp 1.1,resolved,102,3
+Util Exp 1.1,resolved,103,9
+Util Exp 1.1,resolved,104,10
+Util Exp 1.1,resolved,105,7
+Util Exp 1.1,resolved,106,10
+Util Exp 1.1,resolved,107,5
+Util Exp 1.1,resolved,108,11
+Util Exp 1.1,resolved,109,5
+Util Exp 1.1,resolved,110,6
+Util Exp 1.1,resolved,111,5
+Util Exp 1.1,resolved,112,5
+Util Exp 1.1,resolved,113,3
+Util Exp 1.1,resolved,114,4
+Util Exp 1.1,resolved,115,6
+Util Exp 1.1,resolved,116,4
+Util Exp 1.1,resolved,117,7
+Util Exp 1.1,resolved,118,9
+Util Exp 1.1,resolved,119,7
+Util Exp 1.1,resolved,120,6
+Util Exp 1.1,resolved,121,7
+Util Exp 1.1,resolved,122,2
+Util Exp 1.1,resolved,123,5
+Util Exp 1.1,resolved,124,2
+Util Exp 1.1,resolved,125,6
+Util Exp 1.1,resolved,126,4
+Util Exp 1.1,resolved,127,6
+Util Exp 1.1,resolved,128,5
+Util Exp 1.1,resolved,129,5
+Util Exp 1.1,resolved,130,7
+Util Exp 1.1,resolved,131,8
+Util Exp 1.1,resolved,132,8
+Util Exp 1.1,resolved,133,2
+Util Exp 1.1,resolved,134,5
+Util Exp 1.1,resolved,135,9
+Util Exp 1.1,resolved,137,4
+Util Exp 1.1,resolved,138,7
+Util Exp 1.1,resolved,139,5
+Util Exp 1.1,resolved,140,3
+Util Exp 1.1,resolved,141,2
+Util Exp 1.1,resolved,142,1
+Util Exp 1.1,resolved,143,8
+Util Exp 1.1,resolved,144,1
+Util Exp 1.1,resolved,145,6
+Util Exp 1.1,resolved,146,3
+Util Exp 1.1,resolved,147,4
+Util Exp 1.1,resolved,148,4
+Util Exp 1.1,resolved,149,2
+Util Exp 1.1,resolved,150,6
+Util Exp 1.1,resolved,151,7
+Util Exp 1.1,resolved,152,2
+Util Exp 1.1,resolved,153,2
+Util Exp 1.1,resolved,154,3
+Util Exp 1.1,resolved,155,5
+Util Exp 1.1,resolved,156,4
+Util Exp 1.1,resolved,157,6
+Util Exp 1.1,resolved,158,7
+Util Exp 1.1,resolved,159,1
+Util Exp 1.1,resolved,160,1
+Util Exp 1.1,resolved,161,2
+Util Exp 1.1,resolved,162,4
+Util Exp 1.1,resolved,163,4
+Util Exp 1.1,resolved,164,4
+Util Exp 1.1,resolved,165,3
+Util Exp 1.1,resolved,166,7
+Util Exp 1.1,resolved,167,3
+Util Exp 1.1,resolved,168,5
+Util Exp 1.1,resolved,169,2
+Util Exp 1.1,resolved,170,2
+Util Exp 1.1,resolved,171,4
+Util Exp 1.1,resolved,172,2
+Util Exp 1.1,resolved,173,2
+Util Exp 1.1,resolved,174,3
+Util Exp 1.1,resolved,175,2
+Util Exp 1.1,resolved,177,2
+Util Exp 1.1,resolved,178,2
+Util Exp 1.1,resolved,179,5
+Util Exp 1.1,resolved,180,4
+Util Exp 1.1,resolved,181,4
+Util Exp 1.1,resolved,183,1
+Util Exp 1.1,resolved,184,3
+Util Exp 1.1,resolved,185,3
+Util Exp 1.1,resolved,186,5
+Util Exp 1.1,resolved,187,2
+Util Exp 1.1,resolved,188,3
+Util Exp 1.1,resolved,189,1
+Util Exp 1.1,resolved,190,2
+Util Exp 1.1,resolved,191,2
+Util Exp 1.1,resolved,192,3
+Util Exp 1.1,resolved,193,5
+Util Exp 1.1,resolved,194,4
+Util Exp 1.1,resolved,196,3
+Util Exp 1.1,resolved,197,1
+Util Exp 1.1,resolved,198,3
+Util Exp 1.1,resolved,199,2
+Util Exp 1.1,resolved,201,2
+Util Exp 1.1,resolved,202,4
+Util Exp 1.1,resolved,203,2
+Util Exp 1.1,resolved,204,3
+Util Exp 1.1,resolved,205,1
+Util Exp 1.1,resolved,206,2
+Util Exp 1.1,resolved,207,1
+Util Exp 1.1,resolved,209,2
+Util Exp 1.1,resolved,210,1
+Util Exp 1.1,resolved,211,1
+Util Exp 1.1,resolved,212,2
+Util Exp 1.1,resolved,213,1
+Util Exp 1.1,resolved,214,2
+Util Exp 1.1,resolved,215,1
+Util Exp 1.1,resolved,216,3
+Util Exp 1.1,resolved,217,5
+Util Exp 1.1,resolved,218,4
+Util Exp 1.1,resolved,219,1
+Util Exp 1.1,resolved,220,1
+Util Exp 1.1,resolved,221,2
+Util Exp 1.1,resolved,222,2
+Util Exp 1.1,resolved,223,1
+Util Exp 1.1,resolved,224,3
+Util Exp 1.1,resolved,225,1
+Util Exp 1.1,resolved,226,2
+Util Exp 1.1,resolved,227,3
+Util Exp 1.1,resolved,228,1
+Util Exp 1.1,resolved,229,1
+Util Exp 1.1,resolved,230,2
+Util Exp 1.1,resolved,231,2
+Util Exp 1.1,resolved,232,3
+Util Exp 1.1,resolved,233,1
+Util Exp 1.1,resolved,234,2
+Util Exp 1.1,resolved,235,2
+Util Exp 1.1,resolved,236,2
+Util Exp 1.1,resolved,237,1
+Util Exp 1.1,resolved,238,3
+Util Exp 1.1,resolved,239,5
+Util Exp 1.1,resolved,240,2
+Util Exp 1.1,resolved,242,3
+Util Exp 1.1,resolved,243,1
+Util Exp 1.1,resolved,244,2
+Util Exp 1.1,resolved,245,1
+Util Exp 1.1,resolved,246,2
+Util Exp 1.1,resolved,247,1
+Util Exp 1.1,resolved,248,2
+Util Exp 1.1,resolved,249,1
+Util Exp 1.1,resolved,250,2
+Util Exp 1.1,resolved,251,1
+Util Exp 1.1,resolved,252,3
+Util Exp 1.1,resolved,257,2
+Util Exp 1.1,resolved,258,1
+Util Exp 1.1,resolved,259,1
+Util Exp 1.1,resolved,262,1
+Util Exp 1.1,resolved,263,3
+Util Exp 1.1,resolved,264,2
+Util Exp 1.1,resolved,265,1
+Util Exp 1.1,resolved,267,2
+Util Exp 1.1,resolved,269,2
+Util Exp 1.1,resolved,270,1
+Util Exp 1.1,resolved,272,2
+Util Exp 1.1,resolved,273,1
+Util Exp 1.1,resolved,274,1
+Util Exp 1.1,resolved,280,1
+Util Exp 1.1,resolved,282,1
+Util Exp 1.1,resolved,283,2
+Util Exp 1.1,resolved,284,1
+Util Exp 1.1,resolved,286,1
+Util Exp 1.1,resolved,289,2
+Util Exp 1.1,resolved,290,2
+Util Exp 1.1,resolved,291,1
+Util Exp 1.1,resolved,292,1
+Util Exp 1.1,resolved,294,1
+Util Exp 1.1,resolved,295,1
+Util Exp 1.1,resolved,296,1
+Util Exp 1.1,resolved,297,1
+Util Exp 1.1,resolved,298,1
+Util Exp 1.1,resolved,303,2
+Util Exp 1.1,resolved,306,1
+Util Exp 1.1,resolved,307,3
+Util Exp 1.1,resolved,309,1
+Util Exp 1.1,resolved,312,1
+Util Exp 1.1,resolved,313,2
+Util Exp 1.1,resolved,314,1
+Util Exp 1.1,resolved,315,3
+Util Exp 1.1,resolved,316,1
+Util Exp 1.1,resolved,317,1
+Util Exp 1.1,resolved,320,1
+Util Exp 1.1,resolved,321,2
+Util Exp 1.1,resolved,327,2
+Util Exp 1.1,resolved,328,1
+Util Exp 1.1,resolved,329,1
+Util Exp 1.1,resolved,330,1
+Util Exp 1.1,resolved,331,1
+Util Exp 1.1,resolved,332,1
+Util Exp 1.1,resolved,333,2
+Util Exp 1.1,resolved,336,1
+Util Exp 1.1,resolved,342,1
+Util Exp 1.1,resolved,344,1
+Util Exp 1.1,resolved,345,1
+Util Exp 1.1,resolved,346,1
+Util Exp 1.1,resolved,348,2
+Util Exp 1.1,resolved,360,1
+Util Exp 1.1,outstanding,0,40
+Util Exp 1.1,outstanding,1,10
+Util Exp 1.1,outstanding,2,14
+Util Exp 1.1,outstanding,3,20
+Util Exp 1.1,outstanding,4,9
+Util Exp 1.1,outstanding,5,9
+Util Exp 1.1,outstanding,6,16
+Util Exp 1.1,outstanding,7,14
+Util Exp 1.1,outstanding,8,13
+Util Exp 1.1,outstanding,9,11
+Util Exp 1.1,outstanding,10,9
+Util Exp 1.1,outstanding,11,9
+Util Exp 1.1,outstanding,12,12
+Util Exp 1.1,outstanding,13,10
+Util Exp 1.1,outstanding,14,9
+Util Exp 1.1,outstanding,15,12
+Util Exp 1.1,outstanding,16,12
+Util Exp 1.1,outstanding,17,13
+Util Exp 1.1,outstanding,18,17
+Util Exp 1.1,outstanding,19,7
+Util Exp 1.1,outstanding,20,13
+Util Exp 1.1,outstanding,21,13
+Util Exp 1.1,outstanding,22,15
+Util Exp 1.1,outstanding,23,13
+Util Exp 1.1,outstanding,24,6
+Util Exp 1.1,outstanding,25,10
+Util Exp 1.1,outstanding,26,13
+Util Exp 1.1,outstanding,27,9
+Util Exp 1.1,outstanding,28,15
+Util Exp 1.1,outstanding,29,9
+Util Exp 1.1,outstanding,30,9
+Util Exp 1.1,outstanding,31,5
+Util Exp 1.1,outstanding,32,9
+Util Exp 1.1,outstanding,33,14
+Util Exp 1.1,outstanding,34,12
+Util Exp 1.1,outstanding,35,10
+Util Exp 1.1,outstanding,36,11
+Util Exp 1.1,outstanding,37,9
+Util Exp 1.1,outstanding,38,16
+Util Exp 1.1,outstanding,39,6
+Util Exp 1.1,outstanding,40,11
+Util Exp 1.1,outstanding,41,12
+Util Exp 1.1,outstanding,42,11
+Util Exp 1.1,outstanding,43,9
+Util Exp 1.1,outstanding,44,11
+Util Exp 1.1,outstanding,45,10
+Util Exp 1.1,outstanding,46,8
+Util Exp 1.1,outstanding,47,7
+Util Exp 1.1,outstanding,48,13
+Util Exp 1.1,outstanding,49,9
+Util Exp 1.1,outstanding,50,8
+Util Exp 1.1,outstanding,51,7
+Util Exp 1.1,outstanding,52,10
+Util Exp 1.1,outstanding,53,10
+Util Exp 1.1,outstanding,54,15
+Util Exp 1.1,outstanding,55,9
+Util Exp 1.1,outstanding,56,10
+Util Exp 1.1,outstanding,57,6
+Util Exp 1.1,outstanding,58,4
+Util Exp 1.1,outstanding,59,11
+Util Exp 1.1,outstanding,60,7
+Util Exp 1.1,outstanding,61,12
+Util Exp 1.1,outstanding,62,13
+Util Exp 1.1,outstanding,63,9
+Util Exp 1.1,outstanding,64,13
+Util Exp 1.1,outstanding,65,6
+Util Exp 1.1,outstanding,66,9
+Util Exp 1.1,outstanding,67,9
+Util Exp 1.1,outstanding,68,12
+Util Exp 1.1,outstanding,69,10
+Util Exp 1.1,outstanding,70,14
+Util Exp 1.1,outstanding,71,10
+Util Exp 1.1,outstanding,72,11
+Util Exp 1.1,outstanding,73,16
+Util Exp 1.1,outstanding,74,10
+Util Exp 1.1,outstanding,75,13
+Util Exp 1.1,outstanding,76,11
+Util Exp 1.1,outstanding,77,10
+Util Exp 1.1,outstanding,78,14
+Util Exp 1.1,outstanding,79,9
+Util Exp 1.1,outstanding,80,9
+Util Exp 1.1,outstanding,81,6
+Util Exp 1.1,outstanding,82,7
+Util Exp 1.1,outstanding,83,10
+Util Exp 1.1,outstanding,84,8
+Util Exp 1.1,outstanding,85,5
+Util Exp 1.1,outstanding,86,8
+Util Exp 1.1,outstanding,87,13
+Util Exp 1.1,outstanding,88,11
+Util Exp 1.1,outstanding,89,8
+Util Exp 1.1,outstanding,90,11
+Util Exp 1.1,outstanding,91,12
+Util Exp 1.1,outstanding,92,11
+Util Exp 1.1,outstanding,93,12
+Util Exp 1.1,outstanding,94,11
+Util Exp 1.1,outstanding,95,10
+Util Exp 1.1,outstanding,96,10
+Util Exp 1.1,outstanding,97,13
+Util Exp 1.1,outstanding,98,13
+Util Exp 1.1,outstanding,99,10
+Util Exp 1.1,outstanding,100,12
+Util Exp 1.1,outstanding,101,13
+Util Exp 1.1,outstanding,102,11
+Util Exp 1.1,outstanding,103,5
+Util Exp 1.1,outstanding,104,7
+Util Exp 1.1,outstanding,105,6
+Util Exp 1.1,outstanding,106,10
+Util Exp 1.1,outstanding,107,8
+Util Exp 1.1,outstanding,108,9
+Util Exp 1.1,outstanding,109,9
+Util Exp 1.1,outstanding,110,17
+Util Exp 1.1,outstanding,111,7
+Util Exp 1.1,outstanding,112,11
+Util Exp 1.1,outstanding,113,6
+Util Exp 1.1,outstanding,114,9
+Util Exp 1.1,outstanding,115,4
+Util Exp 1.1,outstanding,116,5
+Util Exp 1.1,outstanding,117,9
+Util Exp 1.1,outstanding,118,5
+Util Exp 1.1,outstanding,119,4
+Util Exp 1.1,outstanding,120,4
+Util Exp 1.1,outstanding,121,7
+Util Exp 1.1,outstanding,122,5
+Util Exp 1.1,outstanding,123,4
+Util Exp 1.1,outstanding,124,3
+Util Exp 1.1,outstanding,125,9
+Util Exp 1.1,outstanding,126,7
+Util Exp 1.1,outstanding,127,8
+Util Exp 1.1,outstanding,128,3
+Util Exp 1.1,outstanding,129,10
+Util Exp 1.1,outstanding,130,8
+Util Exp 1.1,outstanding,131,9
+Util Exp 1.1,outstanding,132,7
+Util Exp 1.1,outstanding,133,7
+Util Exp 1.1,outstanding,134,4
+Util Exp 1.1,outstanding,135,7
+Util Exp 1.1,outstanding,136,9
+Util Exp 1.1,outstanding,137,10
+Util Exp 1.1,outstanding,138,9
+Util Exp 1.1,outstanding,139,6
+Util Exp 1.1,outstanding,140,8
+Util Exp 1.1,outstanding,141,7
+Util Exp 1.1,outstanding,142,5
+Util Exp 1.1,outstanding,143,11
+Util Exp 1.1,outstanding,144,4
+Util Exp 1.1,outstanding,145,4
+Util Exp 1.1,outstanding,146,7
+Util Exp 1.1,outstanding,147,7
+Util Exp 1.1,outstanding,148,6
+Util Exp 1.1,outstanding,149,5
+Util Exp 1.1,outstanding,150,6
+Util Exp 1.1,outstanding,151,3
+Util Exp 1.1,outstanding,152,4
+Util Exp 1.1,outstanding,153,6
+Util Exp 1.1,outstanding,154,7
+Util Exp 1.1,outstanding,155,6
+Util Exp 1.1,outstanding,156,5
+Util Exp 1.1,outstanding,157,7
+Util Exp 1.1,outstanding,158,6
+Util Exp 1.1,outstanding,159,7
+Util Exp 1.1,outstanding,160,5
+Util Exp 1.1,outstanding,161,8
+Util Exp 1.1,outstanding,162,7
+Util Exp 1.1,outstanding,163,5
+Util Exp 1.1,outstanding,164,4
+Util Exp 1.1,outstanding,165,4
+Util Exp 1.1,outstanding,166,6
+Util Exp 1.1,outstanding,167,5
+Util Exp 1.1,outstanding,168,3
+Util Exp 1.1,outstanding,169,8
+Util Exp 1.1,outstanding,170,4
+Util Exp 1.1,outstanding,171,5
+Util Exp 1.1,outstanding,172,4
+Util Exp 1.1,outstanding,173,5
+Util Exp 1.1,outstanding,174,8
+Util Exp 1.1,outstanding,175,7
+Util Exp 1.1,outstanding,176,2
+Util Exp 1.1,outstanding,177,5
+Util Exp 1.1,outstanding,178,5
+Util Exp 1.1,outstanding,179,6
+Util Exp 1.1,outstanding,180,5
+Util Exp 1.1,outstanding,181,6
+Util Exp 1.1,outstanding,182,3
+Util Exp 1.1,outstanding,183,6
+Util Exp 1.1,outstanding,184,5
+Util Exp 1.1,outstanding,185,3
+Util Exp 1.1,outstanding,186,5
+Util Exp 1.1,outstanding,187,2
+Util Exp 1.1,outstanding,188,4
+Util Exp 1.1,outstanding,189,5
+Util Exp 1.1,outstanding,190,4
+Util Exp 1.1,outstanding,191,2
+Util Exp 1.1,outstanding,192,1
+Util Exp 1.1,outstanding,193,5
+Util Exp 1.1,outstanding,194,5
+Util Exp 1.1,outstanding,195,6
+Util Exp 1.1,outstanding,196,2
+Util Exp 1.1,outstanding,197,3
+Util Exp 1.1,outstanding,198,5
+Util Exp 1.1,outstanding,199,6
+Util Exp 1.1,outstanding,200,6
+Util Exp 1.1,outstanding,201,11
+Util Exp 1.1,outstanding,202,7
+Util Exp 1.1,outstanding,203,4
+Util Exp 1.1,outstanding,204,7
+Util Exp 1.1,outstanding,205,5
+Util Exp 1.1,outstanding,206,5
+Util Exp 1.1,outstanding,207,4
+Util Exp 1.1,outstanding,208,3
+Util Exp 1.1,outstanding,209,6
+Util Exp 1.1,outstanding,210,5
+Util Exp 1.1,outstanding,211,2
+Util Exp 1.1,outstanding,212,6
+Util Exp 1.1,outstanding,213,7
+Util Exp 1.1,outstanding,214,4
+Util Exp 1.1,outstanding,215,4
+Util Exp 1.1,outstanding,216,2
+Util Exp 1.1,outstanding,217,4
+Util Exp 1.1,outstanding,218,3
+Util Exp 1.1,outstanding,219,3
+Util Exp 1.1,outstanding,220,2
+Util Exp 1.1,outstanding,221,8
+Util Exp 1.1,outstanding,222,2
+Util Exp 1.1,outstanding,223,4
+Util Exp 1.1,outstanding,224,3
+Util Exp 1.1,outstanding,225,5
+Util Exp 1.1,outstanding,226,6
+Util Exp 1.1,outstanding,227,6
+Util Exp 1.1,outstanding,228,4
+Util Exp 1.1,outstanding,229,3
+Util Exp 1.1,outstanding,230,4
+Util Exp 1.1,outstanding,231,1
+Util Exp 1.1,outstanding,232,3
+Util Exp 1.1,outstanding,233,2
+Util Exp 1.1,outstanding,234,5
+Util Exp 1.1,outstanding,235,3
+Util Exp 1.1,outstanding,236,4
+Util Exp 1.1,outstanding,237,3
+Util Exp 1.1,outstanding,238,4
+Util Exp 1.1,outstanding,239,5
+Util Exp 1.1,outstanding,240,1
+Util Exp 1.1,outstanding,241,7
+Util Exp 1.1,outstanding,243,2
+Util Exp 1.1,outstanding,244,5
+Util Exp 1.1,outstanding,245,5
+Util Exp 1.1,outstanding,246,4
+Util Exp 1.1,outstanding,247,3
+Util Exp 1.1,outstanding,248,3
+Util Exp 1.1,outstanding,249,1
+Util Exp 1.1,outstanding,250,5
+Util Exp 1.1,outstanding,251,3
+Util Exp 1.1,outstanding,252,2
+Util Exp 1.1,outstanding,253,1
+Util Exp 1.1,outstanding,254,1
+Util Exp 1.1,outstanding,255,4
+Util Exp 1.1,outstanding,256,2
+Util Exp 1.1,outstanding,257,2
+Util Exp 1.1,outstanding,258,3
+Util Exp 1.1,outstanding,259,2
+Util Exp 1.1,outstanding,261,6
+Util Exp 1.1,outstanding,263,3
+Util Exp 1.1,outstanding,264,2
+Util Exp 1.1,outstanding,265,2
+Util Exp 1.1,outstanding,266,3
+Util Exp 1.1,outstanding,267,3
+Util Exp 1.1,outstanding,268,4
+Util Exp 1.1,outstanding,269,5
+Util Exp 1.1,outstanding,270,2
+Util Exp 1.1,outstanding,271,5
+Util Exp 1.1,outstanding,272,1
+Util Exp 1.1,outstanding,273,2
+Util Exp 1.1,outstanding,274,3
+Util Exp 1.1,outstanding,275,6
+Util Exp 1.1,outstanding,276,2
+Util Exp 1.1,outstanding,277,2
+Util Exp 1.1,outstanding,278,1
+Util Exp 1.1,outstanding,279,1
+Util Exp 1.1,outstanding,280,1
+Util Exp 1.1,outstanding,282,3
+Util Exp 1.1,outstanding,283,3
+Util Exp 1.1,outstanding,284,4
+Util Exp 1.1,outstanding,285,2
+Util Exp 1.1,outstanding,286,1
+Util Exp 1.1,outstanding,287,2
+Util Exp 1.1,outstanding,290,2
+Util Exp 1.1,outstanding,291,1
+Util Exp 1.1,outstanding,293,1
+Util Exp 1.1,outstanding,294,4
+Util Exp 1.1,outstanding,295,2
+Util Exp 1.1,outstanding,296,2
+Util Exp 1.1,outstanding,297,1
+Util Exp 1.1,outstanding,298,3
+Util Exp 1.1,outstanding,299,2
+Util Exp 1.1,outstanding,301,1
+Util Exp 1.1,outstanding,303,1
+Util Exp 1.1,outstanding,304,4
+Util Exp 1.1,outstanding,305,3
+Util Exp 1.1,outstanding,306,2
+Util Exp 1.1,outstanding,309,1
+Util Exp 1.1,outstanding,310,1
+Util Exp 1.1,outstanding,312,1
+Util Exp 1.1,outstanding,313,2
+Util Exp 1.1,outstanding,315,1
+Util Exp 1.1,outstanding,316,2
+Util Exp 1.1,outstanding,317,2
+Util Exp 1.1,outstanding,319,2
+Util Exp 1.1,outstanding,320,4
+Util Exp 1.1,outstanding,322,1
+Util Exp 1.1,outstanding,323,3
+Util Exp 1.1,outstanding,324,1
+Util Exp 1.1,outstanding,325,1
+Util Exp 1.1,outstanding,326,3
+Util Exp 1.1,outstanding,327,1
+Util Exp 1.1,outstanding,332,1
+Util Exp 1.1,outstanding,333,1
+Util Exp 1.1,outstanding,334,1
+Util Exp 1.1,outstanding,337,2
+Util Exp 1.1,outstanding,338,4
+Util Exp 1.1,outstanding,341,1
+Util Exp 1.1,outstanding,342,3
+Util Exp 1.1,outstanding,344,2
+Util Exp 1.1,outstanding,345,1
+Util Exp 1.1,outstanding,346,2
+Util Exp 1.1,outstanding,348,1
+Util Exp 1.1,outstanding,353,2
+Util Exp 1.1,outstanding,354,1
+Util Exp 1.1,outstanding,357,2
+Util Exp 1.1,outstanding,358,3
+Util Exp 1.1,outstanding,360,1
+Util Exp 1.1,outstanding,361,1
+Util Exp 1.1,outstanding,365,55
+Util Exp 1.5,resolved,1,9666
+Util Exp 1.5,resolved,2,831
+Util Exp 1.5,resolved,3,492
+Util Exp 1.5,resolved,4,299
+Util Exp 1.5,resolved,5,244
+Util Exp 1.5,resolved,6,158
+Util Exp 1.5,resolved,7,155
+Util Exp 1.5,resolved,8,117
+Util Exp 1.5,resolved,9,91
+Util Exp 1.5,resolved,10,78
+Util Exp 1.5,resolved,11,80
+Util Exp 1.5,resolved,12,68
+Util Exp 1.5,resolved,13,74
+Util Exp 1.5,resolved,14,61
+Util Exp 1.5,resolved,15,47
+Util Exp 1.5,resolved,16,35
+Util Exp 1.5,resolved,17,37
+Util Exp 1.5,resolved,18,42
+Util Exp 1.5,resolved,19,32
+Util Exp 1.5,resolved,20,38
+Util Exp 1.5,resolved,21,31
+Util Exp 1.5,resolved,22,31
+Util Exp 1.5,resolved,23,20
+Util Exp 1.5,resolved,24,32
+Util Exp 1.5,resolved,25,34
+Util Exp 1.5,resolved,26,16
+Util Exp 1.5,resolved,27,25
+Util Exp 1.5,resolved,28,26
+Util Exp 1.5,resolved,29,22
+Util Exp 1.5,resolved,30,25
+Util Exp 1.5,resolved,31,29
+Util Exp 1.5,resolved,32,26
+Util Exp 1.5,resolved,33,18
+Util Exp 1.5,resolved,34,17
+Util Exp 1.5,resolved,35,25
+Util Exp 1.5,resolved,36,15
+Util Exp 1.5,resolved,37,20
+Util Exp 1.5,resolved,38,12
+Util Exp 1.5,resolved,39,12
+Util Exp 1.5,resolved,40,21
+Util Exp 1.5,resolved,41,9
+Util Exp 1.5,resolved,42,20
+Util Exp 1.5,resolved,43,18
+Util Exp 1.5,resolved,44,17
+Util Exp 1.5,resolved,45,15
+Util Exp 1.5,resolved,46,8
+Util Exp 1.5,resolved,47,9
+Util Exp 1.5,resolved,48,12
+Util Exp 1.5,resolved,49,12
+Util Exp 1.5,resolved,50,16
+Util Exp 1.5,resolved,51,9
+Util Exp 1.5,resolved,52,7
+Util Exp 1.5,resolved,53,20
+Util Exp 1.5,resolved,54,12
+Util Exp 1.5,resolved,55,12
+Util Exp 1.5,resolved,56,5
+Util Exp 1.5,resolved,57,11
+Util Exp 1.5,resolved,58,14
+Util Exp 1.5,resolved,59,11
+Util Exp 1.5,resolved,60,7
+Util Exp 1.5,resolved,61,7
+Util Exp 1.5,resolved,62,16
+Util Exp 1.5,resolved,63,12
+Util Exp 1.5,resolved,64,10
+Util Exp 1.5,resolved,65,7
+Util Exp 1.5,resolved,66,10
+Util Exp 1.5,resolved,67,13
+Util Exp 1.5,resolved,68,12
+Util Exp 1.5,resolved,69,8
+Util Exp 1.5,resolved,70,6
+Util Exp 1.5,resolved,71,13
+Util Exp 1.5,resolved,72,8
+Util Exp 1.5,resolved,73,10
+Util Exp 1.5,resolved,74,9
+Util Exp 1.5,resolved,75,7
+Util Exp 1.5,resolved,76,6
+Util Exp 1.5,resolved,77,10
+Util Exp 1.5,resolved,78,10
+Util Exp 1.5,resolved,79,9
+Util Exp 1.5,resolved,80,18
+Util Exp 1.5,resolved,81,8
+Util Exp 1.5,resolved,82,11
+Util Exp 1.5,resolved,83,8
+Util Exp 1.5,resolved,84,5
+Util Exp 1.5,resolved,85,9
+Util Exp 1.5,resolved,86,14
+Util Exp 1.5,resolved,87,10
+Util Exp 1.5,resolved,88,3
+Util Exp 1.5,resolved,89,5
+Util Exp 1.5,resolved,90,4
+Util Exp 1.5,resolved,91,12
+Util Exp 1.5,resolved,92,6
+Util Exp 1.5,resolved,93,6
+Util Exp 1.5,resolved,94,5
+Util Exp 1.5,resolved,95,3
+Util Exp 1.5,resolved,96,3
+Util Exp 1.5,resolved,97,7
+Util Exp 1.5,resolved,98,6
+Util Exp 1.5,resolved,99,7
+Util Exp 1.5,resolved,100,7
+Util Exp 1.5,resolved,101,10
+Util Exp 1.5,resolved,102,4
+Util Exp 1.5,resolved,103,9
+Util Exp 1.5,resolved,104,6
+Util Exp 1.5,resolved,105,9
+Util Exp 1.5,resolved,106,5
+Util Exp 1.5,resolved,107,5
+Util Exp 1.5,resolved,108,2
+Util Exp 1.5,resolved,109,2
+Util Exp 1.5,resolved,110,7
+Util Exp 1.5,resolved,111,7
+Util Exp 1.5,resolved,112,4
+Util Exp 1.5,resolved,113,5
+Util Exp 1.5,resolved,114,4
+Util Exp 1.5,resolved,115,11
+Util Exp 1.5,resolved,116,7
+Util Exp 1.5,resolved,117,4
+Util Exp 1.5,resolved,118,3
+Util Exp 1.5,resolved,119,5
+Util Exp 1.5,resolved,120,5
+Util Exp 1.5,resolved,121,4
+Util Exp 1.5,resolved,122,4
+Util Exp 1.5,resolved,123,7
+Util Exp 1.5,resolved,124,1
+Util Exp 1.5,resolved,125,3
+Util Exp 1.5,resolved,126,9
+Util Exp 1.5,resolved,127,10
+Util Exp 1.5,resolved,128,3
+Util Exp 1.5,resolved,129,4
+Util Exp 1.5,resolved,130,5
+Util Exp 1.5,resolved,131,4
+Util Exp 1.5,resolved,132,2
+Util Exp 1.5,resolved,133,8
+Util Exp 1.5,resolved,134,8
+Util Exp 1.5,resolved,135,6
+Util Exp 1.5,resolved,136,6
+Util Exp 1.5,resolved,137,5
+Util Exp 1.5,resolved,138,9
+Util Exp 1.5,resolved,139,3
+Util Exp 1.5,resolved,140,4
+Util Exp 1.5,resolved,141,1
+Util Exp 1.5,resolved,142,2
+Util Exp 1.5,resolved,143,3
+Util Exp 1.5,resolved,144,3
+Util Exp 1.5,resolved,145,3
+Util Exp 1.5,resolved,146,7
+Util Exp 1.5,resolved,147,2
+Util Exp 1.5,resolved,148,2
+Util Exp 1.5,resolved,149,2
+Util Exp 1.5,resolved,150,1
+Util Exp 1.5,resolved,151,2
+Util Exp 1.5,resolved,152,7
+Util Exp 1.5,resolved,153,4
+Util Exp 1.5,resolved,154,5
+Util Exp 1.5,resolved,155,3
+Util Exp 1.5,resolved,156,6
+Util Exp 1.5,resolved,157,2
+Util Exp 1.5,resolved,158,1
+Util Exp 1.5,resolved,159,6
+Util Exp 1.5,resolved,160,4
+Util Exp 1.5,resolved,161,1
+Util Exp 1.5,resolved,162,3
+Util Exp 1.5,resolved,163,3
+Util Exp 1.5,resolved,164,1
+Util Exp 1.5,resolved,165,4
+Util Exp 1.5,resolved,166,3
+Util Exp 1.5,resolved,167,2
+Util Exp 1.5,resolved,168,1
+Util Exp 1.5,resolved,169,4
+Util Exp 1.5,resolved,170,4
+Util Exp 1.5,resolved,171,2
+Util Exp 1.5,resolved,172,4
+Util Exp 1.5,resolved,173,1
+Util Exp 1.5,resolved,174,5
+Util Exp 1.5,resolved,175,2
+Util Exp 1.5,resolved,176,4
+Util Exp 1.5,resolved,177,6
+Util Exp 1.5,resolved,179,6
+Util Exp 1.5,resolved,180,2
+Util Exp 1.5,resolved,181,1
+Util Exp 1.5,resolved,182,4
+Util Exp 1.5,resolved,183,3
+Util Exp 1.5,resolved,184,2
+Util Exp 1.5,resolved,185,2
+Util Exp 1.5,resolved,186,2
+Util Exp 1.5,resolved,187,2
+Util Exp 1.5,resolved,188,2
+Util Exp 1.5,resolved,189,3
+Util Exp 1.5,resolved,190,4
+Util Exp 1.5,resolved,191,1
+Util Exp 1.5,resolved,192,2
+Util Exp 1.5,resolved,194,2
+Util Exp 1.5,resolved,195,2
+Util Exp 1.5,resolved,196,1
+Util Exp 1.5,resolved,197,2
+Util Exp 1.5,resolved,198,3
+Util Exp 1.5,resolved,200,3
+Util Exp 1.5,resolved,201,6
+Util Exp 1.5,resolved,203,3
+Util Exp 1.5,resolved,204,3
+Util Exp 1.5,resolved,205,1
+Util Exp 1.5,resolved,206,1
+Util Exp 1.5,resolved,207,1
+Util Exp 1.5,resolved,208,4
+Util Exp 1.5,resolved,209,5
+Util Exp 1.5,resolved,210,4
+Util Exp 1.5,resolved,211,5
+Util Exp 1.5,resolved,212,1
+Util Exp 1.5,resolved,213,4
+Util Exp 1.5,resolved,214,1
+Util Exp 1.5,resolved,215,1
+Util Exp 1.5,resolved,216,2
+Util Exp 1.5,resolved,217,1
+Util Exp 1.5,resolved,218,3
+Util Exp 1.5,resolved,220,1
+Util Exp 1.5,resolved,221,3
+Util Exp 1.5,resolved,222,2
+Util Exp 1.5,resolved,223,2
+Util Exp 1.5,resolved,225,1
+Util Exp 1.5,resolved,226,2
+Util Exp 1.5,resolved,228,1
+Util Exp 1.5,resolved,229,1
+Util Exp 1.5,resolved,230,2
+Util Exp 1.5,resolved,232,2
+Util Exp 1.5,resolved,234,4
+Util Exp 1.5,resolved,235,1
+Util Exp 1.5,resolved,236,2
+Util Exp 1.5,resolved,238,2
+Util Exp 1.5,resolved,239,2
+Util Exp 1.5,resolved,240,1
+Util Exp 1.5,resolved,241,3
+Util Exp 1.5,resolved,242,2
+Util Exp 1.5,resolved,243,2
+Util Exp 1.5,resolved,244,1
+Util Exp 1.5,resolved,245,3
+Util Exp 1.5,resolved,246,2
+Util Exp 1.5,resolved,247,3
+Util Exp 1.5,resolved,249,2
+Util Exp 1.5,resolved,250,2
+Util Exp 1.5,resolved,251,1
+Util Exp 1.5,resolved,252,2
+Util Exp 1.5,resolved,253,2
+Util Exp 1.5,resolved,254,1
+Util Exp 1.5,resolved,255,2
+Util Exp 1.5,resolved,256,2
+Util Exp 1.5,resolved,257,1
+Util Exp 1.5,resolved,259,2
+Util Exp 1.5,resolved,261,6
+Util Exp 1.5,resolved,262,3
+Util Exp 1.5,resolved,264,1
+Util Exp 1.5,resolved,266,1
+Util Exp 1.5,resolved,267,2
+Util Exp 1.5,resolved,268,2
+Util Exp 1.5,resolved,269,1
+Util Exp 1.5,resolved,271,2
+Util Exp 1.5,resolved,272,2
+Util Exp 1.5,resolved,273,2
+Util Exp 1.5,resolved,274,2
+Util Exp 1.5,resolved,276,2
+Util Exp 1.5,resolved,277,1
+Util Exp 1.5,resolved,278,3
+Util Exp 1.5,resolved,280,1
+Util Exp 1.5,resolved,281,2
+Util Exp 1.5,resolved,284,1
+Util Exp 1.5,resolved,285,2
+Util Exp 1.5,resolved,286,3
+Util Exp 1.5,resolved,289,2
+Util Exp 1.5,resolved,291,2
+Util Exp 1.5,resolved,293,1
+Util Exp 1.5,resolved,294,2
+Util Exp 1.5,resolved,296,1
+Util Exp 1.5,resolved,297,1
+Util Exp 1.5,resolved,298,1
+Util Exp 1.5,resolved,299,1
+Util Exp 1.5,resolved,300,2
+Util Exp 1.5,resolved,301,1
+Util Exp 1.5,resolved,305,1
+Util Exp 1.5,resolved,306,2
+Util Exp 1.5,resolved,309,1
+Util Exp 1.5,resolved,313,1
+Util Exp 1.5,resolved,316,1
+Util Exp 1.5,resolved,317,2
+Util Exp 1.5,resolved,319,1
+Util Exp 1.5,resolved,321,1
+Util Exp 1.5,resolved,325,1
+Util Exp 1.5,resolved,328,1
+Util Exp 1.5,resolved,330,1
+Util Exp 1.5,resolved,332,1
+Util Exp 1.5,resolved,333,3
+Util Exp 1.5,resolved,334,1
+Util Exp 1.5,resolved,344,1
+Util Exp 1.5,resolved,352,1
+Util Exp 1.5,resolved,354,1
+Util Exp 1.5,resolved,355,1
+Util Exp 1.5,resolved,356,1
+Util Exp 1.5,resolved,358,1
+Util Exp 1.5,resolved,362,2
+Util Exp 1.5,resolved,363,2
+Util Exp 1.5,resolved,364,1
+Util Exp 1.5,outstanding,0,40
+Util Exp 1.5,outstanding,1,18
+Util Exp 1.5,outstanding,2,16
+Util Exp 1.5,outstanding,3,21
+Util Exp 1.5,outstanding,4,15
+Util Exp 1.5,outstanding,5,20
+Util Exp 1.5,outstanding,6,11
+Util Exp 1.5,outstanding,7,18
+Util Exp 1.5,outstanding,8,8
+Util Exp 1.5,outstanding,9,13
+Util Exp 1.5,outstanding,10,20
+Util Exp 1.5,outstanding,11,15
+Util Exp 1.5,outstanding,12,14
+Util Exp 1.5,outstanding,13,12
+Util Exp 1.5,outstanding,14,6
+Util Exp 1.5,outstanding,15,9
+Util Exp 1.5,outstanding,16,9
+Util Exp 1.5,outstanding,17,13
+Util Exp 1.5,outstanding,18,12
+Util Exp 1.5,outstanding,19,12
+Util Exp 1.5,outstanding,20,10
+Util Exp 1.5,outstanding,21,13
+Util Exp 1.5,outstanding,22,15
+Util Exp 1.5,outstanding,23,12
+Util Exp 1.5,outstanding,24,15
+Util Exp 1.5,outstanding,25,12
+Util Exp 1.5,outstanding,26,5
+Util Exp 1.5,outstanding,27,7
+Util Exp 1.5,outstanding,28,13
+Util Exp 1.5,outstanding,29,9
+Util Exp 1.5,outstanding,30,14
+Util Exp 1.5,outstanding,31,17
+Util Exp 1.5,outstanding,32,7
+Util Exp 1.5,outstanding,33,7
+Util Exp 1.5,outstanding,34,8
+Util Exp 1.5,outstanding,35,14
+Util Exp 1.5,outstanding,36,11
+Util Exp 1.5,outstanding,37,12
+Util Exp 1.5,outstanding,38,14
+Util Exp 1.5,outstanding,39,9
+Util Exp 1.5,outstanding,40,9
+Util Exp 1.5,outstanding,41,10
+Util Exp 1.5,outstanding,42,11
+Util Exp 1.5,outstanding,43,10
+Util Exp 1.5,outstanding,44,11
+Util Exp 1.5,outstanding,45,7
+Util Exp 1.5,outstanding,46,10
+Util Exp 1.5,outstanding,47,6
+Util Exp 1.5,outstanding,48,8
+Util Exp 1.5,outstanding,49,9
+Util Exp 1.5,outstanding,50,7
+Util Exp 1.5,outstanding,51,8
+Util Exp 1.5,outstanding,52,8
+Util Exp 1.5,outstanding,53,9
+Util Exp 1.5,outstanding,54,13
+Util Exp 1.5,outstanding,55,5
+Util Exp 1.5,outstanding,56,10
+Util Exp 1.5,outstanding,57,11
+Util Exp 1.5,outstanding,58,8
+Util Exp 1.5,outstanding,59,12
+Util Exp 1.5,outstanding,60,14
+Util Exp 1.5,outstanding,61,5
+Util Exp 1.5,outstanding,62,6
+Util Exp 1.5,outstanding,63,10
+Util Exp 1.5,outstanding,64,8
+Util Exp 1.5,outstanding,65,10
+Util Exp 1.5,outstanding,66,9
+Util Exp 1.5,outstanding,67,10
+Util Exp 1.5,outstanding,68,12
+Util Exp 1.5,outstanding,69,13
+Util Exp 1.5,outstanding,70,8
+Util Exp 1.5,outstanding,71,10
+Util Exp 1.5,outstanding,72,10
+Util Exp 1.5,outstanding,73,11
+Util Exp 1.5,outstanding,74,5
+Util Exp 1.5,outstanding,75,10
+Util Exp 1.5,outstanding,76,8
+Util Exp 1.5,outstanding,77,6
+Util Exp 1.5,outstanding,78,7
+Util Exp 1.5,outstanding,79,9
+Util Exp 1.5,outstanding,80,7
+Util Exp 1.5,outstanding,81,6
+Util Exp 1.5,outstanding,82,13
+Util Exp 1.5,outstanding,83,10
+Util Exp 1.5,outstanding,84,4
+Util Exp 1.5,outstanding,85,9
+Util Exp 1.5,outstanding,86,10
+Util Exp 1.5,outstanding,87,8
+Util Exp 1.5,outstanding,88,6
+Util Exp 1.5,outstanding,89,6
+Util Exp 1.5,outstanding,90,5
+Util Exp 1.5,outstanding,91,7
+Util Exp 1.5,outstanding,92,7
+Util Exp 1.5,outstanding,93,9
+Util Exp 1.5,outstanding,94,11
+Util Exp 1.5,outstanding,95,9
+Util Exp 1.5,outstanding,96,16
+Util Exp 1.5,outstanding,97,10
+Util Exp 1.5,outstanding,98,12
+Util Exp 1.5,outstanding,99,11
+Util Exp 1.5,outstanding,100,8
+Util Exp 1.5,outstanding,101,8
+Util Exp 1.5,outstanding,102,7
+Util Exp 1.5,outstanding,103,5
+Util Exp 1.5,outstanding,104,6
+Util Exp 1.5,outstanding,105,8
+Util Exp 1.5,outstanding,106,9
+Util Exp 1.5,outstanding,107,7
+Util Exp 1.5,outstanding,108,5
+Util Exp 1.5,outstanding,109,6
+Util Exp 1.5,outstanding,110,8
+Util Exp 1.5,outstanding,111,7
+Util Exp 1.5,outstanding,112,7
+Util Exp 1.5,outstanding,113,7
+Util Exp 1.5,outstanding,114,6
+Util Exp 1.5,outstanding,115,10
+Util Exp 1.5,outstanding,116,3
+Util Exp 1.5,outstanding,117,7
+Util Exp 1.5,outstanding,118,7
+Util Exp 1.5,outstanding,119,7
+Util Exp 1.5,outstanding,120,7
+Util Exp 1.5,outstanding,121,5
+Util Exp 1.5,outstanding,122,7
+Util Exp 1.5,outstanding,123,6
+Util Exp 1.5,outstanding,124,5
+Util Exp 1.5,outstanding,125,8
+Util Exp 1.5,outstanding,126,5
+Util Exp 1.5,outstanding,127,7
+Util Exp 1.5,outstanding,128,8
+Util Exp 1.5,outstanding,129,10
+Util Exp 1.5,outstanding,130,6
+Util Exp 1.5,outstanding,131,5
+Util Exp 1.5,outstanding,132,6
+Util Exp 1.5,outstanding,133,10
+Util Exp 1.5,outstanding,134,9
+Util Exp 1.5,outstanding,135,7
+Util Exp 1.5,outstanding,136,5
+Util Exp 1.5,outstanding,137,8
+Util Exp 1.5,outstanding,138,9
+Util Exp 1.5,outstanding,139,4
+Util Exp 1.5,outstanding,140,4
+Util Exp 1.5,outstanding,141,6
+Util Exp 1.5,outstanding,142,8
+Util Exp 1.5,outstanding,143,3
+Util Exp 1.5,outstanding,144,4
+Util Exp 1.5,outstanding,145,4
+Util Exp 1.5,outstanding,146,2
+Util Exp 1.5,outstanding,147,9
+Util Exp 1.5,outstanding,148,4
+Util Exp 1.5,outstanding,149,6
+Util Exp 1.5,outstanding,150,6
+Util Exp 1.5,outstanding,151,5
+Util Exp 1.5,outstanding,152,7
+Util Exp 1.5,outstanding,153,6
+Util Exp 1.5,outstanding,154,2
+Util Exp 1.5,outstanding,155,5
+Util Exp 1.5,outstanding,156,4
+Util Exp 1.5,outstanding,157,2
+Util Exp 1.5,outstanding,158,5
+Util Exp 1.5,outstanding,159,6
+Util Exp 1.5,outstanding,160,5
+Util Exp 1.5,outstanding,161,10
+Util Exp 1.5,outstanding,162,6
+Util Exp 1.5,outstanding,163,6
+Util Exp 1.5,outstanding,164,4
+Util Exp 1.5,outstanding,165,4
+Util Exp 1.5,outstanding,166,6
+Util Exp 1.5,outstanding,167,7
+Util Exp 1.5,outstanding,168,6
+Util Exp 1.5,outstanding,169,5
+Util Exp 1.5,outstanding,170,5
+Util Exp 1.5,outstanding,171,6
+Util Exp 1.5,outstanding,172,5
+Util Exp 1.5,outstanding,173,9
+Util Exp 1.5,outstanding,174,4
+Util Exp 1.5,outstanding,175,5
+Util Exp 1.5,outstanding,176,5
+Util Exp 1.5,outstanding,177,8
+Util Exp 1.5,outstanding,178,5
+Util Exp 1.5,outstanding,179,3
+Util Exp 1.5,outstanding,180,6
+Util Exp 1.5,outstanding,181,1
+Util Exp 1.5,outstanding,182,7
+Util Exp 1.5,outstanding,183,1
+Util Exp 1.5,outstanding,184,7
+Util Exp 1.5,outstanding,185,5
+Util Exp 1.5,outstanding,186,3
+Util Exp 1.5,outstanding,187,2
+Util Exp 1.5,outstanding,188,3
+Util Exp 1.5,outstanding,189,1
+Util Exp 1.5,outstanding,190,6
+Util Exp 1.5,outstanding,191,5
+Util Exp 1.5,outstanding,192,3
+Util Exp 1.5,outstanding,193,4
+Util Exp 1.5,outstanding,194,3
+Util Exp 1.5,outstanding,195,1
+Util Exp 1.5,outstanding,196,4
+Util Exp 1.5,outstanding,197,12
+Util Exp 1.5,outstanding,198,5
+Util Exp 1.5,outstanding,199,6
+Util Exp 1.5,outstanding,200,5
+Util Exp 1.5,outstanding,201,4
+Util Exp 1.5,outstanding,202,2
+Util Exp 1.5,outstanding,203,4
+Util Exp 1.5,outstanding,204,4
+Util Exp 1.5,outstanding,205,7
+Util Exp 1.5,outstanding,206,8
+Util Exp 1.5,outstanding,207,7
+Util Exp 1.5,outstanding,208,4
+Util Exp 1.5,outstanding,209,6
+Util Exp 1.5,outstanding,210,6
+Util Exp 1.5,outstanding,211,6
+Util Exp 1.5,outstanding,212,4
+Util Exp 1.5,outstanding,213,4
+Util Exp 1.5,outstanding,214,5
+Util Exp 1.5,outstanding,215,2
+Util Exp 1.5,outstanding,216,10
+Util Exp 1.5,outstanding,217,3
+Util Exp 1.5,outstanding,218,6
+Util Exp 1.5,outstanding,219,9
+Util Exp 1.5,outstanding,220,3
+Util Exp 1.5,outstanding,221,8
+Util Exp 1.5,outstanding,222,4
+Util Exp 1.5,outstanding,223,3
+Util Exp 1.5,outstanding,224,5
+Util Exp 1.5,outstanding,225,7
+Util Exp 1.5,outstanding,226,2
+Util Exp 1.5,outstanding,227,7
+Util Exp 1.5,outstanding,228,4
+Util Exp 1.5,outstanding,229,11
+Util Exp 1.5,outstanding,230,3
+Util Exp 1.5,outstanding,231,6
+Util Exp 1.5,outstanding,232,6
+Util Exp 1.5,outstanding,233,11
+Util Exp 1.5,outstanding,234,5
+Util Exp 1.5,outstanding,235,7
+Util Exp 1.5,outstanding,236,9
+Util Exp 1.5,outstanding,237,5
+Util Exp 1.5,outstanding,238,7
+Util Exp 1.5,outstanding,239,3
+Util Exp 1.5,outstanding,240,5
+Util Exp 1.5,outstanding,241,7
+Util Exp 1.5,outstanding,242,7
+Util Exp 1.5,outstanding,243,7
+Util Exp 1.5,outstanding,244,7
+Util Exp 1.5,outstanding,245,4
+Util Exp 1.5,outstanding,246,7
+Util Exp 1.5,outstanding,247,7
+Util Exp 1.5,outstanding,248,3
+Util Exp 1.5,outstanding,249,3
+Util Exp 1.5,outstanding,250,5
+Util Exp 1.5,outstanding,251,6
+Util Exp 1.5,outstanding,252,5
+Util Exp 1.5,outstanding,253,3
+Util Exp 1.5,outstanding,254,3
+Util Exp 1.5,outstanding,255,4
+Util Exp 1.5,outstanding,256,5
+Util Exp 1.5,outstanding,257,2
+Util Exp 1.5,outstanding,258,5
+Util Exp 1.5,outstanding,259,4
+Util Exp 1.5,outstanding,260,5
+Util Exp 1.5,outstanding,261,6
+Util Exp 1.5,outstanding,262,10
+Util Exp 1.5,outstanding,263,5
+Util Exp 1.5,outstanding,264,8
+Util Exp 1.5,outstanding,265,4
+Util Exp 1.5,outstanding,266,3
+Util Exp 1.5,outstanding,267,7
+Util Exp 1.5,outstanding,268,5
+Util Exp 1.5,outstanding,269,5
+Util Exp 1.5,outstanding,270,10
+Util Exp 1.5,outstanding,271,2
+Util Exp 1.5,outstanding,272,2
+Util Exp 1.5,outstanding,273,4
+Util Exp 1.5,outstanding,274,2
+Util Exp 1.5,outstanding,275,1
+Util Exp 1.5,outstanding,276,3
+Util Exp 1.5,outstanding,277,3
+Util Exp 1.5,outstanding,278,4
+Util Exp 1.5,outstanding,279,7
+Util Exp 1.5,outstanding,280,4
+Util Exp 1.5,outstanding,281,4
+Util Exp 1.5,outstanding,282,3
+Util Exp 1.5,outstanding,283,2
+Util Exp 1.5,outstanding,284,5
+Util Exp 1.5,outstanding,285,5
+Util Exp 1.5,outstanding,286,9
+Util Exp 1.5,outstanding,287,3
+Util Exp 1.5,outstanding,288,1
+Util Exp 1.5,outstanding,289,4
+Util Exp 1.5,outstanding,290,6
+Util Exp 1.5,outstanding,291,7
+Util Exp 1.5,outstanding,292,5
+Util Exp 1.5,outstanding,293,3
+Util Exp 1.5,outstanding,294,2
+Util Exp 1.5,outstanding,295,6
+Util Exp 1.5,outstanding,296,4
+Util Exp 1.5,outstanding,297,2
+Util Exp 1.5,outstanding,298,2
+Util Exp 1.5,outstanding,299,5
+Util Exp 1.5,outstanding,300,3
+Util Exp 1.5,outstanding,301,3
+Util Exp 1.5,outstanding,302,5
+Util Exp 1.5,outstanding,303,6
+Util Exp 1.5,outstanding,304,3
+Util Exp 1.5,outstanding,305,2
+Util Exp 1.5,outstanding,306,3
+Util Exp 1.5,outstanding,308,3
+Util Exp 1.5,outstanding,309,1
+Util Exp 1.5,outstanding,310,6
+Util Exp 1.5,outstanding,311,2
+Util Exp 1.5,outstanding,312,1
+Util Exp 1.5,outstanding,313,6
+Util Exp 1.5,outstanding,314,3
+Util Exp 1.5,outstanding,315,5
+Util Exp 1.5,outstanding,316,4
+Util Exp 1.5,outstanding,317,3
+Util Exp 1.5,outstanding,318,3
+Util Exp 1.5,outstanding,319,2
+Util Exp 1.5,outstanding,320,7
+Util Exp 1.5,outstanding,321,5
+Util Exp 1.5,outstanding,322,3
+Util Exp 1.5,outstanding,323,1
+Util Exp 1.5,outstanding,324,1
+Util Exp 1.5,outstanding,325,2
+Util Exp 1.5,outstanding,326,3
+Util Exp 1.5,outstanding,327,5
+Util Exp 1.5,outstanding,328,2
+Util Exp 1.5,outstanding,329,4
+Util Exp 1.5,outstanding,330,2
+Util Exp 1.5,outstanding,331,2
+Util Exp 1.5,outstanding,332,2
+Util Exp 1.5,outstanding,333,3
+Util Exp 1.5,outstanding,334,3
+Util Exp 1.5,outstanding,335,2
+Util Exp 1.5,outstanding,336,2
+Util Exp 1.5,outstanding,337,2
+Util Exp 1.5,outstanding,339,1
+Util Exp 1.5,outstanding,340,1
+Util Exp 1.5,outstanding,341,2
+Util Exp 1.5,outstanding,342,2
+Util Exp 1.5,outstanding,343,1
+Util Exp 1.5,outstanding,344,3
+Util Exp 1.5,outstanding,345,1
+Util Exp 1.5,outstanding,346,2
+Util Exp 1.5,outstanding,348,1
+Util Exp 1.5,outstanding,349,2
+Util Exp 1.5,outstanding,352,1
+Util Exp 1.5,outstanding,353,4
+Util Exp 1.5,outstanding,354,1
+Util Exp 1.5,outstanding,357,2
+Util Exp 1.5,outstanding,358,3
+Util Exp 1.5,outstanding,359,2
+Util Exp 1.5,outstanding,360,2
+Util Exp 1.5,outstanding,361,1
+Util Exp 1.5,outstanding,363,1
+Util Exp 1.5,outstanding,365,56
+Util Exp 1.9,resolved,1,9463
+Util Exp 1.9,resolved,2,701
+Util Exp 1.9,resolved,3,431
+Util Exp 1.9,resolved,4,273
+Util Exp 1.9,resolved,5,220
+Util Exp 1.9,resolved,6,155
+Util Exp 1.9,resolved,7,134
+Util Exp 1.9,resolved,8,100
+Util Exp 1.9,resolved,9,103
+Util Exp 1.9,resolved,10,83
+Util Exp 1.9,resolved,11,71
+Util Exp 1.9,resolved,12,64
+Util Exp 1.9,resolved,13,60
+Util Exp 1.9,resolved,14,38
+Util Exp 1.9,resolved,15,41
+Util Exp 1.9,resolved,16,51
+Util Exp 1.9,resolved,17,51
+Util Exp 1.9,resolved,18,38
+Util Exp 1.9,resolved,19,39
+Util Exp 1.9,resolved,20,29
+Util Exp 1.9,resolved,21,43
+Util Exp 1.9,resolved,22,41
+Util Exp 1.9,resolved,23,29
+Util Exp 1.9,resolved,24,43
+Util Exp 1.9,resolved,25,39
+Util Exp 1.9,resolved,26,28
+Util Exp 1.9,resolved,27,25
+Util Exp 1.9,resolved,28,28
+Util Exp 1.9,resolved,29,30
+Util Exp 1.9,resolved,30,26
+Util Exp 1.9,resolved,31,23
+Util Exp 1.9,resolved,32,25
+Util Exp 1.9,resolved,33,18
+Util Exp 1.9,resolved,34,24
+Util Exp 1.9,resolved,35,20
+Util Exp 1.9,resolved,36,17
+Util Exp 1.9,resolved,37,27
+Util Exp 1.9,resolved,38,19
+Util Exp 1.9,resolved,39,17
+Util Exp 1.9,resolved,40,25
+Util Exp 1.9,resolved,41,16
+Util Exp 1.9,resolved,42,19
+Util Exp 1.9,resolved,43,17
+Util Exp 1.9,resolved,44,11
+Util Exp 1.9,resolved,45,12
+Util Exp 1.9,resolved,46,16
+Util Exp 1.9,resolved,47,22
+Util Exp 1.9,resolved,48,12
+Util Exp 1.9,resolved,49,16
+Util Exp 1.9,resolved,50,17
+Util Exp 1.9,resolved,51,14
+Util Exp 1.9,resolved,52,14
+Util Exp 1.9,resolved,53,8
+Util Exp 1.9,resolved,54,16
+Util Exp 1.9,resolved,55,11
+Util Exp 1.9,resolved,56,13
+Util Exp 1.9,resolved,57,11
+Util Exp 1.9,resolved,58,8
+Util Exp 1.9,resolved,59,7
+Util Exp 1.9,resolved,60,7
+Util Exp 1.9,resolved,61,9
+Util Exp 1.9,resolved,62,8
+Util Exp 1.9,resolved,63,10
+Util Exp 1.9,resolved,64,12
+Util Exp 1.9,resolved,65,15
+Util Exp 1.9,resolved,66,11
+Util Exp 1.9,resolved,67,11
+Util Exp 1.9,resolved,68,13
+Util Exp 1.9,resolved,69,12
+Util Exp 1.9,resolved,70,10
+Util Exp 1.9,resolved,71,9
+Util Exp 1.9,resolved,72,9
+Util Exp 1.9,resolved,73,12
+Util Exp 1.9,resolved,74,6
+Util Exp 1.9,resolved,75,10
+Util Exp 1.9,resolved,76,5
+Util Exp 1.9,resolved,77,11
+Util Exp 1.9,resolved,78,9
+Util Exp 1.9,resolved,79,6
+Util Exp 1.9,resolved,80,12
+Util Exp 1.9,resolved,81,11
+Util Exp 1.9,resolved,82,9
+Util Exp 1.9,resolved,83,12
+Util Exp 1.9,resolved,84,10
+Util Exp 1.9,resolved,85,8
+Util Exp 1.9,resolved,86,7
+Util Exp 1.9,resolved,87,8
+Util Exp 1.9,resolved,88,6
+Util Exp 1.9,resolved,89,6
+Util Exp 1.9,resolved,90,9
+Util Exp 1.9,resolved,91,6
+Util Exp 1.9,resolved,92,7
+Util Exp 1.9,resolved,93,7
+Util Exp 1.9,resolved,94,4
+Util Exp 1.9,resolved,95,13
+Util Exp 1.9,resolved,96,10
+Util Exp 1.9,resolved,97,9
+Util Exp 1.9,resolved,98,8
+Util Exp 1.9,resolved,99,4
+Util Exp 1.9,resolved,100,11
+Util Exp 1.9,resolved,101,4
+Util Exp 1.9,resolved,102,4
+Util Exp 1.9,resolved,103,3
+Util Exp 1.9,resolved,104,8
+Util Exp 1.9,resolved,105,6
+Util Exp 1.9,resolved,106,6
+Util Exp 1.9,resolved,107,4
+Util Exp 1.9,resolved,108,9
+Util Exp 1.9,resolved,109,7
+Util Exp 1.9,resolved,110,7
+Util Exp 1.9,resolved,111,4
+Util Exp 1.9,resolved,112,13
+Util Exp 1.9,resolved,113,7
+Util Exp 1.9,resolved,114,10
+Util Exp 1.9,resolved,115,10
+Util Exp 1.9,resolved,116,11
+Util Exp 1.9,resolved,117,8
+Util Exp 1.9,resolved,118,2
+Util Exp 1.9,resolved,119,6
+Util Exp 1.9,resolved,120,5
+Util Exp 1.9,resolved,121,5
+Util Exp 1.9,resolved,122,12
+Util Exp 1.9,resolved,123,6
+Util Exp 1.9,resolved,124,8
+Util Exp 1.9,resolved,125,6
+Util Exp 1.9,resolved,126,5
+Util Exp 1.9,resolved,127,5
+Util Exp 1.9,resolved,128,11
+Util Exp 1.9,resolved,129,8
+Util Exp 1.9,resolved,130,3
+Util Exp 1.9,resolved,131,6
+Util Exp 1.9,resolved,132,9
+Util Exp 1.9,resolved,133,3
+Util Exp 1.9,resolved,134,4
+Util Exp 1.9,resolved,135,3
+Util Exp 1.9,resolved,136,4
+Util Exp 1.9,resolved,137,2
+Util Exp 1.9,resolved,138,5
+Util Exp 1.9,resolved,139,5
+Util Exp 1.9,resolved,140,5
+Util Exp 1.9,resolved,141,4
+Util Exp 1.9,resolved,142,6
+Util Exp 1.9,resolved,143,2
+Util Exp 1.9,resolved,144,6
+Util Exp 1.9,resolved,145,14
+Util Exp 1.9,resolved,146,2
+Util Exp 1.9,resolved,147,6
+Util Exp 1.9,resolved,148,6
+Util Exp 1.9,resolved,149,6
+Util Exp 1.9,resolved,151,3
+Util Exp 1.9,resolved,152,4
+Util Exp 1.9,resolved,153,3
+Util Exp 1.9,resolved,154,2
+Util Exp 1.9,resolved,155,2
+Util Exp 1.9,resolved,156,4
+Util Exp 1.9,resolved,157,2
+Util Exp 1.9,resolved,158,6
+Util Exp 1.9,resolved,159,3
+Util Exp 1.9,resolved,160,4
+Util Exp 1.9,resolved,161,2
+Util Exp 1.9,resolved,162,7
+Util Exp 1.9,resolved,163,7
+Util Exp 1.9,resolved,164,4
+Util Exp 1.9,resolved,165,8
+Util Exp 1.9,resolved,166,3
+Util Exp 1.9,resolved,167,2
+Util Exp 1.9,resolved,168,4
+Util Exp 1.9,resolved,169,2
+Util Exp 1.9,resolved,171,4
+Util Exp 1.9,resolved,172,4
+Util Exp 1.9,resolved,173,5
+Util Exp 1.9,resolved,174,3
+Util Exp 1.9,resolved,175,3
+Util Exp 1.9,resolved,176,2
+Util Exp 1.9,resolved,177,5
+Util Exp 1.9,resolved,178,1
+Util Exp 1.9,resolved,179,1
+Util Exp 1.9,resolved,180,4
+Util Exp 1.9,resolved,181,3
+Util Exp 1.9,resolved,182,1
+Util Exp 1.9,resolved,183,2
+Util Exp 1.9,resolved,184,6
+Util Exp 1.9,resolved,185,3
+Util Exp 1.9,resolved,186,1
+Util Exp 1.9,resolved,187,2
+Util Exp 1.9,resolved,188,3
+Util Exp 1.9,resolved,189,1
+Util Exp 1.9,resolved,190,5
+Util Exp 1.9,resolved,191,4
+Util Exp 1.9,resolved,192,3
+Util Exp 1.9,resolved,193,5
+Util Exp 1.9,resolved,194,2
+Util Exp 1.9,resolved,195,3
+Util Exp 1.9,resolved,196,3
+Util Exp 1.9,resolved,197,4
+Util Exp 1.9,resolved,198,1
+Util Exp 1.9,resolved,199,4
+Util Exp 1.9,resolved,200,3
+Util Exp 1.9,resolved,201,2
+Util Exp 1.9,resolved,202,2
+Util Exp 1.9,resolved,203,4
+Util Exp 1.9,resolved,204,4
+Util Exp 1.9,resolved,205,3
+Util Exp 1.9,resolved,206,3
+Util Exp 1.9,resolved,207,1
+Util Exp 1.9,resolved,208,4
+Util Exp 1.9,resolved,209,3
+Util Exp 1.9,resolved,210,2
+Util Exp 1.9,resolved,211,4
+Util Exp 1.9,resolved,212,1
+Util Exp 1.9,resolved,214,1
+Util Exp 1.9,resolved,216,1
+Util Exp 1.9,resolved,217,1
+Util Exp 1.9,resolved,218,1
+Util Exp 1.9,resolved,219,2
+Util Exp 1.9,resolved,220,2
+Util Exp 1.9,resolved,221,4
+Util Exp 1.9,resolved,222,3
+Util Exp 1.9,resolved,223,2
+Util Exp 1.9,resolved,224,3
+Util Exp 1.9,resolved,225,5
+Util Exp 1.9,resolved,226,2
+Util Exp 1.9,resolved,227,1
+Util Exp 1.9,resolved,229,2
+Util Exp 1.9,resolved,230,1
+Util Exp 1.9,resolved,231,3
+Util Exp 1.9,resolved,232,2
+Util Exp 1.9,resolved,233,1
+Util Exp 1.9,resolved,234,3
+Util Exp 1.9,resolved,236,1
+Util Exp 1.9,resolved,237,2
+Util Exp 1.9,resolved,239,2
+Util Exp 1.9,resolved,241,3
+Util Exp 1.9,resolved,242,1
+Util Exp 1.9,resolved,243,3
+Util Exp 1.9,resolved,244,2
+Util Exp 1.9,resolved,245,2
+Util Exp 1.9,resolved,247,2
+Util Exp 1.9,resolved,248,1
+Util Exp 1.9,resolved,249,1
+Util Exp 1.9,resolved,250,2
+Util Exp 1.9,resolved,251,1
+Util Exp 1.9,resolved,252,2
+Util Exp 1.9,resolved,253,2
+Util Exp 1.9,resolved,254,1
+Util Exp 1.9,resolved,256,2
+Util Exp 1.9,resolved,259,1
+Util Exp 1.9,resolved,261,1
+Util Exp 1.9,resolved,262,1
+Util Exp 1.9,resolved,263,1
+Util Exp 1.9,resolved,264,4
+Util Exp 1.9,resolved,265,2
+Util Exp 1.9,resolved,266,2
+Util Exp 1.9,resolved,267,1
+Util Exp 1.9,resolved,268,1
+Util Exp 1.9,resolved,269,3
+Util Exp 1.9,resolved,271,1
+Util Exp 1.9,resolved,274,1
+Util Exp 1.9,resolved,276,3
+Util Exp 1.9,resolved,277,2
+Util Exp 1.9,resolved,280,2
+Util Exp 1.9,resolved,282,1
+Util Exp 1.9,resolved,283,1
+Util Exp 1.9,resolved,285,2
+Util Exp 1.9,resolved,287,1
+Util Exp 1.9,resolved,290,1
+Util Exp 1.9,resolved,291,1
+Util Exp 1.9,resolved,295,2
+Util Exp 1.9,resolved,296,1
+Util Exp 1.9,resolved,297,1
+Util Exp 1.9,resolved,299,2
+Util Exp 1.9,resolved,301,2
+Util Exp 1.9,resolved,302,3
+Util Exp 1.9,resolved,304,1
+Util Exp 1.9,resolved,305,1
+Util Exp 1.9,resolved,307,1
+Util Exp 1.9,resolved,308,1
+Util Exp 1.9,resolved,310,1
+Util Exp 1.9,resolved,313,1
+Util Exp 1.9,resolved,314,1
+Util Exp 1.9,resolved,317,1
+Util Exp 1.9,resolved,319,2
+Util Exp 1.9,resolved,320,1
+Util Exp 1.9,resolved,325,1
+Util Exp 1.9,resolved,326,1
+Util Exp 1.9,resolved,327,2
+Util Exp 1.9,resolved,330,1
+Util Exp 1.9,resolved,332,1
+Util Exp 1.9,resolved,338,1
+Util Exp 1.9,resolved,348,1
+Util Exp 1.9,resolved,351,2
+Util Exp 1.9,resolved,353,1
+Util Exp 1.9,resolved,354,1
+Util Exp 1.9,resolved,356,1
+Util Exp 1.9,resolved,357,1
+Util Exp 1.9,resolved,362,1
+Util Exp 1.9,resolved,365,1
+Util Exp 1.9,outstanding,0,40
+Util Exp 1.9,outstanding,1,19
+Util Exp 1.9,outstanding,2,13
+Util Exp 1.9,outstanding,3,17
+Util Exp 1.9,outstanding,4,10
+Util Exp 1.9,outstanding,5,16
+Util Exp 1.9,outstanding,6,19
+Util Exp 1.9,outstanding,7,16
+Util Exp 1.9,outstanding,8,15
+Util Exp 1.9,outstanding,9,12
+Util Exp 1.9,outstanding,10,11
+Util Exp 1.9,outstanding,11,15
+Util Exp 1.9,outstanding,12,8
+Util Exp 1.9,outstanding,13,13
+Util Exp 1.9,outstanding,14,19
+Util Exp 1.9,outstanding,15,14
+Util Exp 1.9,outstanding,16,13
+Util Exp 1.9,outstanding,17,7
+Util Exp 1.9,outstanding,18,12
+Util Exp 1.9,outstanding,19,10
+Util Exp 1.9,outstanding,20,14
+Util Exp 1.9,outstanding,21,15
+Util Exp 1.9,outstanding,22,11
+Util Exp 1.9,outstanding,23,14
+Util Exp 1.9,outstanding,24,8
+Util Exp 1.9,outstanding,25,12
+Util Exp 1.9,outstanding,26,6
+Util Exp 1.9,outstanding,27,3
+Util Exp 1.9,outstanding,28,15
+Util Exp 1.9,outstanding,29,13
+Util Exp 1.9,outstanding,30,12
+Util Exp 1.9,outstanding,31,12
+Util Exp 1.9,outstanding,32,12
+Util Exp 1.9,outstanding,33,9
+Util Exp 1.9,outstanding,34,12
+Util Exp 1.9,outstanding,35,9
+Util Exp 1.9,outstanding,36,13
+Util Exp 1.9,outstanding,37,5
+Util Exp 1.9,outstanding,38,13
+Util Exp 1.9,outstanding,39,10
+Util Exp 1.9,outstanding,40,9
+Util Exp 1.9,outstanding,41,8
+Util Exp 1.9,outstanding,42,8
+Util Exp 1.9,outstanding,43,7
+Util Exp 1.9,outstanding,44,4
+Util Exp 1.9,outstanding,45,12
+Util Exp 1.9,outstanding,46,12
+Util Exp 1.9,outstanding,47,9
+Util Exp 1.9,outstanding,48,10
+Util Exp 1.9,outstanding,49,11
+Util Exp 1.9,outstanding,50,9
+Util Exp 1.9,outstanding,51,12
+Util Exp 1.9,outstanding,52,10
+Util Exp 1.9,outstanding,53,12
+Util Exp 1.9,outstanding,54,6
+Util Exp 1.9,outstanding,55,14
+Util Exp 1.9,outstanding,56,11
+Util Exp 1.9,outstanding,57,10
+Util Exp 1.9,outstanding,58,9
+Util Exp 1.9,outstanding,59,10
+Util Exp 1.9,outstanding,60,8
+Util Exp 1.9,outstanding,61,13
+Util Exp 1.9,outstanding,62,5
+Util Exp 1.9,outstanding,63,6
+Util Exp 1.9,outstanding,64,12
+Util Exp 1.9,outstanding,65,11
+Util Exp 1.9,outstanding,66,10
+Util Exp 1.9,outstanding,67,13
+Util Exp 1.9,outstanding,68,8
+Util Exp 1.9,outstanding,69,9
+Util Exp 1.9,outstanding,70,8
+Util Exp 1.9,outstanding,71,13
+Util Exp 1.9,outstanding,72,10
+Util Exp 1.9,outstanding,73,8
+Util Exp 1.9,outstanding,74,6
+Util Exp 1.9,outstanding,75,9
+Util Exp 1.9,outstanding,76,9
+Util Exp 1.9,outstanding,77,12
+Util Exp 1.9,outstanding,78,11
+Util Exp 1.9,outstanding,79,10
+Util Exp 1.9,outstanding,80,12
+Util Exp 1.9,outstanding,81,14
+Util Exp 1.9,outstanding,82,15
+Util Exp 1.9,outstanding,83,13
+Util Exp 1.9,outstanding,84,15
+Util Exp 1.9,outstanding,85,10
+Util Exp 1.9,outstanding,86,15
+Util Exp 1.9,outstanding,87,14
+Util Exp 1.9,outstanding,88,10
+Util Exp 1.9,outstanding,89,13
+Util Exp 1.9,outstanding,90,11
+Util Exp 1.9,outstanding,91,13
+Util Exp 1.9,outstanding,92,15
+Util Exp 1.9,outstanding,93,7
+Util Exp 1.9,outstanding,94,8
+Util Exp 1.9,outstanding,95,5
+Util Exp 1.9,outstanding,96,8
+Util Exp 1.9,outstanding,97,9
+Util Exp 1.9,outstanding,98,11
+Util Exp 1.9,outstanding,99,10
+Util Exp 1.9,outstanding,100,7
+Util Exp 1.9,outstanding,101,9
+Util Exp 1.9,outstanding,102,5
+Util Exp 1.9,outstanding,103,14
+Util Exp 1.9,outstanding,104,6
+Util Exp 1.9,outstanding,105,8
+Util Exp 1.9,outstanding,106,10
+Util Exp 1.9,outstanding,107,12
+Util Exp 1.9,outstanding,108,8
+Util Exp 1.9,outstanding,109,13
+Util Exp 1.9,outstanding,110,11
+Util Exp 1.9,outstanding,111,11
+Util Exp 1.9,outstanding,112,7
+Util Exp 1.9,outstanding,113,11
+Util Exp 1.9,outstanding,114,6
+Util Exp 1.9,outstanding,115,10
+Util Exp 1.9,outstanding,116,10
+Util Exp 1.9,outstanding,117,9
+Util Exp 1.9,outstanding,118,14
+Util Exp 1.9,outstanding,119,15
+Util Exp 1.9,outstanding,120,7
+Util Exp 1.9,outstanding,121,7
+Util Exp 1.9,outstanding,122,9
+Util Exp 1.9,outstanding,123,12
+Util Exp 1.9,outstanding,124,9
+Util Exp 1.9,outstanding,125,8
+Util Exp 1.9,outstanding,126,15
+Util Exp 1.9,outstanding,127,14
+Util Exp 1.9,outstanding,128,10
+Util Exp 1.9,outstanding,129,9
+Util Exp 1.9,outstanding,130,7
+Util Exp 1.9,outstanding,131,6
+Util Exp 1.9,outstanding,132,5
+Util Exp 1.9,outstanding,133,7
+Util Exp 1.9,outstanding,134,9
+Util Exp 1.9,outstanding,135,11
+Util Exp 1.9,outstanding,136,11
+Util Exp 1.9,outstanding,137,7
+Util Exp 1.9,outstanding,138,15
+Util Exp 1.9,outstanding,139,11
+Util Exp 1.9,outstanding,140,11
+Util Exp 1.9,outstanding,141,7
+Util Exp 1.9,outstanding,142,10
+Util Exp 1.9,outstanding,143,8
+Util Exp 1.9,outstanding,144,8
+Util Exp 1.9,outstanding,145,12
+Util Exp 1.9,outstanding,146,11
+Util Exp 1.9,outstanding,147,9
+Util Exp 1.9,outstanding,148,6
+Util Exp 1.9,outstanding,149,8
+Util Exp 1.9,outstanding,150,13
+Util Exp 1.9,outstanding,151,13
+Util Exp 1.9,outstanding,152,7
+Util Exp 1.9,outstanding,153,9
+Util Exp 1.9,outstanding,154,9
+Util Exp 1.9,outstanding,155,9
+Util Exp 1.9,outstanding,156,4
+Util Exp 1.9,outstanding,157,9
+Util Exp 1.9,outstanding,158,9
+Util Exp 1.9,outstanding,159,7
+Util Exp 1.9,outstanding,160,5
+Util Exp 1.9,outstanding,161,6
+Util Exp 1.9,outstanding,162,6
+Util Exp 1.9,outstanding,163,6
+Util Exp 1.9,outstanding,164,6
+Util Exp 1.9,outstanding,165,9
+Util Exp 1.9,outstanding,166,8
+Util Exp 1.9,outstanding,167,7
+Util Exp 1.9,outstanding,168,3
+Util Exp 1.9,outstanding,169,7
+Util Exp 1.9,outstanding,170,5
+Util Exp 1.9,outstanding,171,6
+Util Exp 1.9,outstanding,172,10
+Util Exp 1.9,outstanding,173,12
+Util Exp 1.9,outstanding,174,7
+Util Exp 1.9,outstanding,175,11
+Util Exp 1.9,outstanding,176,10
+Util Exp 1.9,outstanding,177,6
+Util Exp 1.9,outstanding,178,10
+Util Exp 1.9,outstanding,179,7
+Util Exp 1.9,outstanding,180,8
+Util Exp 1.9,outstanding,181,4
+Util Exp 1.9,outstanding,182,13
+Util Exp 1.9,outstanding,183,3
+Util Exp 1.9,outstanding,184,7
+Util Exp 1.9,outstanding,185,9
+Util Exp 1.9,outstanding,186,8
+Util Exp 1.9,outstanding,187,6
+Util Exp 1.9,outstanding,188,4
+Util Exp 1.9,outstanding,189,7
+Util Exp 1.9,outstanding,190,5
+Util Exp 1.9,outstanding,191,3
+Util Exp 1.9,outstanding,192,6
+Util Exp 1.9,outstanding,193,4
+Util Exp 1.9,outstanding,194,9
+Util Exp 1.9,outstanding,195,10
+Util Exp 1.9,outstanding,196,9
+Util Exp 1.9,outstanding,197,5
+Util Exp 1.9,outstanding,198,7
+Util Exp 1.9,outstanding,199,8
+Util Exp 1.9,outstanding,200,5
+Util Exp 1.9,outstanding,201,9
+Util Exp 1.9,outstanding,202,5
+Util Exp 1.9,outstanding,203,7
+Util Exp 1.9,outstanding,204,7
+Util Exp 1.9,outstanding,205,4
+Util Exp 1.9,outstanding,206,4
+Util Exp 1.9,outstanding,207,4
+Util Exp 1.9,outstanding,208,5
+Util Exp 1.9,outstanding,209,6
+Util Exp 1.9,outstanding,210,7
+Util Exp 1.9,outstanding,211,6
+Util Exp 1.9,outstanding,212,6
+Util Exp 1.9,outstanding,213,9
+Util Exp 1.9,outstanding,214,7
+Util Exp 1.9,outstanding,215,6
+Util Exp 1.9,outstanding,216,5
+Util Exp 1.9,outstanding,217,6
+Util Exp 1.9,outstanding,218,10
+Util Exp 1.9,outstanding,219,7
+Util Exp 1.9,outstanding,220,9
+Util Exp 1.9,outstanding,221,4
+Util Exp 1.9,outstanding,222,5
+Util Exp 1.9,outstanding,223,4
+Util Exp 1.9,outstanding,224,6
+Util Exp 1.9,outstanding,225,8
+Util Exp 1.9,outstanding,226,10
+Util Exp 1.9,outstanding,227,9
+Util Exp 1.9,outstanding,228,2
+Util Exp 1.9,outstanding,229,8
+Util Exp 1.9,outstanding,230,7
+Util Exp 1.9,outstanding,231,9
+Util Exp 1.9,outstanding,232,7
+Util Exp 1.9,outstanding,233,7
+Util Exp 1.9,outstanding,234,12
+Util Exp 1.9,outstanding,235,2
+Util Exp 1.9,outstanding,236,6
+Util Exp 1.9,outstanding,237,10
+Util Exp 1.9,outstanding,238,5
+Util Exp 1.9,outstanding,239,8
+Util Exp 1.9,outstanding,240,6
+Util Exp 1.9,outstanding,241,4
+Util Exp 1.9,outstanding,242,5
+Util Exp 1.9,outstanding,243,1
+Util Exp 1.9,outstanding,244,4
+Util Exp 1.9,outstanding,245,4
+Util Exp 1.9,outstanding,246,2
+Util Exp 1.9,outstanding,247,2
+Util Exp 1.9,outstanding,248,5
+Util Exp 1.9,outstanding,249,5
+Util Exp 1.9,outstanding,250,4
+Util Exp 1.9,outstanding,251,3
+Util Exp 1.9,outstanding,252,5
+Util Exp 1.9,outstanding,253,4
+Util Exp 1.9,outstanding,254,5
+Util Exp 1.9,outstanding,255,3
+Util Exp 1.9,outstanding,256,8
+Util Exp 1.9,outstanding,257,5
+Util Exp 1.9,outstanding,258,6
+Util Exp 1.9,outstanding,259,3
+Util Exp 1.9,outstanding,260,6
+Util Exp 1.9,outstanding,261,3
+Util Exp 1.9,outstanding,262,2
+Util Exp 1.9,outstanding,264,5
+Util Exp 1.9,outstanding,265,3
+Util Exp 1.9,outstanding,266,3
+Util Exp 1.9,outstanding,267,4
+Util Exp 1.9,outstanding,268,5
+Util Exp 1.9,outstanding,269,1
+Util Exp 1.9,outstanding,270,5
+Util Exp 1.9,outstanding,271,6
+Util Exp 1.9,outstanding,272,5
+Util Exp 1.9,outstanding,273,2
+Util Exp 1.9,outstanding,274,3
+Util Exp 1.9,outstanding,275,5
+Util Exp 1.9,outstanding,276,7
+Util Exp 1.9,outstanding,277,1
+Util Exp 1.9,outstanding,278,5
+Util Exp 1.9,outstanding,279,6
+Util Exp 1.9,outstanding,280,3
+Util Exp 1.9,outstanding,281,1
+Util Exp 1.9,outstanding,282,2
+Util Exp 1.9,outstanding,283,3
+Util Exp 1.9,outstanding,284,5
+Util Exp 1.9,outstanding,285,2
+Util Exp 1.9,outstanding,286,3
+Util Exp 1.9,outstanding,287,4
+Util Exp 1.9,outstanding,288,2
+Util Exp 1.9,outstanding,289,5
+Util Exp 1.9,outstanding,290,2
+Util Exp 1.9,outstanding,291,7
+Util Exp 1.9,outstanding,292,4
+Util Exp 1.9,outstanding,293,1
+Util Exp 1.9,outstanding,294,3
+Util Exp 1.9,outstanding,295,3
+Util Exp 1.9,outstanding,296,4
+Util Exp 1.9,outstanding,297,4
+Util Exp 1.9,outstanding,298,4
+Util Exp 1.9,outstanding,299,5
+Util Exp 1.9,outstanding,300,9
+Util Exp 1.9,outstanding,301,6
+Util Exp 1.9,outstanding,302,3
+Util Exp 1.9,outstanding,303,4
+Util Exp 1.9,outstanding,304,3
+Util Exp 1.9,outstanding,305,2
+Util Exp 1.9,outstanding,306,3
+Util Exp 1.9,outstanding,307,4
+Util Exp 1.9,outstanding,308,4
+Util Exp 1.9,outstanding,309,4
+Util Exp 1.9,outstanding,310,2
+Util Exp 1.9,outstanding,311,2
+Util Exp 1.9,outstanding,312,4
+Util Exp 1.9,outstanding,313,2
+Util Exp 1.9,outstanding,314,2
+Util Exp 1.9,outstanding,315,2
+Util Exp 1.9,outstanding,316,1
+Util Exp 1.9,outstanding,317,3
+Util Exp 1.9,outstanding,318,1
+Util Exp 1.9,outstanding,319,5
+Util Exp 1.9,outstanding,320,3
+Util Exp 1.9,outstanding,321,3
+Util Exp 1.9,outstanding,322,1
+Util Exp 1.9,outstanding,323,2
+Util Exp 1.9,outstanding,324,4
+Util Exp 1.9,outstanding,325,1
+Util Exp 1.9,outstanding,326,5
+Util Exp 1.9,outstanding,327,3
+Util Exp 1.9,outstanding,328,2
+Util Exp 1.9,outstanding,329,4
+Util Exp 1.9,outstanding,330,1
+Util Exp 1.9,outstanding,331,3
+Util Exp 1.9,outstanding,332,4
+Util Exp 1.9,outstanding,333,2
+Util Exp 1.9,outstanding,334,1
+Util Exp 1.9,outstanding,335,2
+Util Exp 1.9,outstanding,336,1
+Util Exp 1.9,outstanding,337,1
+Util Exp 1.9,outstanding,338,1
+Util Exp 1.9,outstanding,340,2
+Util Exp 1.9,outstanding,342,1
+Util Exp 1.9,outstanding,343,1
+Util Exp 1.9,outstanding,344,2
+Util Exp 1.9,outstanding,345,3
+Util Exp 1.9,outstanding,346,2
+Util Exp 1.9,outstanding,347,2
+Util Exp 1.9,outstanding,349,2
+Util Exp 1.9,outstanding,353,1
+Util Exp 1.9,outstanding,357,1
+Util Exp 1.9,outstanding,358,1
+Util Exp 1.9,outstanding,360,1
+Util Exp 1.9,outstanding,361,1
+Util Exp 1.9,outstanding,364,1
+Util Exp 1.9,outstanding,365,41

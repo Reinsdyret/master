@@ -1,0 +1,215 @@
+algorithm,kind,wait_days,count
+Greedy DFS,resolved,1,587
+Greedy DFS,resolved,2,266
+Greedy DFS,resolved,3,77
+Greedy DFS,outstanding,0,40
+Greedy DFS,outstanding,1,26
+Greedy DFS,outstanding,2,4
+Huitfeldt TTC,resolved,1,862
+Huitfeldt TTC,resolved,2,26
+Huitfeldt TTC,resolved,3,17
+Huitfeldt TTC,resolved,4,4
+Huitfeldt TTC,resolved,5,4
+Huitfeldt TTC,resolved,6,4
+Huitfeldt TTC,resolved,7,4
+Huitfeldt TTC,resolved,8,1
+Huitfeldt TTC,outstanding,0,40
+Huitfeldt TTC,outstanding,1,2
+Huitfeldt TTC,outstanding,2,2
+Huitfeldt TTC,outstanding,3,1
+Huitfeldt TTC,outstanding,4,2
+Huitfeldt TTC,outstanding,6,4
+Huitfeldt TTC,outstanding,7,1
+Huitfeldt TTC,outstanding,8,2
+Huitfeldt TTC,outstanding,11,1
+Huitfeldt TTC,outstanding,12,1
+Huitfeldt TTC,outstanding,13,2
+Huitfeldt TTC,outstanding,14,2
+Huitfeldt TTC,outstanding,15,4
+Huitfeldt TTC,outstanding,16,3
+Huitfeldt TTC,outstanding,17,5
+Huitfeldt TTC,outstanding,19,3
+Huitfeldt TTC,outstanding,20,3
+Exact Cardinality,resolved,1,862
+Exact Cardinality,resolved,2,26
+Exact Cardinality,resolved,3,17
+Exact Cardinality,resolved,4,4
+Exact Cardinality,resolved,5,4
+Exact Cardinality,resolved,6,4
+Exact Cardinality,resolved,7,4
+Exact Cardinality,resolved,8,1
+Exact Cardinality,outstanding,0,40
+Exact Cardinality,outstanding,1,2
+Exact Cardinality,outstanding,2,2
+Exact Cardinality,outstanding,3,1
+Exact Cardinality,outstanding,4,2
+Exact Cardinality,outstanding,6,4
+Exact Cardinality,outstanding,7,1
+Exact Cardinality,outstanding,8,2
+Exact Cardinality,outstanding,11,1
+Exact Cardinality,outstanding,12,1
+Exact Cardinality,outstanding,13,2
+Exact Cardinality,outstanding,14,2
+Exact Cardinality,outstanding,15,4
+Exact Cardinality,outstanding,16,3
+Exact Cardinality,outstanding,17,5
+Exact Cardinality,outstanding,19,3
+Exact Cardinality,outstanding,20,3
+Exact Priority,resolved,1,565
+Exact Priority,resolved,2,209
+Exact Priority,resolved,3,108
+Exact Priority,resolved,4,16
+Exact Priority,outstanding,0,40
+Exact Priority,outstanding,1,19
+Exact Priority,outstanding,2,27
+Exact Priority,outstanding,3,16
+Util Linear,resolved,1,862
+Util Linear,resolved,2,26
+Util Linear,resolved,3,17
+Util Linear,resolved,4,4
+Util Linear,resolved,5,4
+Util Linear,resolved,6,4
+Util Linear,resolved,7,4
+Util Linear,resolved,8,1
+Util Linear,outstanding,0,40
+Util Linear,outstanding,1,2
+Util Linear,outstanding,2,2
+Util Linear,outstanding,3,1
+Util Linear,outstanding,4,2
+Util Linear,outstanding,6,4
+Util Linear,outstanding,7,1
+Util Linear,outstanding,8,2
+Util Linear,outstanding,11,1
+Util Linear,outstanding,12,1
+Util Linear,outstanding,13,2
+Util Linear,outstanding,14,2
+Util Linear,outstanding,15,4
+Util Linear,outstanding,16,3
+Util Linear,outstanding,17,5
+Util Linear,outstanding,19,3
+Util Linear,outstanding,20,3
+Util Exp 1.01,resolved,1,862
+Util Exp 1.01,resolved,2,26
+Util Exp 1.01,resolved,3,17
+Util Exp 1.01,resolved,4,4
+Util Exp 1.01,resolved,5,4
+Util Exp 1.01,resolved,6,4
+Util Exp 1.01,resolved,7,4
+Util Exp 1.01,resolved,8,1
+Util Exp 1.01,outstanding,0,40
+Util Exp 1.01,outstanding,1,2
+Util Exp 1.01,outstanding,2,2
+Util Exp 1.01,outstanding,3,1
+Util Exp 1.01,outstanding,4,2
+Util Exp 1.01,outstanding,6,4
+Util Exp 1.01,outstanding,7,1
+Util Exp 1.01,outstanding,8,2
+Util Exp 1.01,outstanding,11,1
+Util Exp 1.01,outstanding,12,1
+Util Exp 1.01,outstanding,13,2
+Util Exp 1.01,outstanding,14,2
+Util Exp 1.01,outstanding,15,4
+Util Exp 1.01,outstanding,16,3
+Util Exp 1.01,outstanding,17,5
+Util Exp 1.01,outstanding,19,3
+Util Exp 1.01,outstanding,20,3
+Util Exp 1.05,resolved,1,862
+Util Exp 1.05,resolved,2,26
+Util Exp 1.05,resolved,3,17
+Util Exp 1.05,resolved,4,4
+Util Exp 1.05,resolved,5,4
+Util Exp 1.05,resolved,6,4
+Util Exp 1.05,resolved,7,4
+Util Exp 1.05,resolved,8,1
+Util Exp 1.05,outstanding,0,40
+Util Exp 1.05,outstanding,1,2
+Util Exp 1.05,outstanding,2,2
+Util Exp 1.05,outstanding,3,1
+Util Exp 1.05,outstanding,4,2
+Util Exp 1.05,outstanding,6,4
+Util Exp 1.05,outstanding,7,1
+Util Exp 1.05,outstanding,8,2
+Util Exp 1.05,outstanding,11,1
+Util Exp 1.05,outstanding,12,1
+Util Exp 1.05,outstanding,13,2
+Util Exp 1.05,outstanding,14,2
+Util Exp 1.05,outstanding,15,4
+Util Exp 1.05,outstanding,16,3
+Util Exp 1.05,outstanding,17,5
+Util Exp 1.05,outstanding,19,3
+Util Exp 1.05,outstanding,20,3
+Util Exp 1.1,resolved,1,862
+Util Exp 1.1,resolved,2,26
+Util Exp 1.1,resolved,3,17
+Util Exp 1.1,resolved,4,4
+Util Exp 1.1,resolved,5,4
+Util Exp 1.1,resolved,6,4
+Util Exp 1.1,resolved,7,4
+Util Exp 1.1,resolved,8,1
+Util Exp 1.1,outstanding,0,40
+Util Exp 1.1,outstanding,1,2
+Util Exp 1.1,outstanding,2,2
+Util Exp 1.1,outstanding,3,1
+Util Exp 1.1,outstanding,4,2
+Util Exp 1.1,outstanding,6,4
+Util Exp 1.1,outstanding,7,1
+Util Exp 1.1,outstanding,8,2
+Util Exp 1.1,outstanding,11,1
+Util Exp 1.1,outstanding,12,1
+Util Exp 1.1,outstanding,13,2
+Util Exp 1.1,outstanding,14,2
+Util Exp 1.1,outstanding,15,4
+Util Exp 1.1,outstanding,16,3
+Util Exp 1.1,outstanding,17,5
+Util Exp 1.1,outstanding,19,3
+Util Exp 1.1,outstanding,20,3
+Util Exp 1.5,resolved,1,862
+Util Exp 1.5,resolved,2,26
+Util Exp 1.5,resolved,3,17
+Util Exp 1.5,resolved,4,4
+Util Exp 1.5,resolved,5,4
+Util Exp 1.5,resolved,6,4
+Util Exp 1.5,resolved,7,4
+Util Exp 1.5,resolved,8,1
+Util Exp 1.5,outstanding,0,40
+Util Exp 1.5,outstanding,1,2
+Util Exp 1.5,outstanding,2,2
+Util Exp 1.5,outstanding,3,1
+Util Exp 1.5,outstanding,4,2
+Util Exp 1.5,outstanding,6,4
+Util Exp 1.5,outstanding,7,1
+Util Exp 1.5,outstanding,8,2
+Util Exp 1.5,outstanding,11,1
+Util Exp 1.5,outstanding,12,1
+Util Exp 1.5,outstanding,13,2
+Util Exp 1.5,outstanding,14,2
+Util Exp 1.5,outstanding,15,4
+Util Exp 1.5,outstanding,16,3
+Util Exp 1.5,outstanding,17,5
+Util Exp 1.5,outstanding,19,3
+Util Exp 1.5,outstanding,20,3
+Util Exp 1.9,resolved,1,862
+Util Exp 1.9,resolved,2,26
+Util Exp 1.9,resolved,3,17
+Util Exp 1.9,resolved,4,4
+Util Exp 1.9,resolved,5,4
+Util Exp 1.9,resolved,6,4
+Util Exp 1.9,resolved,7,4
+Util Exp 1.9,resolved,8,1
+Util Exp 1.9,outstanding,0,40
+Util Exp 1.9,outstanding,1,2
+Util Exp 1.9,outstanding,2,2
+Util Exp 1.9,outstanding,3,1
+Util Exp 1.9,outstanding,4,2
+Util Exp 1.9,outstanding,6,4
+Util Exp 1.9,outstanding,7,1
+Util Exp 1.9,outstanding,8,2
+Util Exp 1.9,outstanding,11,1
+Util Exp 1.9,outstanding,12,1
+Util Exp 1.9,outstanding,13,2
+Util Exp 1.9,outstanding,14,2
+Util Exp 1.9,outstanding,15,4
+Util Exp 1.9,outstanding,16,3
+Util Exp 1.9,outstanding,17,5
+Util Exp 1.9,outstanding,19,3
+Util Exp 1.9,outstanding,20,3

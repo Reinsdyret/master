@@ -1,6 +1,0 @@
-file_name,num_patients,num_doctors,dfs_total_ms,dfs_total_ms,scc_v1_total_ms,scc_v1_total_ms,cycles_found,patients_reassigned
-,,,mean,std,mean,std,mean,mean
-test_150000_patient_2000_doctors_16_districts_0.05_prob.txt,150000,2000,902.7729999999999,9.890172507202434,1502.036,20.483801838959902,,
-test_150000_patient_2000_doctors_32_districts_0.05_prob.txt,150000,2000,881.7520000000001,9.624760660804839,1529.713,21.82888405047055,,
-test_150000_patient_2000_doctors_64_districts_0.05_prob.txt,150000,2000,982.7700000000001,18.35728859184942,1294.143,12.929410100834275,,
-test_150000_patient_2000_doctors_8_districts_0.05_prob.txt,150000,2000,908.6940000000001,21.20657665285307,1257.818,49.32108086587095,,
