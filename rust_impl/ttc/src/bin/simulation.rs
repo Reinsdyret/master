@@ -70,8 +70,8 @@ fn main() {
             num_patients: 100_000,
             num_doctors: 102,
             waitlist_fraction: 0.2,
-            num_days: 20,
-            new_requests_per_day: NewRequestMode::Fixed(40),
+            num_days: 365 * 2, // 730d — under 1.9's 1010d clamp limit, no exponent capping
+            new_requests_per_day: NewRequestMode::Fixed(50),
             min_new_requests_fraction: 0.0,
             algorithm: *alg,
             algorithm_name: name.to_string(),
