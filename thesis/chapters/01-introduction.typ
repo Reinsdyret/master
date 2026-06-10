@@ -1,5 +1,5 @@
 = Introduction <ch:introduction>
-The Norwegian general practitioner (GP) system, launched in 200, aims to ensure the Norwegian population has a stable GP.
+The Norwegian general practitioner (GP) system, launched in 2001, aims to ensure the Norwegian population has a stable GP.
 A GP can follow their patients over time, creating a trusting and safe relationship @legelisten2024.
 Today, this system works as intended, and GPs handle most of the population's needs.
 As of December 2025, there are 5720 GPs in Norway serving a population of 5.6 million.

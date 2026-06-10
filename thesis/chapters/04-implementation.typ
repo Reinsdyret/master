@@ -5,7 +5,7 @@
 = Implementation <ch:implementation>
 
 In this chapter we look at each algorithm we have implemented, how we implemented them, why and runtime analysis.
-We have in total implemented four algorithms, Greedy DFS, Cycle cancelling for cardinality, utility and for strict priority.
+We have in total implemented five algorithms, Greedy DFS, Cycle cancelling for cardinality, utility and for strict priority, and the TTC of Huitfeldt et al. that we compare against.
 For the cycle cancelling algorithms we also give, or refer to existing, proofs for why they are exact and why they run in polynomial time.
 
 == Different graph representations used
@@ -36,16 +36,32 @@ u(a, b) = |{i in I | D_"cur"[i] = a and D_"pref"[i] = b}| \
 c(a, b) = -1 \
 $
 
-=== GP graph priority weighted <gp-graph-priority-weighted>
-This weighted graph is much like the GP graph collapsed edges, but while that graph representation focuses on number of patients wanting a switch this graph focuses on the priority of each patient.
-Instead of collapsing all preferences that are equal here we make each preference into an edge and weight it with the priority of that patient.
+=== GP multigraph <gp-multigraph>
+This graph representation is much like the GP graph collapsed edges, but instead of collapsing all preferences that are equal we make each preference into its own edge.
+This makes the graph a multigraph, as two patients wanting the same switch give two parallel edges.
+Each edge then represents exactly one patient, identified by the index $i$.
 
 $
 G = (V, E), quad V = D\
 E = { (D_"cur"[i], D_"pref"[i], i) | i in I }\
-u(a, b, i) = 1 \
-c(a, b, i) = - R(P_i)
+u(a, b, i) = 1
 $
+
+For the _Cycle Cancelling for utility_ algorithm we additionally give each edge a cost, $c(a, b, i) = -R(p_i)$, encoding the priority of the patient in the edge weight.
+The _Cycle Cancelling for strict priority_ algorithm uses the same graph but without costs.
+
+== Huitfeldt et al. TTC
+To have a fair baseline to compare against we also implemented the TTC of Huitfeldt et al., described in @ch:background.
+Our implementation is a direct port of the Python code from their replication package to Rust, keeping the algorithm logic unchanged.
+The replication package is not publicly available at the time of writing, the authors kindly shared it with us directly.
+Porting it to Rust means all algorithms in our experiments run in the same language, so runtime comparisons are not skewed by the choice of language.
+
+Two adaptations were needed to run it in our setting.
+First, their code expects priorities where a lower number means higher priority, as their priority is a position on a waitlist.
+In our setting a higher priority number means higher priority, so we reverse the order before passing patients to the algorithm.
+Second, their implementation first runs a waitlist algorithm that assigns patients to GPs with free capacity before running TTC.
+In our setting every GP is at full capacity, so this step never does anything and we omit it.
+The TTC itself is unchanged, GPs rank their current panel members in a fixed arbitrary order followed by the waitlisted patients in priority order, exactly as in their code.
 
 == Greedy DFS
 
@@ -145,8 +161,8 @@ Since the cost of each edge in the original graph is -1 and _Cycle Cancelling_ m
 
 == Cycle Cancelling for utility
 This algorithm finds the solution maximal under $succ_"util"$.
-We use the GP graph priority weighted representation defined in @gp-graph-priority-weighted. 
-So each patient, $i$, is an edge in $G$, the capacity is one while the cost is $-R(i)$.
+We use the GP multigraph representation defined in @gp-multigraph, with the priority costs.
+So each patient, $i$, is an edge in $G$, the capacity is one while the cost is $-R(p_i)$.
 The algorithm then proceeds as follows:
 #pseudocode-list(booktabs:true, title: smallcaps[CycleCancellingUtility($G$, $P$)])[
   + $"resolved" = nothing$
@@ -174,9 +190,18 @@ exponential in $n$, so running this algorithm on it would no longer be polynomia
 This is why we treat the strict lexicographic case separately and give it its own
 algorithm.
 
+There is also a practical limit on how large the priorities can get.
+In our implementation the costs are stored as 128 bit integers, and with $R(a) = k^("days waiting")$ the weights grow exponentially with waiting time.
+To keep the weights within bounds we divide the number of days by $10$ before exponentiating, so patients are grouped into priority buckets of $10$ days, and we cap the exponent so the weights never overflow.
+For the fastest growing base we use, $k = 1.9$, the cap is reached after $1010$ days of waiting.
+Past this point all longer waits get the same weight and the ordering between them is lost.
+So in practice the utility algorithm with exponential priorities can only separate patients up to a bounded waiting time, this limits how long simulations we can run it on.
+
 == Cycle Cancelling for strict priority 
 The _Cycle Cancelling for strict priority_ finds the solution maximal under $succ_"lex"$.
-It uses the GP graph priority weighted representation defined in @gp-graph-priority-weighted and uses _Cycle Cancelling_, but modifies it. 
+It uses the GP multigraph representation defined in @gp-multigraph, but without the priority costs.
+The two exact algorithms for priority thus solve their problems on the same graph, _Cycle Cancelling for utility_ encodes priority in the edge weights while _Cycle Cancelling for strict priority_ encodes it in the order patients are processed.
+It is based on _Cycle Cancelling_, but modifies it.
 First we loop through patients in descending order of priority, if we find any cycle with this patient in the residual graph we cancel it and add the patient to the solution.
 If the patient already has flow from being in a cycle with another patient with greater priority, then we just remove it from the graph.
 This way the highest priority patient is either in a cycle or not, the patient is removed from the graph at the end either way.
@@ -187,26 +212,48 @@ The algorithms is as follows:
   + $f = $ zero circulation on $G$
   + $"sorted" = $ $P$ sorted by $R$ in decreasing order
   + *for each* $p in "sorted"$ *do*
-    + $i = "idx"(p)$
-    + $e = (D_"curr"[i], D_"pref"[i], i)$
-    + *if* $f(e) > 0$ *then*
+    + $i = "idx"(p)$, $quad e = (D_"cur"[i], D_"pref"[i], i)$
+    + *if* $f(e) = 1$ *then*
       + Add $p$ to $"resolved"$
-      + Delete $e$ from $G$
-    + *end*
-    + *if* $exists$ negative residual cycle $c in G(f)$ and $e in c$ *then*
-      + Cancel $c$
+    + *else if* $exists$ directed path $Q$ from $D_"pref"[i]$ to $D_"cur"[i]$ in $G(f)$ *then*
+      + Push one unit of flow on $e$ and on every edge of $Q$
       + Add $p$ to $"resolved"$
     + *end*
-    + Delete $e$ from $G$
+    + Delete $e$ and its residual edges from $G$
   + *end*
   + *return* $"resolved"$
 ]
 
-The final solution is the maximal solution under $succ_"lex"$ this is because we process patients starting from those with greatest priority.
-Because one high priority patient is "better" in terms of $succ_"lex"$ than all patients with lesser priority, if we find a cycle that allows that high priority patient to be resolved we must use it.
-Then by removing the edge from the graph we do not allow that edge to be "undoed".
-If we do not find a cycle containing the high priority patients edge then there is no way to circulate flow along this edge e.g it is not possible to satisfy that patient.
+The final solution is the maximal solution under $succ_"lex"$.
+To show why we first need a small observation about how the feasible solutions change as the algorithm runs.
+
+#theorem("Monotonicity of feasibility")[
+  Let $F$ be the set of patient edges that currently carry flow, and let $e$ be an edge not in $F$.
+  If there is no circulation that has flow on every edge of $F$ and on $e$, then there is also no such circulation after more patients have been committed.
+]<monotonicity-lemma>
+
+#proof[
+  Committing a patient adds their edge to $F$ and deletes the edge from the residual network.
+  Both of these only add constraints, no new circulations become possible.
+  So if no circulation containing $F union {e}$ exists now, none can exist later. 
+]
+
+Recall that a path from $D_"pref" [i]$ to $D_"cur" [i]$ in the residual network $G(f)$, together with the edge $e$, forms a cycle through $e$.
+By standard flow theory such a path exists if and only if there is a circulation that keeps flow on all committed edges and also has flow on $e$.
+So the search in the algorithm is an exact test of whether patient $p$ can still be satisfied together with all higher priority patients that are already resolved.
+
+Now consider the patients in the order the algorithm processes them.
+Because one high priority patient is "better" in terms of $succ_"lex"$ than all patients with lesser priority combined, the maximal solution under $succ_"lex"$ must contain patient $p$ whenever $p$ can be satisfied together with the already committed patients.
+This is exactly when the algorithm finds a cycle through $e$, so the algorithm resolves $p$ if and only if the maximal solution contains $p$.
+By deleting $e$ and its residual edge after committing, no later patient can reroute the flow off of $e$, so the decision for $p$ is final.
+If the algorithm does not find a cycle through $e$, then by @monotonicity-lemma no later step could have satisfied $p$ either, so deleting $e$ loses nothing.
+Repeating this argument for every patient in decreasing priority order gives that the returned solution agrees with the maximal solution under $succ_"lex"$ at every position, so they are equal.
 
 === Runtime
-As we loop over all patients we have |P| iterations. For each iteration we search for a negative residual cycle, recall we can use Bellman-Ford in $O(n m)$ time for this.
-So the _Cycle Cancelling for strict priority_ has a runtime of $O(n m |P|)$ and is not dependent on the maximum priority as in the _Cycle Cancelling for utility_.
+As we loop over all patients we have $|P|$ iterations.
+For each iteration we search for a path from $D_"pref" [i]$ to $D_"cur" [i]$ in the residual network.
+This is a single graph search, for instance a BFS, and takes $O(n + m)$ time.
+So the _Cycle Cancelling for strict priority_ has a runtime of $O((n + m) |P|)$ and is not dependent on the maximum priority as in the _Cycle Cancelling for utility_.
+Note that this is also faster than searching for negative cycles with Bellman-Ford, which would cost $O(n m)$ per patient.
+We can drop the costs entirely because the priority order is already enforced by the order we process patients in, the edge weights play no role in this algorithm.
+

@@ -15,6 +15,7 @@
   acknowledgements: [
     I would like to thank my supervisor Fredrik Manne for his guidance and support throughout this project.
     I would also like to thank Juni Weisteen Bjerde for input and help during the project. In addition Juni and Mathias Bertntert together theorised the exact algorithms so that I could implement them.
+    I would also like to thank Ingrid Huitfeldt, Victoria Marone and Daniel Waldinger for sharing the replication code for their TTC mechanism.
   ],
   bibliography: bibliography("refs.bib"),
   figure-index: (enabled: true),
