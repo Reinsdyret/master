@@ -277,7 +277,10 @@ pub fn huitfeldt_ttc(state: &mut AssignmentState) -> ResultWithStats {
         }
         wants_switch.push((patient.priority, patient.id));
     }
-    wants_switch.sort();
+    // Simulation convention: higher priority value = waited longer = served first.
+    // Huitfeldt's code expects highest priority first in the queue, so sort descending,
+    // tie-broken by ascending patient id for determinism.
+    wants_switch.sort_by_key(|&(prio, id)| (std::cmp::Reverse(prio), id));
 
     let priority_list: Vec<usize> = wants_switch.iter().map(|&(_, id)| id).collect();
     let mut preferences: HashMap<usize, Vec<usize>> = HashMap::new();

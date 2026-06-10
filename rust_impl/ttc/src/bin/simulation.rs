@@ -30,11 +30,11 @@ fn main() {
         ("Exact Cardinality", run_exact_cardinality),
         ("Exact Priority",    run_exact_priority),
         ("Util Linear",       run_util_linear),
-        ("Util Exp 1.01",     run_util_exp_1_01),
-        ("Util Exp 1.05",     run_util_exp_1_05),
-        ("Util Exp 1.1",      run_util_exp_1_1),
-        ("Util Exp 1.5",      run_util_exp_1_5),
-        ("Util Exp 1.9",      run_util_exp_1_9),
+        // ("Util Exp 1.01",     run_util_exp_1_01),
+        // ("Util Exp 1.05",     run_util_exp_1_05),
+        // ("Util Exp 1.1",      run_util_exp_1_1),
+        // ("Util Exp 1.5",      run_util_exp_1_5),
+        // ("Util Exp 1.9",      run_util_exp_1_9),
     ];
 
     // Open all three output files up front and write headers, so each algorithm's
@@ -67,17 +67,17 @@ fn main() {
 
     for (name, alg) in &algorithms {
         let config = SimulationConfig {
-            num_patients: 100_000,
-            num_doctors: 102,
-            waitlist_fraction: 0.2,
-            num_days: 365 * 2, // 730d — under 1.9's 1010d clamp limit, no exponent capping
-            new_requests_per_day: NewRequestMode::Fixed(50),
+            num_patients: 1_000_000,
+            num_doctors: 1020,
+            waitlist_fraction: 0.05,
+            num_days: 365 * 10,
+            new_requests_per_day: NewRequestMode::Fixed(180),
             min_new_requests_fraction: 0.0,
             algorithm: *alg,
             algorithm_name: name.to_string(),
             seed: 42,
-            num_districts: 6,
-            cross_district_prob: 0.02,
+            num_districts: 60,
+            cross_district_prob: 0.11,
         };
 
         let result = run_simulation(config);

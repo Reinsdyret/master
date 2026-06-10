@@ -11,7 +11,7 @@ use std::fs;
 /// Strategy for ordering patients during TTC algorithm execution
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PriorityStrategy {
-    /// Process strictly by priority number (lower = higher priority)
+    /// Process strictly by priority number (higher = higher priority)
     StrictPriority,
     /// Put unassigned patients (no current doctor) first, then by priority
     UnassignedFirst,

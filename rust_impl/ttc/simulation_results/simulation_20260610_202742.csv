@@ -1,0 +1,1 @@
+algorithm,day,waitlist_before,patients_resolved,new_requests,waitlist_after,satisfaction_rate,cycles_found,avg_cycle_length,max_cycle_length,avg_wait_days,max_wait_days,cross_requests_added,cross_resolved,solve_ms
