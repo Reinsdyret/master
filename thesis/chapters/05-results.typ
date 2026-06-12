@@ -8,7 +8,7 @@ Because of privacy and time constraints we could not use real data from Helfo.
 We then proceeded to use randomly generated data, while trying to keep relative sizes compared to real numbers in Norway.
 In the following sections we define how the data generation is done, our simulation model, exactly what algorithms we compared and the metrics we use to measure them.
 
-=== Data generation
+=== Data generation <sec:data-generation>
 To generate the starting state for our simulation, we start by defining our parameters.
 - The number of patients
 - The number of doctors
@@ -57,20 +57,40 @@ We record statistics each day, the size of the waitlist before and after the alg
 Waiting times are also recorded for the patients still on the waitlist when the simulation ends, so long waits are not hidden by never being resolved.
 
 === Algorithms compared
-We have in total five algorithms to compare:
-- _Huitfeldt TTC_
+We compare five algorithms:
+- _Huitfeldt TTC_, the existing mechanism we use as a baseline, described in @ch:implementation
 - _Greedy DFS_
 - _Cycle Cancelling for cardinality_
-- _Cycle Cancelling for utility_
+- _Cycle Cancelling for utility_, with the linear priority function $R(a) = a$ where $a$ is days waited
 - _Cycle Cancelling for strict priority_
+Each of these we ran in a 10 year simulation, long enough for the waitlists to stabilize and to see the long term behaviour of each algorithm.
 
-These algorithms we each ran in a 10 year simulation, with a population of 
-
-In addition we run four variations of the _Cycle Cancelling for utility_ with different base for the priority function.
-
+In addition we run five variations of _Cycle Cancelling for utility_ with an exponential priority function $R(a) = k^(floor(a "/" 10))$, using the bases $k = 1.01, 1.05, 1.1, 1.5$ and $1.9$.
+The days are divided into buckets of 10 to keep the weights within bounds, see @ch:implementation.
+This means patients within the same 10 day bucket are weighted equally, the exponential variants order groups of patients rather than individuals.
+Recall from @ch:implementation that the exponential priorities have a practical limit on how long a patient can wait before the weights overflow, for $k = 1.9$ this limit is 1010 days.
+We therefore run the exponential variants in a smaller simulation of two years, since no patient can have waited longer than the simulation itself this keeps every variant below the limit.
+The two year simulation also includes all five algorithms from the long run, so the exponential variants can be compared against them directly.
 
 === Metrics
+To compare the algorithms we use different metrics to view the positive and negative sides of each one.
 
+The most important metric is the size of the waitlist over time.
+This is what the system as a whole cares about, a good algorithm should keep the waitlist small and stable.
+Closely related is the number of patients resolved each day.
+
+The waitlist size alone can however hide unfairness.
+An algorithm can keep the waitlist small while letting a few unlucky patients wait forever.
+We therefore also measure the waiting times of the resolved patients, the average, the 99th percentile and the maximum.
+The 99th percentile shows how the algorithm treats its least lucky patients without being dominated by a single outlier as the maximum is.
+Waiting times are also recorded for the patients still on the waitlist when the simulation ends, so long waits are not hidden by never being resolved.
+
+We also measure the share of the waitlist that is waiting for a GP in another district.
+Cross district requests should be harder to resolve as fewer patients want to switch the other way, this metric shows how each algorithm treats these patients.
+Recall from @sec:data-generation that 11% of new requests are cross district, if an algorithm treats them no worse than other requests their share of the waitlist should stay near 11%.
+
+Finally we measure the wall-clock time each algorithm uses per day.
+An exact algorithm is of little practical use if it cannot keep up with the system it is meant to run in.
 
 == Results
 

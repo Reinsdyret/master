@@ -7,5 +7,5 @@
     ranksep=0.8; // vertical spacing
     A -> A;
   }"),
-  caption: [An example Housing Market for TTC, A's $"Top"(i)$ is itself.]
+  caption: [An example Housing Market for TTC, A's $"Top"$ is itself.]
 ) <ttc-graph-2>

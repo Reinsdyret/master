@@ -31,7 +31,7 @@ In the GP allocation problem the patients are the agents and GPs are the objects
 The typical assignment problems are one-to-one meaning that one agent is assigned to at most one object and an object can only be "owned" by one agent.
 In addition we also have many-to-one assignment problems, like the GP allocation problem where one agent can only be assigned to one object but one object can be "owned" by more than one agent.
 The terminology that a patient "owns" a GP means that the patient has that GP as his or hers current GP.
-It might be misleading to say that our patients "own" doctors but this makes more sense in other problems that we will describe, owning a doctor in our case means having that doctor as a current doctor.
+It might be misleading to say that our patients "own" GPs but this makes more sense in other problems that we will describe, owning a GP in our case means having that GP as a current GP.
 
 === One-to-one assignment problems
 Recall that in a one-to-one assignment problem each agent is assigned to at most one object and each object can be "owned" by at most one agent.
@@ -65,7 +65,7 @@ Finding a maximum-cardinality exchange with cycles of length at most $k$, for an
 The Kidney Exchange problem and the GP allocation problem have much in common.
 In both problems agents already have an object, but want to switch for another.
 We need to find cycles to exchange the objects in such a manner that as many patients as possible are satisfied.
-The key difference is that only one donor can be "owned" by one patient while in the GP allocation problem a doctor can be "owned" by multiple patients.
+The key difference is that only one donor can be "owned" by one patient while in the GP allocation problem a GP can be "owned" by multiple patients.
 
 === Many-to-one assignment problems
 In a many-to-one assignment problem each agent is still assigned to at most one object, but an object can be "owned" by more than one agent.
@@ -101,66 +101,75 @@ algorithms against.
 
 === Classical TTC
 The Top Trading Cycles algorithm (TTC), developed by Gale and published by Shapley and Scarf @SHAPLEY197423, is an algorithm to find a re-allocation of objects, or goods, without using money.
-As mentioned it was introduced in an article together with the Housing Market problem.
-The algorithm finds a re-allocation of houses to traders, such that all mutually-beneficial exchanges have been realized @enwiki:1344910705.
+It was introduced as a way of solving the Housing Market problem.
+The algorithm finds a re-allocation of houses to traders, such that all mutually-beneficial exchanges have been realized @SHAPLEY197423.
 
-TTC works on a directed graph, for the following implementation, on the Housing Market problem, each agent is a node and edges point from agents to other agents.
-The algorithm then does the following @enwiki:1344910705:
-+ Query each agent for its "top" (most preferred) house.
-+ Insert a directed edge from each agent $i$ to the agent, denoted $"Top"(i)$, that holds the most desired house of $i$.
-+ Find a cycle (which is guaranteed to exist) and execute the trades in that cycle. Next, remove all involved agents from the graph.
+TTC works on a directed graph.
+For the Housing Market problem each agent is a node.
+For an agent $i$ we let $"Top"(i)$ denote the agent holding the house that $i$ prefers the most among the houses still in the graph, if $i$'s own house is the most preferred then $"Top"(i) = i$.
+The algorithm is as follows @SHAPLEY197423:
++ Insert a directed edge from each agent $i$ to $"Top"(i)$.
++ Find a cycle, which is guaranteed to exist since every agent has exactly one outgoing edge, and execute the trades in that cycle. Then remove all involved agents from the graph.
 + If there are remaining agents, repeat from step 1.
 
-Note that a cycle is guaranteed to exist if there are agents still left.
-This is because of the pidgeonhole principle, since each agent has one outgoing edge we have to have a cycle.
-The cycle can also be of length 1 in which case an agent's top house is its own, then we treat it as a normal cycle and remove the agent from the graph.
-For this classical TTC implementation to work we need to remember that agents have a strict preferences.
-Each agent has a complete list of all houses ranked in order of preference.
-Because of this as houses get re-allocated agents are bound to either find a trade cycle with others or end up having their $"Top"(i)$ house as their own.
+This guarantee is the pigeonhole principle, a finite graph where every node has exactly one outgoing edge must contain a cycle.
+The cycle can be of length 1, when an agent's top house is its own, then the agent simply keeps their house and is removed.
+For $"Top"(i)$ to always be defined the agent does not need to rank every house.
+It is enough that each agent has a strict ranking of some of the houses that includes their own house.
+An agent's own house stays in the graph as long as the agent does, so $"Top"(i)$ always finds a house no further down the list than the agent's own.
+Houses ranked below the agent's own house can never be assigned to them, so they can be left out entirely.
 
-Consider the example of 3 agents, $A, B "and" C$, each has a house and have a strict preference list.
-Lets go through how TTC would handle this:\
-The preference lists are 
-- $A = [B, C, A]$
-- $B = [C, A, B]$
-- $C = [B, C, A]$
-
-If we make the graph where each agent point to their top we get @ttc-graph.
-#include "../figs/ttc-graph.typ"
-We have the cycle $B arrow C$ so we execute the trades, remove agents from the graph and create the edges again.
-The last remaining node is $A$ and as $B$ and $C$ are not in the graph, $"Top"(i)$ of $A$ is now $A$.
+We now consider an example with three agents, $A$, $B$ and $C$, owning houses $h_A$, $h_B$ and $h_C$, each with a strict preference list over the houses:
+- $A = [h_B, h_C, h_A]$
+- $B = [h_C, h_A, h_B]$
+- $C = [h_B, h_C, h_A]$
+If we make the graph where each agent points to their $"Top"$ we get @ttc-graph.
+#include "../figs/ttc-graph.typ";
+We have the cycle $B arrow C arrow B$, shown in @ttc-graph, so we execute the trades, $B$ gets $h_C$ and $C$ gets $h_B$, and remove both agents from the graph.
+The last remaining agent is $A$, and as $h_B$ and $h_C$ are no longer in the graph, $"Top"(A)$ is now $A$ itself, shown in @ttc-graph-2.
 #include "../figs/ttc-graph-2.typ"
-We execute this trade and are left with no more agents, making TTC terminate.
+We execute this trivial trade, $A$ keeps $h_A$, and are left with no more agents, making TTC terminate.
 
-Roth proved that TTC is strategy proof, meaning all agents are motivated to prefer their true preferences @ROTH1982127.
-TTC has also satisfies properties of Individual rationality, that an agent is at least as well of by participating, and Pareto efficiency which is that the objects are allocated such that no agent can improve without worsening another agent.
+Roth proved that TTC is strategy proof, meaning all agents are motivated to report their true preferences @ROTH1982127.
+TTC also satisfies individual rationality, that an agent is at least as well off by participating, and Pareto efficiency, that the objects are allocated such that no agent can improve without worsening another agent @SHAPLEY197423 @ROTH1982127.
 
-Now using TTC for the GP assignment problem is challenging as patients do not have complete strict preference lists, they only have one preferred doctor, and a doctor can be "owned" by multiple patients.
-This makes the $"Top"(i)$ give out multiple patients, as the doctor that patient $i$ prefers is "owned" by multiple patients. How should we choose between these?
-This is what Huitfeldt et. al has written about and how their implementation satisfies the same properties of the classical TTC. 
-Later we run the TTC made for the GP assignment problem and compare with our algorithms. First we explain it and how it is different from normal TTC.
+Now using TTC for the GP assignment problem is challenging, but not because patients rank only two GPs.
+Note that a patient's preferences are exactly a list of the minimal form above, the preferred GP followed by their current GP.
+The real difference is that several patients can hold the GP that patient $i$ prefers, so $"Top"(i)$ is no longer a single agent.
+How should we choose between these?
+This is what Huitfeldt et al. @NBERw32458 address.
+Notably they show that in their dynamic setting, where the mechanism is run repeatedly and patients care about waiting time, TTC loses some of the classical properties, it is no longer strategy proof and some patients can be left worse off than under the existing first come first served system.
+Later we run their TTC for the GP assignment problem and compare it with our algorithms, but first we explain it and how it differs from the classical TTC.
 
 === GP assignment problem TTC
-In the paper from Huitfeldt et al. they tackle a more complex dataset as they use real patient and doctor data from Norway.
-In their model they have doctors with available capacity and patients switching to these GPs can be allocated that GP without an exchange.
-This is why in each of the two TTC implementations they first run a waitlist algorithm that goes through all GP with available capacity and assigns the highest priority to that GPs panels until there are no more patients waiting on GPs with available capacity @NBERw32458.
-Following we explain Huitfeldt et al. TTC implementation without regard to capacities to doctors as that is how we tackle the problem.
+In their paper, Huitfeldt et al. @NBERw32458 study the GP assignment problem using real patient and GP data from Norway.
+Before explaining their algorithm we need one piece of terminology.
+The set of patients currently enrolled with a GP is called the GP's _panel_, and each GP has a cap on how many patients their panel can hold.
+A GP has available capacity when their panel holds fewer patients than its cap, such a GP has open slots that a waiting patient can fill directly, without any exchange.
 
-Now the algorithm is as follows @NBERw32458:
-+ Each patient points to their preferred GP, if the preferred GP is not in the graph the patient points to its current GP. Each GP points to the patient in their panel with highest priority.
-+ Find a cycle in the graph, remove patients part of that cycle. If a GP has no more patients that are in the graph it is removed from the graph.
-+ Repeat step 1 until there are no more patients
+In their model some GPs have available capacity.
+Their mechanism therefore first runs a waitlist algorithm that fills all open slots, it goes through every GP with available capacity and assigns the waiting patients with the highest priority to the open slots, until no patient is waiting for a GP with available capacity @NBERw32458.
+Only after this do they run TTC on the patients that remain on waitlists.
+In our setting every GP is at full capacity, so the waitlist step never assigns anyone, and in the following we explain their TTC without it.
 
-Like the classical TTC we are guaranteed to have a cycle because of the pidgeonhole principle, since if a patient does not get their preferred GP they end up pointing to their own GP making a cycle.
+The algorithm works on a graph with both the waiting patients and their GPs as nodes:
++ Each patient points to their preferred GP, if the preferred GP has been removed from the graph the patient points to their current GP instead. Each GP has a preference list consisting of its panel members in a fixed arbitrary order, followed by the waiting patients wanting that GP in priority order. The GP points to the first patient in this list that is still in the graph.
++ Find a cycle in the graph and resolve it, every patient in the cycle is moved to the GP they point to. Remove the resolved patients from the graph. If a GP has no panel members left in the graph, remove the GP.
++ Repeat from step 1 until there are no more patients.
+
+Like in the classical TTC algorithm a cycle is guaranteed to exist by the pigeonhole principle, every node in the graph, patient or GP, has exactly one outgoing edge.
+A cycle can also consist of just a patient and their own GP pointing at each other, then the patient simply stays with their current GP and is removed.
+Huitfeldt et al. also propose a variant with adjusted priorities, TTC with priority, that protects patients whose GPs have available capacity, since in our setting no GP has available capacity we compare only against the basic TTC @NBERw32458.
 
 == Cycle cancelling <cycle-cancelling>
-Cycle cancelling is a technique used in flow and circulation problems to find a minimum cost solution.
-First we explain some of the terms needed for cycle cancelling then we go onto what cycle cancelling is.
-We use definitions from Ahuja, Magnantti and Orlin @ahuja1993.
+Cycle cancelling is a technique used in flow and circulation problems.
+In these problems each edge of a graph has a cost, and the goal is to find a circulation of flow whose total cost is as small as possible.
+First we define the terms needed for cycle cancelling, then we present the technique itself.
+We use definitions from Ahuja, Magnanti and Orlin @ahuja1993.
 
 === The minimum cost circulation problem
 
-Let $G = (V, A)$ be a directed multigraph with $n$ vertices and $m$ edges. Each edge
+Let $G = (V, E)$ be a directed multigraph with $n$ vertices and $m$ edges. Each edge
 is a triple $(v, w, i)$ where $v$ is the tail, $w$ is the head and $i$ is an index.
 The pair $(v, w)$ gives the endpoints of the edge. The index $i$ separates edges that
 have the same endpoints, so $G$ can have parallel edges. This means an edge is
@@ -168,14 +177,14 @@ identified by the full triple and not just by its endpoints.
 
 The multigraph $G$ is a circulation network if each edge $(v, w, i)$ has a capacity
 $u(v, w, i) >= 0$ and a cost $c(v, w, i) in ZZ$. For a vertex $w in V$ we let
-$"in"(w) = {(v, w, i) in A}$ be the edges whose head is $w$, and
-$"out"(w) = {(w, v, i) in A}$ the edges whose tail is $w$.
+$"in"(w) = {(v, w, i) in E}$ be the edges whose head is $w$, and
+$"out"(w) = {(w, v, i) in E}$ the edges whose tail is $w$.
 
 #definition("Circulation")[
   A circulation is a function $f$ that assigns a value $f(v, w, i)$ to each edge and
   satisfies the capacity constraints
   $
-    0 <= f(v, w, i) <= u(v, w, i) quad quad forall (v, w, i) in A
+    0 <= f(v, w, i) <= u(v, w, i) quad quad forall (v, w, i) in E
   $
   and the conservation constraints
   $
@@ -184,11 +193,11 @@ $"out"(w) = {(w, v, i) in A}$ the edges whose tail is $w$.
   $
 ]
 
-The conservation constraint says that at each vertex the flow coming in equals the
+The conservation constraint states that at each vertex the flow coming in equals the
 flow going out. No flow enters or leaves $G$ from the outside, so all flow
-circulates around the network. The cost of a circulation $f$ is
+circulates in the network. The cost of a circulation $f$ is
 $
-  "cost"(f) = sum_((v, w, i) in A) c(v, w, i) f(v, w, i).
+  "cost"(f) = sum_((v, w, i) in E) c(v, w, i) f(v, w, i).
 $
 
 #definition("Minimum cost circulation problem")[
@@ -196,30 +205,37 @@ $
   a circulation $f$ with minimum cost.
 ]
 
-In our problem each edge is a possible patient switch, and we want a circulation
-that does as many switches as possible. We get this by setting the cost of every
-edge to $-1$. Then $"cost"(f) = - sum_((v,w,i) in A) f(v,w,i)$, which is the negative
-of the total flow. So a circulation with minimum cost is the same as a circulation
-with the most flow. We do not treat the amount of flow as a separate goal. It is
-already part of the cost, and the problem stays a normal minimum cost circulation
-problem.
+Note that the costs are what make the problem interesting.
+If every edge has a cost $c(v, w, i) >= 0$, then the circulation with zero flow on
+every edge always has minimum cost, and the problem is trivial.
+The problem becomes meaningful when some edges have negative costs.
+Then the zero circulation is still feasible, but pushing flow along negative cost
+edges lowers the cost, so the problem becomes to find where flow should be pushed.
+In @ch:implementation we show how to construct circulation networks for the GP
+assignment problem, where each edge is a possible patient switch and all costs are
+negative, so that a minimum cost circulation corresponds to a best set of switches.
+For example, if every edge has cost $-1$, then
+$"cost"(f) = -sum_((v,w,i) in E) f(v,w,i)$, the negative of the total flow, so a
+circulation with minimum cost is equivalent to a circulation with the most flow.
 
-An example circulation network is shown in @example-circulation. For simplicity
-this example is not a multigraph. Each edge is labeled "x,y", meaning the edge has
-cost $x$ and capacity $y$, and as explained above every edge has cost $-1$. The
-network has three feasible circulations: no flow on any edge, the cycle
+An example circulation network is shown in @example-circulation.
+For simplicity this example is not a multigraph.
+In the example each edge is labeled $x, y$, meaning the edge has cost $x$ and
+capacity $y$, and every edge has cost $-1$ and capacity $1$.
+The network has three feasible circulations: no flow on any edge, the cycle
 $d arrow c arrow b arrow d$, and the cycle $a arrow b arrow d arrow c arrow a$.
-Their costs are $0$, $-3$ and $-4$. The longer cycle is the optimal circulation
-since it has the most flow and the lowest cost.
+Their costs are $0$, $-3$ and $-4$.
+The longer cycle is the optimal circulation since it has the most flow and the
+lowest cost.
 
 #include "../figs/example-circulation.typ"
 
 === The residual network
 
-The residual network shows what capacity is left after a circulation, and what
-flow can be undone. Given a circulation network $G$ and a circulation $f$, we build
-the residual network $G(f)$ edge by edge. Each edge $(v, w, i) in A$ gives two
-residual edges.
+The residual network shows what capacity is left after a circulation has been
+computed, and what flow can be undone. Given a circulation network $G$ and a
+circulation $f$, we build the residual network $G(f)$ edge by edge. Each edge
+$(v, w, i) in E$ gives two residual edges.
 
 - A forward edge $(v, w, i)$ with cost $c(v, w, i)$ and residual capacity
   $u_f (v, w, i) = u(v, w, i) - f(v, w, i)$.
@@ -229,31 +245,36 @@ residual edges.
 A residual edge is in $G(f)$ only if its residual capacity is greater than $0$. An
 edge with residual capacity $0$ is saturated. We build the residual edges from each
 edge $(v, w, i)$ and not from the pair $(v, w)$, so the index $i$ is kept on both
-residual edges. This means $G(f)$ is also a directed multigraph and every residual
-edge is still uniquely identified.
+residual edges. This means that $G(f)$ is also a directed multigraph and every
+residual edge is still uniquely identified.
 
-A forward edge has the same cost as its original edge, and pushing flow on it
-increases $f$ on that edge. A backward edge has the negated cost, and pushing flow on
-it decreases $f$ on the original edge. So a backward edge undoes earlier flow. A
-backward edge is only in $G(f)$ up to the flow on its original edge, so we can only
-undo flow when there is flow to undo.
+The two kinds of residual edges have different roles. A forward edge has the same
+cost as its original edge, and pushing more flow through it increases $f$ on that
+edge. A backward edge has the negated cost, and pushing flow through it decreases
+$f$ on the original edge, so a backward edge undoes earlier flow. A backward edge
+is in $G(f)$ only as long as there is positive flow on its original edge. This
+means that we can only undo flow that is actually there.
 
 A negative cost cycle in $G(f)$ is a directed cycle of residual edges where the
 costs sum to a negative number. The following theorem from Ahuja, Magnanti and
-Orlin @ahuja1993 tells us when a circulation is optimal.
+Orlin @ahuja1993 states when a circulation is optimal.
 
 #theorem("Negative Cycle Optimality Theorem")[
   A feasible circulation $f^*$ is an optimal solution of the minimum cost
   circulation problem if and only if the residual network $G(f^*)$ contains no
   negative cost directed cycle.
-]<negative-cycle-optimality-theorem> 
+]<negative-cycle-optimality-theorem>
 
-Note that the theorem does not say every circulation with flow is suboptimal. If we
-push flow around a cycle of cost $-1$ edges we do create backward edges of cost $+1$,
-but these form a positive cost cycle and not a negative one. A negative cost cycle
-is instead an improvement we can still make. It can use forward edges where we add
-more switches, and backward edges that reroute flow we already committed. When there
-is no such cycle left, there is no improvement left, and $f$ is optimal.
+At first glance the theorem may seem to say that any circulation carrying flow is
+suboptimal, since pushing flow creates backward edges with positive cost. This is
+not the case. If we push flow around a cycle where every edge has a cost of $-1$,
+we do create backward edges of cost $+1$, but these form a cycle with positive
+cost, not a negative one. So a circulation can carry flow and still have no
+negative cycle in its residual network. A negative cost cycle in $G(f)$ instead
+represents an improvement that is still possible. Such a cycle can use forward
+edges, where we push new flow, and backward edges, where we reroute flow we
+already committed. When no negative cycle is left, no improvement is left, and by
+@negative-cycle-optimality-theorem $f$ is optimal.
 
 === Algorithm
 
@@ -263,49 +284,48 @@ and while the residual network has a negative cost cycle we cancel that cycle. T
 theorem tells us that when there are no negative cost cycles left, the circulation
 is optimal.
 
-Note that the starting circulation can be $0$ on all edges. Sometimes a circulation
-problem has lower bounds that make this an invalid starting circulation. For cases
-with lower bounds on edges, a starting circulation can be computed using any
-max-flow algorithm. In our problem all lower bounds are $0$, so the zero
-circulation is always feasible and we can use it as the start.
+The starting circulation can often be $0$ on all edges. In general, a circulation
+problem can also have lower bounds on the flow of each edge, requiring some edges
+to carry a minimum amount of flow. Then the zero circulation is not feasible, and a
+feasible starting circulation must first be computed, which can be done with a
+max-flow computation on a modified network @ahuja1993. In the circulation networks
+we construct for the GP assignment problem all lower bounds will be $0$, so the
+zero circulation is always feasible and we use it as the start. The outline of the
+algorithm is therefore as follows:
 
 #import "@preview/lovelace:0.3.1": *
 #pseudocode-list[
-  + Start with any feasible circulation $f$, this can be $0$
+  + Start with any feasible circulation $f$, in our case $f = 0$
   + *while* $exists$ negative residual cycle $c$
-    + Cancel $c$: $forall a in c: f(a) := f(a) + "capacity"(c)$
+    + Cancel $c$: push $"capacity"(c)$ units of flow along every residual edge of $c$
 ]
 
-When we cancel a cycle we push flow equal to $"capacity"(c)$ along each residual
-edge in the cycle. Here $"capacity"(c)$ is the smallest residual capacity of any edge
-in $c$. Recall that the residual network has two kinds of edges. A forward edge
+Here $"capacity"(c)$ is the smallest residual capacity of any edge in $c$. What
+pushing flow means depends on the type of residual edge. Recall that a forward edge
 $(v, w, i)$ comes from an edge with leftover capacity, and a backward edge
-$(w, v, i)$ comes from an edge that already has flow on it.
-
-How we push flow depends on the type of edge. When the cycle uses a forward edge
-$(v, w, i)$ we increase the flow $f(v, w, i)$ on that edge. When the cycle uses a
-backward edge $(w, v, i)$ we decrease the flow $f(v, w, i)$ on the original edge.
-This is how the algorithm can undo earlier flow. A backward edge is in the residual
-network only up to the flow on its original edge, so we can only undo flow that is
-actually there.
+$(w, v, i)$ comes from an edge that already has flow on it in the reverse
+direction. When the cycle uses a forward edge $(v, w, i)$ we increase the flow
+$f(v, w, i)$ on that edge. When the cycle uses a backward edge $(w, v, i)$ we
+decrease the flow $f(v, w, i)$ on the original edge. This is how the algorithm can
+undo earlier flow.
 
 After we cancel a cycle the residual network changes. An edge that we pushed flow
 on has less leftover capacity, and its forward edge can become saturated. At the
 same time its backward edge gets more residual capacity, since there is now more
-flow that can be undone. This is why a later cycle can push flow back on a backward
-edge and undo a push we made before.
+flow that can be undone. This is why a later cycle can push flow back using a
+backward edge and undo a forward flow made earlier.
 
 === Runtime
 
-Finding the negative residual cycles can be done with Bellman-Ford in $O(n m)$ time
-@enwiki:bellman-ford. At each negative residual cycle that is cancelled the total
-cost of the circulation decreases by at least $1$. The cost is bounded below by
-$-m C U$ where $C$ is the max cost and $U$ is the max capacity of any edge. It
-follows that the number of iterations is bounded by $O(m C U)$, and then the
-runtime is $O(n m^2 C U)$. Note that this runtime is pseudo-polynomial since it
-depends largely on the size of $C$ and $U$.
+Finding the negative residual cycles can be done using the Bellman-Ford algorithm
+in $O(n m)$ time @ahuja1993. For each negative residual cycle that is cancelled the
+total cost of the circulation decreases by at least $1$. The cost is bounded below
+by $-m C U$ where $C$ is the maximum cost and $U$ is the maximum capacity of any
+edge. It follows that the number of iterations is bounded by $O(m C U)$, and then
+the running time is $O(n m^2 C U)$. Note that this running time is
+pseudo-polynomial, as it depends largely on the size of $C$ and $U$.
 
 Goldberg and Tarjan proved that a variant of the cycle cancelling algorithm called
-Minimum Mean Cycle Cancelling has a strongly polynomial bound on its runtime
-@GoldbergCirculation. But we will later show how for our problem we still have a
-polynomial algorithm using the classical Cycle Cancelling algorithm.
+Minimum Mean Cycle Cancelling has a running time that is strongly polynomial
+@GoldbergCirculation. For the GP assignment problem however, we will later show
+that the classical Cycle Cancelling algorithm is already polynomial.
