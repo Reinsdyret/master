@@ -585,6 +585,9 @@ impl PwCyclePacker {
         }
 
         // Sort: highest rank first (most important), None (dummies) last
+        // NOTE: ties (equal rank) are broken by ascending patient id, implicitly:
+        // sort_by is STABLE and patients were pushed in id order. Do not change
+        // to sort_unstable_by — the thesis defines the tie-break as patient id.
         patient_fwd_unsorted.sort_by(|a, b| {
             let ra = a.0.unwrap_or(usize::MIN);
             let rb = b.0.unwrap_or(usize::MIN);

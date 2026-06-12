@@ -70,7 +70,7 @@ fn main() {
             num_patients: 100_000,
             num_doctors: 102,
             waitlist_fraction: 0.05,
-            num_days: 365 * 20,
+            num_days: 365 * 100,
             new_requests_per_day: NewRequestMode::Fixed(18),
             min_new_requests_fraction: 0.0,
             algorithm: *alg,
