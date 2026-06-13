@@ -22,10 +22,9 @@ import os
 import sys
 from datetime import datetime
 
-# 12 distinct colors (matplotlib tab10 + 2 darks) so all 10 algorithms get a
-# unique color without the palette wrapping around.
-COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
-          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#637939"]
+# Per-algorithm colors and display names live in plot_style.py so every plot
+# uses the same color for a given algorithm. See that module to adjust.
+from plot_style import color_for, label_for
 
 # Auto-named plots go here; an explicit --out is still honored verbatim.
 PLOTS_DIR = "plots"
@@ -98,7 +97,7 @@ def fmt(val, is_percent):
 
 
 def print_table(rows, metrics):
-    algs = [r["algorithm"] for r in rows]
+    algs = [label_for(r["algorithm"]) for r in rows]
     width = max(len(a) for a in algs + ["Algorithm"])
     cols = [METRICS.get(m, (m, False))[0] for m in metrics]
     colw = [max(len(c), 10) for c in cols]
@@ -111,7 +110,7 @@ def print_table(rows, metrics):
         for m, w in zip(metrics, colw):
             _, is_pct = METRICS.get(m, (m, False))
             cells.append(f"{fmt(fval(r, m), is_pct):>{w}}")
-        print(f"{r['algorithm']:<{width}}  " + "  ".join(cells))
+        print(f"{label_for(r['algorithm']):<{width}}  " + "  ".join(cells))
     print("-" * len(header))
 
 
@@ -132,29 +131,33 @@ def plot(rows, metrics, out_path, csv_path):
         label, is_pct = METRICS.get(metric, (metric, False))
         vals = [fval(r, metric) * (100 if is_pct else 1) for r in rows]
         bars = ax.bar(range(len(algs)), vals,
-                      color=[COLORS[i % len(COLORS)] for i in range(len(algs))])
+                      color=[color_for(a) for a in algs])
         ax.set_title(label, fontsize=12)
         ax.set_xticks(range(len(algs)))
-        ax.set_xticklabels(algs, rotation=30, ha="right", fontsize=9)
+        ax.set_xticklabels([label_for(a) for a in algs], rotation=30, ha="right", fontsize=9)
         ax.grid(True, axis="y", alpha=0.3)
         for b, v in zip(bars, vals):
             ax.annotate(f"{v:.1f}" if is_pct else fmt(v, False),
                         (b.get_x() + b.get_width() / 2, v),
                         ha="center", va="bottom", fontsize=8,
                         xytext=(0, 2), textcoords="offset points")
+        vmax = max(vals) if vals else 0
+        if vmax > 0:
+            ax.set_ylim(top=vmax * 1.12)
 
     # Hide unused panels
     for j in range(n, nrows * ncols):
         axes[j // ncols][j % ncols].axis("off")
 
-    fig.suptitle(os.path.basename(csv_path), fontsize=13)
+    metric_labels = [METRICS.get(m, (m, False))[0] for m in metrics]
+    fig.suptitle("Algorithm comparison — " + ", ".join(metric_labels), fontsize=13)
     plt.tight_layout()
 
     if out_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         os.makedirs(PLOTS_DIR, exist_ok=True)
-        out_path = os.path.join(PLOTS_DIR, f"summary_bars_{ts}.png")
-    plt.savefig(out_path, dpi=150)
+        out_path = os.path.join(PLOTS_DIR, f"summary_bars_{ts}.svg")
+    plt.savefig(out_path, format="svg")
     print(f"\nPlot saved to: {out_path}")
 
 

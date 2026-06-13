@@ -26,10 +26,9 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 
-# 12 distinct colors (matplotlib tab10 + 2 darks) so all 10 algorithms get a
-# unique color without the palette wrapping around.
-COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
-          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#637939"]
+# Per-algorithm colors and display names live in plot_style.py so every plot
+# uses the same color for a given algorithm. See that module to adjust.
+from plot_style import color_for, label_for
 
 # Auto-named plots go here; an explicit --out is still honored verbatim.
 PLOTS_DIR = "plots"
@@ -139,7 +138,7 @@ def plot(algorithms, kinds, hist, kinds_to_show, style, max_days, log, out_path,
 
     for ax, panel in zip(axes, panels):
         for i, alg in enumerate(algorithms):
-            color = COLORS[i % len(COLORS)]
+            color = color_for(alg)
             for kind in kinds:
                 if kind not in kinds_to_show:
                     continue
@@ -148,7 +147,7 @@ def plot(algorithms, kinds, hist, kinds_to_show, style, max_days, log, out_path,
                     continue
                 xs, counts = to_series(buckets, max_days)
                 total = sum(counts) or 1
-                label = alg if kind == "resolved" else f"{alg} ({kind})"
+                label = label_for(alg) if kind == "resolved" else f"{label_for(alg)} ({kind})"
                 if panel == "cdf":
                     cum, ys = 0, []
                     for c in counts:

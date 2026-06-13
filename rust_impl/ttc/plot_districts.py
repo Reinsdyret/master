@@ -141,12 +141,12 @@ def plot_district_structure(rows, out_path):
 
     fig.suptitle("District structure", fontsize=13)
     plt.tight_layout()
-    plt.savefig(out_path, dpi=150)
+    plt.savefig(out_path, format="svg")
     print(f"Plot saved to: {out_path}")
     plt.close(fig)
 
 
-def plot_cross_within(rows, out_path):
+def plot_cross_within(rows,csv_path, out_path):
     import matplotlib.pyplot as plt
 
     algs = [r["algorithm"] for r in rows]
@@ -192,7 +192,7 @@ def plot_cross_within(rows, out_path):
 
     fig.suptitle("Cross- vs within-district request outcomes", fontsize=13)
     plt.tight_layout()
-    plt.savefig(out_path, dpi=150)
+    plt.savefig(out_path, format="svg")
     print(f"Plot saved to: {out_path}")
     plt.close(fig)
 
@@ -233,9 +233,9 @@ def main():
     else:
         os.makedirs(PLOTS_DIR, exist_ok=True)
         prefix = os.path.join(PLOTS_DIR, f"district_plot_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
-    plot_district_structure(district_rows, f"{prefix}_structure.png")
+    plot_district_structure(district_rows, f"{prefix}_structure.svg")
     if summary_rows:
-        plot_cross_within(summary_rows, f"{prefix}_cross_within.png")
+        plot_cross_within(summary_rows, args.summary, f"{prefix}_cross_within.svg")
 
 
 if __name__ == "__main__":

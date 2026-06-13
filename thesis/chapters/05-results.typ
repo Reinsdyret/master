@@ -41,7 +41,7 @@ We still consider this the best available estimate.
 We do not simulate the full population size as the exact algorithms based on Bellman-Ford scale with the number of GPs, running all algorithms for the full simulation length at full scale is not computationally feasible.
 The proportions are what drive the dynamics of the waitlists, so we keep these matched to the real system instead.
 
-=== Simulation model
+=== Simulation model <sec:simulation-model>
 The simulation runs day by day.
 Each day consists of three steps.
 First, every patient on the waitlist has their priority and waiting time increased by one day.
@@ -56,13 +56,13 @@ Scaled to our population size this gives about 180 requests per day.
 We record statistics each day, the size of the waitlist before and after the algorithm runs, the number of patients resolved, the waiting times of the resolved patients, and the wall-clock time of the algorithm itself.
 Waiting times are also recorded for the patients still on the waitlist when the simulation ends, so long waits are not hidden by never being resolved.
 
-=== Algorithms compared
+=== Algorithms compared <sec:algs-compared>
 We compare five algorithms:
-- _Huitfeldt TTC_, the existing mechanism we use as a baseline, described in @ch:implementation
-- _Greedy DFS_
-- _Cycle Cancelling for cardinality_
-- _Cycle Cancelling for utility_, with the linear priority function $R(a) = a$ where $a$ is days waited
-- _Cycle Cancelling for strict priority_
+- _Huitfeldt TTC_, the existing mechanism we use as a baseline, described in @ch:implementation.
+- _Greedy DFS_.
+- _Cycle Cancelling for cardinality_.
+- _Cycle Cancelling for utility_, with the linear priority function $R(p) = a$ where $a$ is days patient $p$ has waited.
+- _Cycle Cancelling for strict priority_.
 Each of these we ran in a 10 year simulation, long enough for the waitlists to stabilize and to see the long term behaviour of each algorithm.
 
 In addition we run five variations of _Cycle Cancelling for utility_ with an exponential priority function $R(a) = k^(floor(a "/" 10))$, using the bases $k = 1.01, 1.05, 1.1, 1.5$ and $1.9$.
@@ -94,9 +94,41 @@ An exact algorithm is of little practical use if it cannot keep up with the syst
 
 == Results
 
-=== Waitlist size over time 
+In this section we present the results of running simulations with the algorithms mentioned in @sec:algs-compared.
+We ran three simulations in total.
+
+The first is our main simulation.
+It runs _Greedy DFS_, _Huitfeldt TTC_, _Cycle Cancelling for cardinality_, _Cycle Cancelling for strict priority_ and _Cycle Cancelling for utility_ with a linear priority function $R(p) = a$, where $a$ is the number of days patient $p$ has waited.
+It runs for a simulated 10 years, or 3650 days, with the parameters defined in @sec:data-generation and @sec:simulation-model.
+This is the simulation we use for most of our results.
+
+The second simulation adds the exponential variants of _Cycle Cancelling for utility_, with bases $k = 1.01, 1.05, 1.1, 1.5$ and $1.9$, alongside the five algorithms from the main simulation.
+With a base greater than one the priority function grows rapidly as a patient waits, so the weights would overflow on a long simulation.
+For $k = 1.9$ this happens after 1010 days, see @ch:implementation.
+We therefore run this simulation for only 730 days, short enough that no weight overflows.
+It lets us compare the exponential variants against the other algorithms directly.
+
+The third simulation is used to study the long term behaviour of the waitlists.
+The main simulation runs for 10 years, which as we will see is not long enough for the waitlists to stabilize.
+Running the full size system for much longer is too computationally expensive, so we instead run a smaller system, with one tenth the patients and GPs but the same proportions, for a simulated 100 years.
+Since the proportions are kept the same, this smaller system models the same dynamics at a smaller scale.
+
+=== Waitlist size over time
+==== Large simulation 10 years
+#include "../figs/simulation_waitlist_1million_3650_days.typ"
+
+==== Small simulation with exponential variants
+#include "../figs/simulation_waitlist_small_730_days.typ"
+
+==== Small simulation over 100 years
+#include "../figs/simulation_waitlist_small_100y.typ"
 
 === Maximum waiting time 
+==== Large simulation over 10 years
+#include "../figs/summary_large_resolved_p99_overall_max_wait.typ"
+
+==== Small simulation with exponential variants
+#include "../figs/summary_small_730_days_resolved_p99_overall_max_wait.typ"
 
 === Average waiting time 
 

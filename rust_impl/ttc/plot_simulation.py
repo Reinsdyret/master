@@ -39,10 +39,9 @@ METRICS = {
 CANDLE_GOOD_METRICS = ["patients_resolved", "avg_wait_days", "waitlist_before",
                        "waitlist_after", "satisfaction_rate", "cycles_found"]
 
-# 12 distinct colors (matplotlib tab10 + 2 darks) so all 10 algorithms get a
-# unique color without the palette wrapping around.
-COLORS = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
-          "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#637939"]
+# Per-algorithm colors and display names live in plot_style.py so every plot
+# uses the same color for a given algorithm. See that module to adjust.
+from plot_style import color_for, label_for, marker_for, linestyle_for
 
 # Auto-named plots go here; an explicit --out is still honored verbatim.
 PLOTS_DIR = "plots"
@@ -160,10 +159,10 @@ def plot(csv_path, day_from, day_to, metric, out_path, style, window):
         offsets = [(i - (n - 1) / 2) * body_width * 1.15 for i in range(n)]
 
         for i, alg in enumerate(algorithms):
-            color = COLORS[i % len(COLORS)]
+            color = color_for(alg)
             alg_vals = {d: data[alg][d][metric] for d in days_in_range if d in data[alg]}
             candles = aggregate_candles(alg_vals, days_in_range, window, is_rate)
-            draw_candles(ax, candles, color, alg, body_width, offsets[i])
+            draw_candles(ax, candles, color, label_for(alg), body_width, offsets[i])
 
         # Auto x-limits with padding
         xs = [c["x"] for alg in algorithms
@@ -177,19 +176,23 @@ def plot(csv_path, day_from, day_to, metric, out_path, style, window):
         subtitle = f"Candlestick ({window}-day windows)"
     else:
         for i, alg in enumerate(algorithms):
-            color = COLORS[i % len(COLORS)]
+            color = color_for(alg)
             xs, ys = [], []
             for d in days_in_range:
                 if d in data[alg]:
                     xs.append(d)
                     ys.append(_scale(data[alg][d][metric], is_rate))
-            ax.plot(xs, ys, label=alg, color=color, linewidth=2, marker="o", markersize=3)
+            # Space markers out so dense lines stay readable; ~15 markers/line.
+            markevery = max(1, len(xs) // 15)
+            ax.plot(xs, ys, label=label_for(alg), color=color, linewidth=2,
+                    linestyle=linestyle_for(alg), marker=marker_for(alg),
+                    markersize=6, markevery=markevery)
         subtitle = "Line"
 
     ax.set_xlabel("Day", fontsize=13)
     ax.set_ylabel(f"{ylabel}{' (%)' if is_rate else ''}", fontsize=13)
     ax.set_title(
-        f"{ylabel} — Days {day_from}–{day_to}  [{subtitle}]\n{os.path.basename(csv_path)}",
+        f"{ylabel} — Days {day_from}–{day_to}  [{subtitle}]",
         fontsize=14,
     )
     ax.legend(fontsize=11)
@@ -202,9 +205,9 @@ def plot(csv_path, day_from, day_to, metric, out_path, style, window):
     if out_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         os.makedirs(PLOTS_DIR, exist_ok=True)
-        out_path = os.path.join(PLOTS_DIR, f"simulation_plot_{metric}_{style}_{day_from}_{day_to}_{ts}.png")
+        out_path = os.path.join(PLOTS_DIR, f"simulation_plot_{metric}_{style}_{day_from}_{day_to}_{ts}.svg")
 
-    plt.savefig(out_path, dpi=150)
+    plt.savefig(out_path,format="svg")
     print(f"Plot saved to: {out_path}")
 
 
