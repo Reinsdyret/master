@@ -52,7 +52,7 @@ METRICS = {
     "overall_max_wait":          ("Overall max wait (d)", False),
     "starved_resolved":          ("Starved resolved", False),
     "starved_outstanding":       ("Starved outstanding", False),
-    "total_solve_ms":            ("Total solve time (ms)", False),
+    "total_solve_ms":            ("Total solve time (s)", False),
     "avg_solve_ms":              ("Avg solve time/day (ms)", False),
     "max_solve_ms":              ("Max solve time/day (ms)", False),
 }
@@ -81,11 +81,18 @@ def load_csv(path):
     return rows
 
 
+# Metrics stored in ms but displayed in seconds (value divided by 1000).
+MS_TO_S = {"total_solve_ms"}
+
+
 def fval(row, metric):
     try:
-        return float(row[metric])
+        val = float(row[metric])
     except (KeyError, ValueError):
         return 0.0
+    if metric in MS_TO_S:
+        val /= 1000.0
+    return val
 
 
 def fmt(val, is_percent):

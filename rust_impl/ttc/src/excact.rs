@@ -1,7 +1,7 @@
 // Implementation of the excact algorithm finding cycles, then using residual graph from cycles finds extension of existing cycles or new cycles
 // All of this until otimal solution is found
 
-use crate::{AssignmentState, CycleStats, Doctor, Patient, dinic::Dinic};
+use crate::{AssignmentState, CycleStats, Doctor, Patient};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Clone, Debug)]
@@ -251,18 +251,18 @@ impl CardCyclePacker {
             *edge_quota.entry((u, v)).or_insert(0) += count;
         }
 
+        // Among the patients on each used edge, claim the limited slots for the
+        // highest-priority ones first (higher priority value = longer wait).
+        let mut switching: Vec<&Patient> = patients
+            .iter()
+            .filter(|p| !p.is_dummy)
+            .filter(|p| p.current_doctor.map_or(false, |d| d != p.preferred_doctor))
+            .collect();
+        switching.sort_by(|a, b| b.priority.cmp(&a.priority));
+
         let mut result = Vec::new();
-        for p in patients {
-            if p.is_dummy {
-                continue;
-            }
-            let curr = match p.current_doctor {
-                Some(d) => d,
-                None => continue,
-            };
-            if curr == p.preferred_doctor {
-                continue;
-            }
+        for p in switching {
+            let curr = p.current_doctor.unwrap();
             if let Some(quota) = edge_quota.get_mut(&(curr, p.preferred_doctor)) {
                 if *quota > 0 {
                     *quota -= 1;
@@ -338,6 +338,10 @@ struct UtilEdge {
     capacity: usize,
     cost: i128,
     rev: usize,
+    /// The patient this forward arc represents (one arc per patient). `None` for
+    /// residual/reverse arcs. Lets the extraction recover exactly which patient's
+    /// arc the optimizer consumed, not just how many on the (u,v) pair.
+    patient_id: Option<usize>,
 }
 
 pub struct UtilCyclePacker {
@@ -365,15 +369,15 @@ impl UtilCyclePacker {
             if curr_doc == pref_doc || !p.wants_to_switch {
                 continue;
             }
-            g.add_edge(curr_doc, pref_doc, 1, -prio(p));
+            g.add_edge(curr_doc, pref_doc, 1, -prio(p), p.id);
         }
 
         g
     }
 
-    fn add_edge(&mut self, u: usize, v: usize, capacity: usize, cost: i128) {
-        let fwd = UtilEdge { to: v, start_capacity: capacity, capacity, rev: self.adj[v].len(), cost };
-        let back = UtilEdge { to: u, start_capacity: 0, capacity: 0, rev: self.adj[u].len(), cost: -cost };
+    fn add_edge(&mut self, u: usize, v: usize, capacity: usize, cost: i128, patient_id: usize) {
+        let fwd = UtilEdge { to: v, start_capacity: capacity, capacity, rev: self.adj[v].len(), cost, patient_id: Some(patient_id) };
+        let back = UtilEdge { to: u, start_capacity: 0, capacity: 0, rev: self.adj[u].len(), cost: -cost, patient_id: None };
         self.adj[u].push(fwd);
         self.adj[v].push(back);
     }
@@ -486,23 +490,20 @@ impl UtilCyclePacker {
     }
 
     pub fn satisfied_patients<'a>(&self, patients: &'a [Patient]) -> Vec<&'a Patient> {
-        let mut edge_quota: HashMap<(usize, usize), usize> = HashMap::new();
-        for (u, v, count) in self.get_solution_edges() {
-            *edge_quota.entry((u, v)).or_insert(0) += count;
-        }
+        // Each forward arc represents one specific patient. An arc was used iff its
+        // capacity dropped from start (1) to 0, so we return exactly the patients
+        // whose own arc the optimizer consumed — not an arbitrary k on the (u,v) pair.
+        let by_id: HashMap<usize, &Patient> = patients.iter().map(|p| (p.id, p)).collect();
 
         let mut result = Vec::new();
-        for p in patients {
-            if p.is_dummy { continue; }
-            let curr = match p.current_doctor {
-                Some(d) => d,
-                None => continue,
-            };
-            if curr == p.preferred_doctor { continue; }
-            if let Some(quota) = edge_quota.get_mut(&(curr, p.preferred_doctor)) {
-                if *quota > 0 {
-                    *quota -= 1;
-                    result.push(p);
+        for list in &self.adj {
+            for edge in list {
+                if let Some(pid) = edge.patient_id {
+                    if edge.capacity < edge.start_capacity {
+                        if let Some(&p) = by_id.get(&pid) {
+                            result.push(p);
+                        }
+                    }
                 }
             }
         }

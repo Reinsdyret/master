@@ -48,9 +48,7 @@ WITHIN_COLOR = "#1f77b4"  # within-district
 # is_ratio panels are computed as <prefix>_resolved_count / <prefix>_added.
 CROSS_PANELS = [
     ("Realization rate (resolved / added)", "cross", "within", True),
-    ("Resolved avg wait (d)", "cross_resolved_avg", "within_resolved_avg", False),
-    ("Resolved P90 wait (d)", "cross_resolved_p90", "within_resolved_p90", False),
-    ("Outstanding (never resolved)", "cross_outstanding_count", "within_outstanding_count", False),
+    ("Resolved max wait (d)", "cross_resolved_max", "within_resolved_max", False),
 ]
 
 

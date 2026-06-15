@@ -29,7 +29,6 @@ This can be generalized to longer "waiting cycles" that could all be serviced by
 
 In this thesis, we study how such cycles can be resolved and propose different strategies for resolving these.
 In particular we investigate the use of cycle detecting algorithms to find optimal switches between patients and show that this can lead to a substantial reduction in the number of people on waiting lists by running these algorithms periodically.
-Our algorithms are based on existing cycle cancelling and TTC algorithms.
 While the focus is always on helping as many patients as possible we study two different variations of this problem, when there is a priority among those waiting and when there is no priority.
 We have developed and tested optimal algorithms as well as heuristics for these cases and evaluated them for solution quality as well as speed.
 
@@ -41,9 +40,9 @@ This could for instance be in reallocation of houses, kidney donors or students 
 
 The remainder of this thesis is organized as follows:
 
-- *@ch:background* provides background on the TTC mechanism, cycle cancelling algorithms and how these methods have been used on similar problems.
-- *@ch:problem* formally defines the computational problems arising from TTC as variants of cycle cover problems on directed graphs.
+- *@ch:background* provides background on the Top Trading Cycles mechanism, cycle cancelling algorithms and how these methods have been used on similar problems.
+- *@ch:problem* formally defines the GP allocation problem and three notions of an optimal solution that differ in how they prioritise patients.
 - *@ch:implementation* describes the algorithmic strategies employed in our implementations.
-- *@ch:results* presents experimental results comparing different priority strategies.
+- *@ch:results* presents the experimental results, comparing the algorithms on how many patients they resolve, how long patients wait, and how fast they run.
 - *@ch:conclusion* concludes and discusses future work.
 
