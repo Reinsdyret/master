@@ -16,6 +16,11 @@ figure below shows it does not.
 ) <fig-district>
 
 
+= Source Code Repository
+All code used in this thesis can be found in the following repository:
+https://github.com/Reinsdyret/master
+
+
 = Statement on the Use of AI Tools
 
 Claude was used throughout the thesis to provide structure, grammar correction, spelling fixes and discussing ideas with.
