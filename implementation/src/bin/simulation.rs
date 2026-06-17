@@ -1,9 +1,9 @@
 use chrono::Local;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use ttc::simulation::{NewRequestMode, SimulationConfig, SimulationResult, run_exact_cardinality, run_exact_priority, run_simulation, run_util_exp_1_01, run_util_exp_1_1, run_util_exp_1_05, run_util_exp_1_5, run_util_exp_1_9, run_util_linear};
-use ttc::{AssignmentState, ResultWithStats, run_greedy_dfs_strict_prio};
-use ttc::huitfeldt::huitfeldt_ttc;
+use implementation::simulation::{NewRequestMode, SimulationConfig, SimulationResult, run_exact_cardinality, run_exact_priority, run_simulation, run_util_exp_1_01, run_util_exp_1_1, run_util_exp_1_05, run_util_exp_1_5, run_util_exp_1_9, run_util_linear};
+use implementation::{AssignmentState, ResultWithStats, run_greedy_dfs_strict_prio};
+use implementation::huitfeldt::huitfeldt_ttc;
 
 const DAY_HEADER: &str = "algorithm,day,waitlist_before,patients_resolved,new_requests,waitlist_after,satisfaction_rate,cycles_found,avg_cycle_length,max_cycle_length,avg_wait_days,max_wait_days,cross_requests_added,cross_resolved,solve_ms";
 

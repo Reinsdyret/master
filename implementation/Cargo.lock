@@ -397,6 +397,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "implementation"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "indicatif",
+ "petgraph",
+ "plotters",
+ "rand",
+ "rustc-hash",
+ "serde",
+]
+
+[[package]]
 name = "indexmap"
 version = "2.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -786,19 +799,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "ttc"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "indicatif",
- "petgraph",
- "plotters",
- "rand",
- "rustc-hash",
- "serde",
 ]
 
 [[package]]
