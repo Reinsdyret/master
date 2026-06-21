@@ -16,8 +16,48 @@ System", // Required
 - Lang kø
   - Bergen 97%
   - 274 dager i 2024 
+- Ansetter flere fastleger
+
+#include "figs/antall_venteliste.typ"
+
+== Løsningen?
+- Redusere antall folk på venteliste -> Flere folk er fornøyd?
+
+#include "figs/doktor-eksempel.typ"
 
 == Bakgrunn
+- Agenter og Objekter
+- Lignende problemer
+  - Housing Market
+  - Kidney exchange
+  - College Admissions problem
+
+- Top Trading Cycles algoritmen
+
+== Top Trading Cycles (TTC)
+- $A = [h_B, h_C, h_A]$
+- $B = [h_C, h_A, h_B]$
+- $C = [h_B, h_C, h_A]$
+\
+\
+\
+#include "figs/ttc-graph.typ"
+\
+\
+\
+\
+- $A = [h_B, h_C, h_A]$
+- $B = [h_C, h_A, h_B]$
+- $C = [h_B, h_C, h_A]$
+#include "figs/ttc-graph-2.typ"
+
+- Strategi trygt
+- Individuell rasjonalitet
+- Pareto effektiv
+
+== Huitfeldt et al. TTC
+- Pasienter har prioritet 
+  - Ventetid
 
 
 = GP allocation problem
