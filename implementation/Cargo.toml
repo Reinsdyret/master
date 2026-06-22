@@ -3,6 +3,10 @@ name = "implementation"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "11-mini-sims"
+path = "src/bin/mini_sims.rs"
+
 [dependencies]
 indicatif = "0.17"
 petgraph = "0.8"

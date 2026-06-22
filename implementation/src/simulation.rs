@@ -872,7 +872,7 @@ pub fn run_exact_cardinality(state: &mut AssignmentState) -> ResultWithStats {
     result
 }
 
-fn run_util_with_prio(
+pub fn run_util_with_prio(
     state: &mut AssignmentState,
     prio: impl Fn(&Patient) -> i128,
 ) -> ResultWithStats {
