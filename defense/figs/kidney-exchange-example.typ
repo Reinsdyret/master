@@ -8,7 +8,7 @@
     ranksep=0.8; // vertical spacing
     A -> B;
     B -> C;
-    C -> B;
+    C -> A
   }"),
-  caption: [Eksempel _TTC_ graf.]
-) <ttc-graph>
+  caption: [An example graph for the kidney exchange problem.]
+) <kidney-exchange-example>
