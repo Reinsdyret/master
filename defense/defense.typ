@@ -8,6 +8,7 @@ System", // Required
   authors: ("Lars Møen Haukland"),
   title-color: rgb("#761a19"),
   toc: false,
+  count: none
 )
 
 = Intro
@@ -111,7 +112,7 @@ $
 
 #import "@preview/ctheorems:1.1.3": *
 #show: thmrules.with(qed-symbol: $square$)
-#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
+#let theorem = thmbox("teorem", "Teorem", fill: rgb("#eeffee"))
 #let corollary = thmplain(
   "corollary",
   "Corollary",
@@ -169,19 +170,163 @@ $
 = Algoritmer
 
 == Top Trading Cycles (TTC)
+- Tatt fra replikasjonspakken
+- Python oversatt til rust
+  - Kjøretid ikke påvirket av språk
 
-== Cycle Cancelling
+== Greedy DFS 
+- $G = (V, E), quad V = P union D$
+- $E = {(p_i, D_"pref"[i])} union {(D_"cur"[i], p_i)}$
+  - Pasienter peker på sin foretrukne lege
+  - Leger peker på alle sine pasienter
 
-== Cycle Cancelling for kardinalitet
+- For hver pasient i synkende prioritet
+  - Prøv å finn en sykel med denne pasienten, DFS
+    - På hver lege gå til pasient med høyeste prioritet først
+  - Gi alle pasientene i sykelen sin foretrukne lege og fjern fra grafen
 
-== Cycle Cancelling for Nytte
+- Hvis ingen sykel finnes for en pasient, kan den markeres som "stuck"
 
-== Cycle Cancelling for leksikografisk optimalitet
+- $O(|P| (|D| + |P|))$
 
+#include "figs/pareto-inefficient.typ"
+
+== _Minimum Cost Circulation_
+- Input: $G = (V,E)$ hvor G er en rettet multigraf
+- Kantene er tripler: $(v,w,i)$
+  - Har kostnad $c(v,w,i) in ZZ$
+  - Og kapasitet $u(v,w,i) >= 0$
+
+- Finne en circulation $f$ som setter verdi på hver kant som tilfredstiller:
+$
+0 <= f(v,w,i) <= u(v,w,i) quad forall (v,w,i) in E
+$
+$
+sum_((q,w,i) in "in"(w)) f(q,w,i) = sum_((w,v,j) in "out"(w)) f(w,v,j) quad forall w in V
+$
+
+$
+"cost"(f) = sum_((v,w,i) in E) c(v,w,i) f(v,w,i)
+$
+
+- Finne circulation $f^*$ med minst kostnad
+
+== Residual graf
+#grid(
+  columns: (1.4fr, 1fr),
+  column-gutter: 1em,
+  align: (left, center + horizon),
+  [
+    - Omskrivning av grafen basert på $f$
+    - Nodene endres ikke fra original grafen
+    - For hver kant $(v,w,i)$ lag to kanter
+      - $(v,w,i)$ fremover kant
+        - samme kostnad som i original
+        - $u_f(v,w,i) = u(v,w,i) - f(v,w,i)$
+      - $(w,v,i)$ baklengs kant
+        - $-c(v,w,i)$
+        - $u_f(w,v,i) = f(v,w,i)$
+  ],
+  include "figs/residual-graph-example.typ",
+)
+
+== Optimal circulation 
+#theorem("Negative Cycle Optimality Theorem")[
+  En circulation $f^*$ er en optimal løsning til _Minimum Cost Circulation_ problemet hvis og bare hvis residual grafen $G(f^*)$ ikke har noen negativ-kostnad rettede sykler.
+]<negative-cycle-optimality-theorem>
+
+- I en instanse med bare positive kostnader, $f^*(e) = 0 quad forall e in E$
+- Vi setter kostnadene til å være negative, da finner vi også løsningen med maksimal total circulation
+$
+sum_((v,w,i) in E) f(v,w,i)
+$
+
+== _Cycle Cancelling_
+- Starter med 0 circulation: $f^0(e) = 0 quad forall e in E$
+- Så lenge det finnes en negativ sykel i residual grafen
+  - Kanseller den: Øk flyt på hver kant i sykelen med den minste kapasiteten til en av kantene i sykelen
+
+#include "figs/cc-1.typ"
+#include "figs/cc-2.typ"
+#include "figs/cc-3.typ"
+
+== _Cycle cancelling_ kjøretid 
+- $O(n m^2 C U)$, $n = |V|, m = |E|$
+  - $C$: maks kostnad på en kant 
+  - $U$: maks kapasitet på en kant
+- Pseudo-polynom
+  - For en av våre algoritmer setter vi kostnad basert på $R$
+
+- _Mean Cycle Cancelling_
+
+== _Cycle Cancelling_ for kardinalitet
+- $G = (V,E), quad V = D$
+- Kant $(v,w,i)$ dersom det finnes minst en pasient som vil bytte fra lege $v$ til lege $w$
+- Kostnad $c(v,w,i)$ er $-1$
+- Kapasitet er antall pasienter som vil ha det byttet
+  - $u(v,w,i) = 5$: fem pasienter vil bytte fra v til w 
+\
+- Grafen lagrer ingenting om prioritet
+- Etter _Cycle Cancelling_ har kjørt på grafen får vi bare vite hvor mange som kan byttes på hver kant
+  - Hvis $k$ pasienter kan byttes, velge de $k$ som har ventet lengst
+- Negativ kostnad gjør at vi finner optimal løsning under $succ_"size"$
+\
+- Kjøretid: $O(n m^2 C U) arrow O(n m^2 |P|)$ 
+
+== _Cycle Cancelling_ for Nytte
+- $G = (V,E), quad V = D$
+- Kant $(v,w,i)$ dersom det finnes én pasient $i$ som vil fra lege $v$ til $w$
+  - En kant per pasient
+- Kostnad $c(v,w,i) = - R(p_i)$
+- Kapasitet $u(v,w,i) = 1$ én pasient per kant
+\
+- Etter _Cycle Cancelling_ har kjørt på grafen har vi flyt på noen kanter som betyr at pasientene som tilhører kan få sin foretrukne lege.
+- Optimal løsning under $succ_"util"$
+- Kjøretid: $O(n m^2 C U) arrow O(n m^2 "max" R(p))$
+  - pseudo-polynom
+- Max prioritet i våre simuleringer
+  - Lagret som 128 bit heltall. $R(a) = 2^("wait"(a) / 10)$
+  - Maks 1010 dager
+
+
+== _Cycle Cancelling_ for $succ_"lex"$
+- Bruker fortsatt cycle cancelling teknikken men med litt endring
+- $G = (V, E), V=D$
+- Kant $(v,w,i)$ dersom det finnes én pasient $i$ som vil fra lege $v$ til $w$.
+- Bryr oss ikke om kostnad
+- Kapasitet $u(v,w,i) = 1$
+\
+- For hver pasient $p_i$ i synkende prioritet 
+  - La $e = (v,w,i)$ være kanten til $p_i$
+  - Hvis $f(e) = 1$: Legg $p$ til i løsningen og slett $e$ og residual kanten dens fra grafen
+  - Ellers:
+    - Hvis det finnes en sti $Q$ fra $w$ til $v$ i $G(f)$, bruker BFS
+      - Det finnes sykel som inneholder $p_i$ da må den være med i løsningen
+      - Øk flyt med en på hver kant i $Q$, legg $p_i$ til løsningen og slett $e$ og residual kanten dens
+
+#include "figs/cc_lex-1.typ"
+#include "figs/cc_lex-2.typ"
+#include "figs/cc_lex-3.typ"
+#include "figs/cc_lex-4.typ"
+
+- Kjøretid: $O((n + m) |P|)$
+  - Går over alle pasienter: $|P|$ iterasjoner
+    - For hver pasient så søker vi med BFS $(n + m)$ iterasjoner
 
 = Eksperimenter og resultater
 
 == Simulering og data
+- Ikke mulighet for ekte data
+  - Tilfeldig generert
+- Simulerer en mindre instans men proporsjonell til norges tall.
+- To simuleringer
+  - 100 år: se utviklingen av ventelistestørrelse 
+  - 2 år: Inkludere eksponentielle prioriteringsfunksjoner
+\
+- For hver dag:
+  - Øke ventetiden til pasienter med 1
+  - Kjøre algoritmen og fjerne pasienter som løses 
+  - Legge til nye pasienter på ventelister
 
 == Metrikker
 - Antall hjulpet
@@ -191,10 +336,47 @@ $
   - Gjennomsnitt
 - Kjøretid
 
-== Resultater
-- Halaa
+== Antall hjulpet
+- Lite variasjon
+#figure(
+  image("figs/images/antall_hjulpet.svg", width: 70%),
+  caption: [Totalt antall legebytter utført],
+)
+
+== Størrelse på ventelisten 
+#figure(
+  image("figs/images/størrelse_på_venteliste_100y.svg"),
+  caption: [Totalt antall pasienter på venteliste over tid]
+)
+
+== Maks vente tid 
+#figure(
+  image("figs/images/summary_resolved_p99_overall_max_100y.svg"),
+  caption: [Maks ventetid for løste bytter, uten de 1% lengste på venstre siden og totalt max ventetid inkludert pasienter som ikke fikk byttet på høyre.]
+)
+
+== Gjennomsnittlig vente tid 
+#figure(
+  image("figs/images/summary_resolved_avg_wait_100y.svg", width: 80%),
+  caption: [Gjennomsnittlig ventetid for bytter som ble løst]
+)
+
+#figure(
+  image("figs/images/summary_resolved_avg_wait_2y.svg")
+)
+
+== Kjøretid 
 
 == Konklusjon
-temp
+- Ikke representabel simulering ift Norge.
+  - Ingen pasienter som dør eller blir født.
+  - Økende venteliste ville ikke skjedd i et reelt system
+- Viser fortsatt hvordan algoritmenes prioriteringer endrer resultat.
+Videre arbeid:
+- Teste med ekte data 
+- Dynamisk algoritme, maksimerer $succ_"size"$ så lenge det ikke er noen pasienter som har ventet i mer enn $x$ dager, ellers maksimer $succ_"lex"$
+- Analysere om noen kan utnytte algoritmene for å få en urettferdig fordel.
+- Bruke _Mean Cycle Cancelling_ for polynomisk kjøretid for _Cycle Cancelling for Nytte_
 
+= Takk for meg, spørsmål?
 
