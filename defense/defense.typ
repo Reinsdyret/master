@@ -123,7 +123,7 @@ $
 
 #definition("Leksikografisk rangering fra prioritet")[
   $
-  S succ_"lex" S' quad <=> quad chi(S) "er leksikografisk mer maksimal enn" chi(S')
+  S succ_"lex" S' quad <=> quad chi(S) "er større enn" chi(S')
   $
   Så, på første index $i$ hvor $S$ og $S'$ er forskjellig, $chi(S)_i = 1$ og $chi(S')_i = 0$.
 ]
