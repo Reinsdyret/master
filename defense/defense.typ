@@ -370,11 +370,12 @@ $
 == Konklusjon
 - Ikke representabel simulering ift Norge.
   - Ingen pasienter som dør eller blir født.
-  - Økende venteliste ville ikke skjedd i et reelt system
+  - Økende venteliste ville ikke skjedd i et reelt system.
+  - Først kjøre ventelistesteg hvor alle ledige plasser blir gitt.
 - Viser fortsatt hvordan algoritmenes prioriteringer endrer resultat.
 Videre arbeid:
 - Teste med ekte data 
-- Dynamisk algoritme, maksimerer $succ_"size"$ så lenge det ikke er noen pasienter som har ventet i mer enn $x$ dager, ellers maksimer $succ_"lex"$
+- Dynamisk algoritme, maksimerer $succ_"size"$ så lenge det ikke er noen pasienter som har ventet i mer enn $x$ dager, ellers maksimer $succ_"lex"$.
 - Analysere om noen kan utnytte algoritmene for å få en urettferdig fordel.
 - Bruke _Mean Cycle Cancelling_ for polynomisk kjøretid for _Cycle Cancelling for Nytte_
 

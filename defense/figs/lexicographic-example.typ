@@ -21,7 +21,7 @@
     {rank=same; 4; 3;}
   }"),
   caption: [ En instans med to mulige løsninger\
-  rød: $S = {5,4} quad chi(S) = {1,1,0,0,0}$\
-  blå: $S' = {5, 3, 2} quad chi(S') = {1,0,1,1,0}$\
+  rød: $S = {5,4} quad chi(S) = {1,1,0,0}$\
+  blå: $S' = {5, 3, 2} quad chi(S') = {1,0,1,1}$\
   $S succ_"lex" S'$]
 ) <lex-twocolor>
